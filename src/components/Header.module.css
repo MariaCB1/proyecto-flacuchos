@@ -1,0 +1,198 @@
+.header {
+    background: var(--white);
+    box-shadow: var(--shadow);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.logoIcon img {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1.5rem;
+}
+
+.navLinks {
+    display: flex;
+    gap: 25px;
+    list-style: none;
+    align-items: center;
+}
+
+.navLinks li {
+    position: relative;
+}
+
+.navLinks a {
+    text-decoration: none;
+    color: var(--dark);
+    font-weight: 600;
+    transition: var(--transition);
+    padding: 10px 0;
+    display: block;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.navLinks a:hover {
+    color: var(--primary);
+}
+
+.dropdownToggle {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 600;
+    color: var(--dark);
+    cursor: pointer;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: var(--transition);
+}
+
+.dropdownToggle:hover {
+    color: var(--primary);
+}
+
+.dropdownToggle .material-symbols-outlined {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--white);
+    min-width: 200px;
+    box-shadow: var(--shadow);
+    border-radius: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: var(--transition);
+    list-style: none;
+    padding: 10px 0;
+    z-index: 100;
+}
+
+.dropdown:hover .dropdownMenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdownMenu li {
+    padding: 0;
+}
+
+.dropdownMenu a {
+    padding: 10px 20px;
+    color: var(--dark);
+    font-weight: 500;
+    border-radius: 0;
+}
+
+.dropdownMenu a:hover {
+    background: var(--light);
+    color: var(--primary);
+}
+
+.mobileMenuBtn {
+    display: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--dark);
+}
+
+@media (max-width: 1000px) {
+    .navLinks {
+        display: none;
+    }
+    
+    .navLinks.active {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .mobileMenuBtn {
+        display: block;
+    }
+
+    .dropdown {
+        width: 100%;
+        text-align: center;
+    }
+
+    .dropdownToggle {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 0;
+    }
+
+    .dropdownMenu {
+        position: static;
+        opacity: 0;
+        visibility: hidden;
+        transform: none;
+        box-shadow: none;
+        padding: 0 0 0 20px;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .dropdownMenu.open {
+        opacity: 1;
+        visibility: visible;
+        max-height: 500px;
+        padding: 10px 0 10px 20px;
+    }
+
+    .dropdownToggle .material-symbols-outlined {
+        transition: transform 0.3s ease;
+    }
+
+    .dropdownMenu.open + .dropdownToggle .material-symbols-outlined {
+        transform: rotate(180deg);
+    }
+}

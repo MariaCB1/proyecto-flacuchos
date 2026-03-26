@@ -1,0 +1,99 @@
+.events {
+    background: var(--white);
+    padding: 60px 0;
+}
+
+.eventsList {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.eventCardFull {
+    display: flex;
+    gap: 25px;
+    background: var(--light);
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.eventDateBadge {
+    background: var(--primary);
+    color: var(--white);
+    padding: 15px 20px;
+    border-radius: 10px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.eventDay {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.eventMonth {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.eventDetails {
+    flex: 1;
+}
+
+.eventDetails h3 {
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.eventDetails p {
+    color: var(--gray);
+    margin-bottom: 15px;
+}
+
+.eventInfo {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: var(--dark);
+}
+
+.pastEvents {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.pastEvent {
+    background: var(--light);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.pastDate {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.pastEvent h4 {
+    color: var(--primary);
+    margin: 5px 0;
+    font-size: 0.95rem;
+}
+
+.pastEvent p {
+    font-size: 0.85rem;
+    color: var(--gray);
+}
+
+@media (max-width: 1000px) {
+    .eventCardFull {
+        flex-direction: column;
+    }
+    .pastEvents {
+        grid-template-columns: 1fr;
+    }
+}

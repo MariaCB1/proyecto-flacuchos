@@ -1,0 +1,85 @@
+.transparency {
+    background: var(--white);
+    padding: 60px 0;
+}
+
+.docsGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}
+
+.docCard {
+    background: var(--light);
+    border-radius: 15px;
+    padding: 25px 15px;
+    text-align: center;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.docCard:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.docIcon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.docCard h4 {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.docCard p {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.docCard:hover p {
+    color: rgba(255,255,255,0.8);
+}
+
+.transparencyInfo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-top: 50px;
+}
+
+.infoCard {
+    background: var(--light);
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.infoCard h3 {
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.infoCard p {
+    color: var(--gray);
+    font-size: 0.95rem;
+}
+
+@media (max-width: 1024px) {
+    .docsGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 1000px) {
+    .transparencyInfo {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 558px) {
+    .docsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

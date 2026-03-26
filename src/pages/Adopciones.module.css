@@ -1,0 +1,208 @@
+.adoption {
+    background: var(--white);
+    padding: 60px 0;
+}
+
+.filterButtons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    padding: 10px 25px;
+    border-radius: 25px;
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.filterBtn.active, .filterBtn:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.petsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+.petCard {
+    background: var(--light);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.petCard:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+}
+
+.petImage {
+    height: 180px;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    position: relative;
+}
+
+.petStatus {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.petStatus.available {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.petStatus.pending {
+    background: var(--secondary);
+    color: var(--white);
+}
+
+.petContent {
+    padding: 15px;
+}
+
+.petContent h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.petInfo {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.petInfo span {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.petCharacter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.characterTag {
+    background: var(--white);
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    color: var(--gray);
+}
+
+.petHealth {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.adoptionProcess {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 50px;
+    border-top: 1px solid #eee;
+}
+
+.adoptionProcess h3 {
+    margin-bottom: 30px;
+    color: var(--primary);
+}
+
+.processSteps {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.processStep {
+    text-align: center;
+    max-width: 200px;
+}
+
+.processStepIcon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.processStep h4 {
+    margin-bottom: 5px;
+}
+
+.processStep p {
+    color: var(--gray);
+    font-size: 0.85rem;
+}
+
+.adoptionRequirements {
+    margin-top: 30px;
+    padding: 20px;
+    background: var(--light);
+    border-radius: 15px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.adoptionRequirements h4 {
+    margin-bottom: 15px;
+}
+
+.adoptionRequirements ul {
+    text-align: left;
+    list-style: none;
+    color: var(--gray);
+}
+
+.adoptionRequirements li {
+    margin-bottom: 8px;
+}
+
+@media (max-width: 1024px) {
+    .petsGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 1000px) {
+    .petsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .processSteps {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 558px) {
+    .petsGrid {
+        grid-template-columns: 1fr;
+    }
+}
