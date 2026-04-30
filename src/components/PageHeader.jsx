@@ -7,6 +7,7 @@ const variantClass = {
     news: styles.news,
     events: styles.events,
     contact: styles.contact,
+    notifications: styles.notifications,
 };
 
 function PageHeader({ title, subtitle, variant = 'default' }) {

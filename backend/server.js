@@ -5,6 +5,8 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const notificationRoutes = require('./routes/notification.routes');
+const animalRoutes = require('./routes/animal.routes');
+const uploadRoutes = require('./routes/upload.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -24,6 +26,8 @@ app.get('/health', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/usuarios', userRoutes);
 app.use('/notificaciones', notificationRoutes);
+app.use('/', animalRoutes);
+app.use('/upload', uploadRoutes);
 
 app.use((err, req, res, next) => {
   console.error('❌ Error:', err);
@@ -46,6 +50,18 @@ app.listen(PORT, () => {
   console.log(`   GET  /notificaciones`);
   console.log(`   GET  /notificaciones/no-leidas`);
   console.log(`   PUT  /notificaciones/:id/leer`);
+  console.log(`   GET  /animales`);
+  console.log(`   GET  /animales/todos`);
+  console.log(`   GET  /animales/:id`);
+  console.log(`   POST /animales`);
+  console.log(`   PUT  /animales/:id`);
+  console.log(`   DELETE /animales/:id`);
+  console.log(`   POST /solicitudes/:animalId`);
+  console.log(`   GET  /solicitudes/mis-solicitudes`);
+  console.log(`   GET  /solicitudes`);
+  console.log(`   PUT  /solicitudes/:id/aprobar`);
+  console.log(`   PUT  /solicitudes/:id/rechazar`);
+  console.log(`   GET  /adopciones/mis-adopciones`);
 });
 
 module.exports = app;

@@ -29,6 +29,25 @@ const notificationController = {
       res.status(err.status || 500).json({ error: err.message });
     }
   },
+
+  async handleEliminar(req, res) {
+    try {
+      const { id } = req.params;
+      await notificationService.eliminarNotificacion(id, req.user.id);
+      res.json({ message: 'Notificación eliminada' });
+    } catch (err) {
+      res.status(err.status || 500).json({ error: err.message });
+    }
+  },
+
+  async handleEliminarTodas(req, res) {
+    try {
+      await notificationService.eliminarTodasLasNotificaciones(req.user.id);
+      res.json({ message: 'Todas las notificaciones eliminadas' });
+    } catch (err) {
+      res.status(err.status || 500).json({ error: err.message });
+    }
+  },
 };
 
 module.exports = notificationController;

@@ -73,6 +73,16 @@ ul {
     transform: translateY(-2px);
 }
 
+.btn-danger {
+    background: #e74c3c;
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+
 .section-header {
     text-align: center;
     margin-bottom: 40px;

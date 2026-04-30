@@ -3,28 +3,145 @@
     padding: 60px 0;
 }
 
-.filterButtons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 40px;
-    flex-wrap: wrap;
+.filtersSection {
+    background: var(--light);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
 }
 
-.filterBtn {
-    padding: 10px 25px;
-    border-radius: 25px;
-    border: 2px solid var(--primary);
-    background: transparent;
-    color: var(--primary);
+.filterRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+    margin-bottom: 15px;
+}
+
+.filterGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filterGroup label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray);
+}
+
+.filterSelect {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    background: var(--white);
+    font-size: 0.9rem;
+    min-width: 140px;
+    cursor: pointer;
+}
+
+.filterSelect:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 10px 15px;
+    background: var(--white);
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    transition: all 0.3s;
+}
+
+.checkboxLabel input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.urgentCheckbox {
+    background: #fee;
+    border-color: #e74c3c;
+    color: #c0392b;
+    font-weight: 600;
+}
+
+.urgentCheckbox:has(input:checked) {
+    background: #fadbd8;
+}
+
+.urgentCheckbox .material-symbols-outlined {
+    font-size: 1.1rem;
+}
+
+.searchRow {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.searchInput {
+    flex: 1;
+    padding: 12px 20px 12px 45px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    font-size: 0.95rem;
+    background: var(--white);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999'%3E%3Cpath d='M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 15px center;
+    background-size: 20px;
+}
+
+.searchInput::placeholder {
+    color: #999;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.clearBtn {
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    background: var(--secondary);
+    color: var(--white);
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
 }
 
-.filterBtn.active, .filterBtn:hover {
-    background: var(--primary);
-    color: var(--white);
+.clearBtn:hover {
+    opacity: 0.9;
+}
+
+.loading, .error, .noResults {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray);
+}
+
+.error {
+    color: #e74c3c;
+}
+
+.resultsCount {
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--gray);
+    font-size: 0.95rem;
 }
 
 .petsGrid {
@@ -46,13 +163,77 @@
 }
 
 .petImage {
-    height: 180px;
-    background: #ddd;
+    height: 200px;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 4rem;
     position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.petImage::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.petCard:hover .petImage::before {
+    left: 100%;
+}
+
+.petImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+}
+
+.petEmoji {
+    font-size: 5rem;
+    color: var(--primary);
+    opacity: 0.7;
+    transition: all 0.4s ease;
+    filter: drop-shadow(0 2px 4px rgba(46, 125, 50, 0.2));
+}
+
+.petCard:hover .petEmoji {
+    opacity: 1;
+    transform: scale(1.1) rotate(5deg);
+    filter: drop-shadow(0 4px 8px rgba(46, 125, 50, 0.3));
+}
+
+.urgentTag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #e74c3c;
+    color: var(--white);
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    animation: pulse 2s infinite;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.urgentTag .material-symbols-outlined {
+    font-size: 0.85rem;
+    line-height: 1;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
 }
 
 .petStatus {
@@ -65,13 +246,18 @@
     font-weight: 700;
 }
 
-.petStatus.available {
+.petStatus.disponible {
     background: var(--primary);
     color: var(--white);
 }
 
-.petStatus.pending {
+.petStatus.adoptado {
     background: var(--secondary);
+    color: var(--white);
+}
+
+.petStatus.pending {
+    background: #f39c12;
     color: var(--white);
 }
 
@@ -82,6 +268,14 @@
 .petContent h3 {
     font-size: 1.1rem;
     margin-bottom: 8px;
+}
+
+.adoptBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
 }
 
 .petInfo {
@@ -120,6 +314,64 @@
     font-size: 0.8rem;
     color: var(--primary);
     margin-bottom: 10px;
+}
+
+.adminButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.adminBtnEdit,
+.adminBtnDelete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.adminBtnEdit {
+    background: var(--secondary);
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(245, 124, 0, 0.3);
+}
+
+.adminBtnDelete {
+    background: #e74c3c;
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.adminBtnEdit:hover,
+.adminBtnDelete:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.adminBtnEdit:active,
+.adminBtnDelete:active {
+    transform: translateY(-1px) scale(1);
+}
+
+.adminBtnEdit .material-symbols-outlined,
+.adminBtnDelete .material-symbols-outlined {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.adminBtnEdit:hover .material-symbols-outlined,
+.adminBtnDelete:hover .material-symbols-outlined {
+    transform: rotate(15deg) scale(1.2);
 }
 
 .adoptionProcess {
@@ -205,4 +457,148 @@
     .petsGrid {
         grid-template-columns: 1fr;
     }
+}
+
+.addAnimalBar {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px dashed #e0e0e0;
+}
+
+.addAnimalBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(46, 125, 50, 0.4);
+    transition: all 0.3s;
+}
+
+.addAnimalBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.5);
+    background: var(--primary-dark);
+}
+
+.addAnimalBtn .material-symbols-outlined {
+    font-size: 28px;
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    padding: 20px;
+}
+
+.modalContent {
+    background: white;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    background: var(--primary);
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+.modalHeader h3 {
+    margin: 0;
+}
+
+.closeBtn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.modalForm {
+    padding: 20px;
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.field label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.field input, .field select {
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: var(--white);
+}
+
+.field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-top: 25px;
+}
+
+.checkboxLabel input {
+    width: 18px;
+    height: 18px;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
 }

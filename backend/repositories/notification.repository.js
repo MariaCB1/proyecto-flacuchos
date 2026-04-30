@@ -50,6 +50,22 @@ const notificationRepository = {
       [usuarioId, tipo, mensaje, referenciaId]
     );
     return result.rows[0];
+  },
+
+  async delete(id, usuarioId) {
+    const result = await query(
+      'DELETE FROM notificaciones WHERE id = $1 AND usuario_id = $2 RETURNING id',
+      [id, usuarioId]
+    );
+    return result.rows[0];
+  },
+
+  async deleteAll(usuarioId) {
+    const result = await query(
+      'DELETE FROM notificaciones WHERE usuario_id = $1 RETURNING id',
+      [usuarioId]
+    );
+    return result.rowCount;
   }
 };
 

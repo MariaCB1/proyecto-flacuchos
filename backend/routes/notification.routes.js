@@ -6,5 +6,7 @@ const authMiddleware = require('../middlewares/auth.middleware');
 router.get('/', authMiddleware, notificationController.handleGetNotificaciones);
 router.get('/no-leidas', authMiddleware, notificationController.handleGetNoLeidas);
 router.put('/:id/leer', authMiddleware, notificationController.handleMarcarLeida);
+router.delete('/:id', authMiddleware, notificationController.handleEliminar);
+router.delete('/', authMiddleware, notificationController.handleEliminarTodas);
 
 module.exports = router;

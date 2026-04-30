@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { notificationApi } from '../api/api';
 import styles from './NotificationBell.module.css';
 
@@ -7,6 +8,20 @@ const NotificationBell = () => {
   const [notificaciones, setNotificaciones] = useState([]);
   const [noLeidas, setNoLeidas] = useState(0);
   const [abierto, setAbierto] = useState(false);
+  const containerRef = useRef(null);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdmin = user?.rol === 'admin';
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setAbierto(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const fetchNotificaciones = async () => {
     try {
@@ -68,13 +83,32 @@ const NotificationBell = () => {
       solicitud_socio: 'Nuevo socio',
       solicitud_acogida: 'Nueva acogida',
       mensaje_contacto: 'Nuevo mensaje',
+      solicitud_eliminada: 'Animal eliminado',
+      solicitud_rechazada: 'Solicitud rechazada',
+      solicitud_aprobada: 'Solicitud aprobada',
       sistema: 'Sistema',
     };
     return labels[tipo] || tipo;
   };
 
+  const handleClickNotif = async (notif) => {
+    if (!notif.leido) {
+      await handleMarcarLeida(notif.id);
+    }
+    if (notif.tipo === 'solicitud_adopcion' || notif.tipo === 'solicitud_rechazada' || notif.tipo === 'solicitud_aprobada' || notif.tipo === 'cambio_estado') {
+      navigate(isAdmin ? '/admin/solicitudes' : '/perfil');
+    } else if (notif.tipo === 'solicitud_socio' || notif.tipo === 'solicitud_acogida') {
+      navigate('/como-ayudar');
+    } else if (notif.tipo === 'solicitud_eliminada') {
+      navigate('/adopciones');
+    } else if (notif.tipo === 'mensaje_contacto') {
+      navigate('/contacto');
+    }
+    setAbierto(false);
+  };
+
   return (
-    <div className={styles.container}>
+    <div className={styles.container} ref={containerRef}>
       <button className={styles.bellButton} onClick={() => setAbierto(!abierto)}>
         <svg
           className={styles.icon}
@@ -111,7 +145,7 @@ const NotificationBell = () => {
                 <div
                   key={notif.id}
                   className={`${styles.item} ${!notif.leido ? styles.noLeida : ''}`}
-                  onClick={() => !notif.leido && handleMarcarLeida(notif.id)}
+                  onClick={() => handleClickNotif(notif)}
                 >
                   <div className={styles.itemHeader}>
                     <span className={styles.tipo}>{getTipoLabel(notif.tipo)}</span>
