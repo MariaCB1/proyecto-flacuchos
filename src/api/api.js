@@ -133,6 +133,105 @@ export const notificationApi = {
   async marcarLeida(id) {
     return api.put(`/notificaciones/${id}/leer`, {});
   },
+
+  async eliminar(id) {
+    return api.delete(`/notificaciones/${id}`);
+  },
+
+  async eliminarTodas() {
+    return api.delete('/notificaciones');
+  },
+};
+
+export const animalApi = {
+  async getAnimales(filtros = {}) {
+    const params = new URLSearchParams();
+    if (filtros.urgente) params.append('urgente', filtros.urgente);
+    if (filtros.tipo) params.append('tipo', filtros.tipo);
+    if (filtros.tamano) params.append('tamano', filtros.tamano);
+    if (filtros.busqueda) params.append('busqueda', filtros.busqueda);
+    if (filtros.orden) params.append('orden', filtros.orden);
+    
+    const queryString = params.toString();
+    const endpoint = queryString ? `/animales?${queryString}` : '/animales';
+    return api.get(endpoint);
+  },
+
+  async getAnimalById(id) {
+    return api.get(`/animales/${id}`);
+  },
+
+  async crearSolicitud(animalId, data) {
+    return api.post(`/solicitudes/${animalId}`, data);
+  },
+
+  async getMisSolicitudes() {
+    return api.get('/solicitudes/mis-solicitudes');
+  },
+
+  async eliminarMiSolicitud(id) {
+    return api.delete(`/solicitudes/${id}`);
+  },
+
+  async getAllSolicitudes() {
+    return api.get('/solicitudes');
+  },
+
+  async getSolicitudesPendientes() {
+    return api.get('/solicitudes/pendientes');
+  },
+
+  async aprobarSolicitud(id) {
+    return api.put(`/solicitudes/${id}/aprobar`, {});
+  },
+
+  async rechazarSolicitud(id, motivo) {
+    return api.put(`/solicitudes/${id}/rechazar`, { motivo });
+  },
+
+  async getMisAdopciones() {
+    return api.get('/adopciones/mis-adopciones');
+  },
+
+  async getAllAnimalesAdmin() {
+    return api.get('/animales/todos');
+  },
+
+  async createAnimal(data) {
+    return api.post('/animales', data);
+  },
+
+  async updateAnimal(id, data) {
+    return api.put(`/animales/${id}`, data);
+  },
+
+  async deleteAnimal(id) {
+    return api.delete(`/animales/${id}`);
+  },
+
+  async getSolicitudDetalle(id) {
+    return api.get(`/solicitudes/${id}`);
+  },
+
+  async uploadImage(file) {
+    const formData = new FormData();
+    formData.append('imagen', file);
+    
+    const response = await fetch(`${API_URL}/upload/imagen`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: formData
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Error al subir imagen');
+    }
+    
+    return response.json();
+  },
 };
 
 export default api;

@@ -25,6 +25,20 @@ const notificationService = {
 
   async crearNotificacion({ usuarioId, tipo, mensaje, referenciaId }) {
     return notificationRepository.create({ usuarioId, tipo, mensaje, referenciaId });
+  },
+
+  async eliminarNotificacion(notificacionId, usuarioId) {
+    const result = await notificationRepository.delete(notificacionId, usuarioId);
+    if (!result) {
+      const error = new Error('Notificación no encontrada');
+      error.status = 404;
+      throw error;
+    }
+    return result;
+  },
+
+  async eliminarTodasLasNotificaciones(usuarioId) {
+    return notificationRepository.deleteAll(usuarioId);
   }
 };
 

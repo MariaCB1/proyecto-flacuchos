@@ -65,15 +65,7 @@ function Header() {
           </Link>
           <ul ref={menuRef} className={`${styles.navLinks} ${mobileMenuOpen ? styles.active : ''}`}>
             <li><Link to="/" onClick={() => setMobileMenuOpen(false)}>Quiénes Somos</Link></li>
-            <li className={styles.dropdown}>
-              <button className={styles.dropdownToggle} onClick={() => toggleDropdown('adopciones')}>
-                Adopciones <span className="material-symbols-outlined">expand_more</span>
-              </button>
-              <ul className={`${styles.dropdownMenu} ${openDropdowns.adopciones ? styles.open : ''}`}>
-                <li><Link to="/adopciones" onClick={() => setMobileMenuOpen(false)}>Ver animales</Link></li>
-                <li><Link to="/casos-urgentes" onClick={() => setMobileMenuOpen(false)}>Casos urgentes</Link></li>
-              </ul>
-            </li>
+            <li><Link to="/adopciones" onClick={() => setMobileMenuOpen(false)}>Adopciones</Link></li>
             <li className={styles.dropdown}>
               <button className={styles.dropdownToggle} onClick={() => toggleDropdown('ayudar')}>
                 Cómo Ayudar <span className="material-symbols-outlined">expand_more</span>

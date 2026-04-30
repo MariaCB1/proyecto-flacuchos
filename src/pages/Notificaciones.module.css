@@ -1,5 +1,5 @@
 .container {
-    padding: 100px 0 60px;
+    padding: 40px 0 60px;
     min-height: calc(100vh - 200px);
 }
 
@@ -110,4 +110,53 @@
     font-size: 12px;
     font-weight: 700;
     border-radius: 12px;
+}
+
+.deleteBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    color: var(--gray);
+    flex-shrink: 0;
+}
+
+.deleteBtn:hover {
+    background: #fee;
+    color: #e74c3c;
+}
+
+.deleteBtn .material-symbols-outlined {
+    font-size: 20px;
+}
+
+.deleteAllBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 10px 16px;
+    background: #fee;
+    color: #e74c3c;
+    border: 1px solid #fcc;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s;
+    margin-left: auto;
+}
+
+.deleteAllBtn:hover {
+    background: #fdd;
+    border-color: #e74c3c;
+}
+
+.deleteAllBtn .material-symbols-outlined {
+    font-size: 20px;
 }

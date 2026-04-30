@@ -1,0 +1,386 @@
+.adminSection {
+    background: var(--white);
+    padding: 40px 0;
+    min-height: calc(100vh - 200px);
+}
+
+.loading, .error, .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray);
+}
+
+.error {
+    color: #e74c3c;
+    background: #fdecea;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.statsBar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.stat {
+    flex: 1;
+    min-width: 120px;
+    background: var(--light);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border-left: 4px solid var(--primary);
+}
+
+.statPending {
+    border-left-color: #f39c12;
+}
+
+.statApproved {
+    border-left-color: #27ae60;
+}
+
+.statRejected {
+    border-left-color: #e74c3c;
+}
+
+.statNumber {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.statLabel {
+    font-size: 0.85rem;
+    color: var(--gray);
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.filterBtn.active, .filterBtn:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.solicitudesList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.solicitudCard {
+    background: var(--light);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: var(--white);
+    border-bottom: 1px solid #eee;
+}
+
+.animalInfo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.animalImage {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    overflow: hidden;
+}
+
+.animalImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.animalInfo h4 {
+    margin: 0;
+    color: var(--primary);
+}
+
+.fecha {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.pending {
+    background: #f39c12;
+    color: var(--white);
+}
+
+.approved {
+    background: #27ae60;
+    color: var(--white);
+}
+
+.rejected {
+    background: #e74c3c;
+    color: var(--white);
+}
+
+.cardBody {
+    padding: 20px;
+}
+
+.userInfo {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.email {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-top: 3px;
+}
+
+.detailRow {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.detailRow strong {
+    color: var(--dark);
+    min-width: 140px;
+}
+
+.cardActions {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    background: var(--white);
+    border-top: 1px solid #eee;
+}
+
+.btnApprove {
+    flex: 1;
+    background: #27ae60 !important;
+    border-color: #27ae60 !important;
+}
+
+.btnApprove:hover {
+    background: #219a52 !important;
+}
+
+.btnReject {
+    flex: 1;
+    background: #e74c3c !important;
+    border-color: #e74c3c !important;
+}
+
+.btnReject:hover {
+    background: #c0392b !important;
+}
+
+@media (max-width: 768px) {
+    .statsBar {
+        flex-direction: column;
+    }
+    
+    .stat {
+        min-width: 100%;
+    }
+    
+    .cardHeader {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .cardActions {
+        flex-direction: column;
+    }
+}
+
+.btnDetail {
+    padding: 10px 16px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+}
+
+.btnDetail:hover {
+    background: #2980b9;
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modalContent {
+    background: white;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    background: var(--primary);
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+.modalHeader h3 {
+    margin: 0;
+}
+
+.closeBtn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.modalBody {
+    padding: 25px 30px;
+}
+
+.detailSection {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.detailSection:last-child {
+    border-bottom: none;
+}
+
+.detailSection h4 {
+    color: var(--primary);
+    margin: 0 0 12px 0;
+    font-size: 1rem;
+}
+
+.detailSubSection {
+    margin: 15px 0 10px 0;
+    padding: 10px 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 3px solid var(--primary);
+}
+
+.detailSubSection h5 {
+    color: var(--dark);
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.detailGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.detailItem {
+    font-size: 0.85rem;
+}
+
+.detailItem span {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.modalActions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 25px;
+    padding: 20px 30px;
+    border-top: 2px solid #eee;
+}
+
+.modalActions .btn {
+    padding: 14px 28px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 8px;
+}
+
+.textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    resize: vertical;
+    margin-top: 10px;
+}
+
+.textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}

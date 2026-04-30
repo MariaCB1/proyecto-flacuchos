@@ -38,7 +38,10 @@ CREATE TYPE tipo_notificacion AS ENUM (
     'solicitud_socio',
     'solicitud_acogida',
     'mensaje_contacto',
-    'sistema'
+    'sistema',
+    'solicitud_rechazada',
+    'solicitud_aprobada',
+    'solicitud_eliminada'
 );
 
 -- ============================================
@@ -62,6 +65,7 @@ DROP TABLE IF EXISTS animales CASCADE;
 CREATE TABLE animales (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     nombre TEXT NOT NULL,
+    especie TEXT CHECK (especie IN ('perro', 'gato')),
     edad TEXT NOT NULL,
     tamano TEXT CHECK (tamano IN ('pequeño', 'mediano', 'grande')),
     caracter TEXT,
@@ -163,6 +167,7 @@ CREATE TABLE solicitudes_adopcion (
     como_conocio TEXT,
     -- Estado
     estado estado_solicitud DEFAULT 'pending',
+    motivo_rechazo TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -358,11 +363,28 @@ CREATE TRIGGER trg_nueva_solicitud_adopcion
 -- Función: notificar cambio estado
 CREATE OR REPLACE FUNCTION fn_notificar_cambio_estado_adopcion()
 RETURNS TRIGGER AS $$
+DECLARE
+    mensaje TEXT;
+    tipo_notif tipo_notificacion;
 BEGIN
     IF OLD.estado IS DISTINCT FROM NEW.estado THEN
+        IF NEW.estado = 'approved' THEN
+            tipo_notif := 'solicitud_aprobada'::tipo_notificacion;
+            mensaje := '¡Enhorabuena! Tu solicitud de adopción ha sido aprobada. Por favor, contacta con nosotros para formalizar la adopción.';
+        ELSIF NEW.estado = 'rejected' THEN
+            tipo_notif := 'solicitud_rechazada'::tipo_notificacion;
+            IF NEW.motivo_rechazo IS NOT NULL AND NEW.motivo_rechazo != '' THEN
+                mensaje := 'Tu solicitud de adopción ha sido rechazada. Motivo: ' || NEW.motivo_rechazo;
+            ELSE
+                mensaje := 'Tu solicitud de adopción ha sido rechazada.';
+            END IF;
+        ELSE
+            tipo_notif := 'cambio_estado'::tipo_notificacion;
+            mensaje := 'Tu solicitud ha sido: ' || NEW.estado;
+        END IF;
+        
         INSERT INTO notificaciones (usuario_id, tipo, mensaje, referencia_id)
-        VALUES (NEW.usuario_id, 'cambio_estado',
-                'Tu solicitud ha sido: ' || NEW.estado, NEW.id);
+        VALUES (NEW.usuario_id, tipo_notif, mensaje, NEW.id);
     END IF;
     RETURN NEW;
 END;
@@ -431,13 +453,17 @@ VALUES ('Admin', 'admin@flacuchos.org', crypt('admin123', gen_salt('bf')), 'admi
 ON CONFLICT (email) DO NOTHING;
 
 -- Animales de ejemplo
-INSERT INTO animales (nombre, edad, tamano, caracter, salud, peso, urgente, estado, imagen_url) VALUES
-('Luna', '2 años', 'mediano', 'Juguetona y cariñosa', 'Vacunada, desparasitada', 15.5, false, 'disponible', 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400'),
-('Rocky', '5 años', 'grande', 'Tranquilo y leal', 'Vacunado, esterilizado', 32.0, true, 'disponible', 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400'),
-('Maya', '8 meses', 'pequeño', 'Activa y curiosa', 'Vacunada, sin esterilizar', 8.0, false, 'disponible', 'https://images.unsplash.com/photo-1591160690555-5debfba289f0?w=400'),
-('Thor', '4 años', 'grande', 'Protector y noble', 'Vacunado, microchipado', 28.5, false, 'disponible', 'https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=400'),
-('Nala', '3 años', 'mediano', 'Dulce y observadora', 'Vacunada, desparasitada', 18.0, true, 'disponible', 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400'),
-('Buddy', '6 años', 'mediano', 'Sociable y amigable', 'Vacunado, castrado', 22.0, false, 'adoptado', 'https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?w=400');
+INSERT INTO animales (nombre, especie, edad, tamano, caracter, salud, peso, urgente, estado, imagen_url) VALUES
+('Luna', 'perro', '2 años', 'mediano', 'Juguetona, cariñosa, activa', 'Vacunada, desparasitada', 15.5, false, 'disponible', 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400'),
+('Rocky', 'perro', '5 años', 'grande', 'Tranquilo, leal, protector', 'Vacunado, esterilizado', 32.0, true, 'disponible', 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400'),
+('Maya', 'gato', '8 meses', 'pequeño', 'Activa, curiosa, mimosa', 'Vacunada, sin esterilizar', 8.0, false, 'disponible', 'https://images.unsplash.com/photo-1591160690555-5debfba289f0?w=400'),
+('Thor', 'perro', '4 años', 'grande', 'Protector, noble, inteligente', 'Vacunado, microchipado', 28.5, false, 'disponible', 'https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=400'),
+('Nala', 'gato', '3 años', 'mediano', 'Dulce, observadora, independiente', 'Vacunada, desparasitada', 18.0, true, 'disponible', 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400'),
+('Buddy', 'perro', '6 años', 'mediano', 'Sociable, amigable, juguetón', 'Vacunado, castrado', 22.0, false, 'adoptado', 'https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?w=400'),
+('Luna', 'gato', '1 año', 'pequeño', 'Juguetona, cariñosa', 'Vacunada', 4.0, false, 'disponible', 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400'),
+('Max', 'perro', '3 años', 'mediano', 'Energético, leal', 'Vacunado, castrado', 20.0, false, 'disponible', 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400'),
+('Miranda', 'gato', '5 años', 'mediano', 'Tranquila, afectuosa', 'Vacunada, esterilizada', 4.5, false, 'disponible', 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400'),
+('Killer', 'perro', '2 años', 'grande', 'Afectuoso, protector', 'Vacunado', 30.0, true, 'disponible', 'https://images.unsplash.com/photo-1560807707-8cc77767d783?w=400');
 
 -- Noticias de ejemplo
 INSERT INTO noticias (titulo, contenido, imagen_url) VALUES

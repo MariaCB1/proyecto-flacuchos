@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { notificationApi } from '../api/api';
 import PageHeader from '../components/PageHeader';
 import styles from './Notificaciones.module.css';
@@ -6,6 +8,9 @@ import styles from './Notificaciones.module.css';
 function Notificaciones() {
   const [notificaciones, setNotificaciones] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdmin = user?.rol === 'admin';
 
   useEffect(() => {
     fetchNotificaciones();
@@ -32,6 +37,27 @@ function Notificaciones() {
     }
   };
 
+  const handleEliminar = async (e, id) => {
+    e.stopPropagation();
+    if (!confirm('¿Eliminar esta notificación?')) return;
+    try {
+      await notificationApi.eliminar(id);
+      await fetchNotificaciones();
+    } catch (err) {
+      console.error('Error deleting notification:', err);
+    }
+  };
+
+  const handleEliminarTodas = async () => {
+    if (!confirm('¿Eliminar todas las notificaciones?')) return;
+    try {
+      await notificationApi.eliminarTodas();
+      await fetchNotificaciones();
+    } catch (err) {
+      console.error('Error deleting all notifications:', err);
+    }
+  };
+
   const formatFecha = (fecha) => {
     const d = new Date(fecha);
     const now = new Date();
@@ -54,6 +80,9 @@ function Notificaciones() {
       solicitud_socio: 'Nuevo socio',
       solicitud_acogida: 'Nueva acogida',
       mensaje_contacto: 'Nuevo mensaje',
+      solicitud_eliminada: 'Animal eliminado',
+      solicitud_rechazada: 'Solicitud rechazada',
+      solicitud_aprobada: 'Solicitud aprobada',
       sistema: 'Sistema',
     };
     return labels[tipo] || tipo;
@@ -66,6 +95,9 @@ function Notificaciones() {
       solicitud_socio: 'card_membership',
       solicitud_acogida: 'home',
       mensaje_contacto: 'email',
+      solicitud_eliminada: 'delete',
+      solicitud_rechazada: 'cancel',
+      solicitud_aprobada: 'check_circle',
       sistema: 'info',
     };
     return icons[tipo] || 'notifications';
@@ -74,7 +106,7 @@ function Notificaciones() {
   if (loading) {
     return (
       <>
-        <PageHeader title="🔔 Notificaciones" subtitle="Tu historial de actividad" variant="default" />
+        <PageHeader title="Notificaciones" subtitle="Tu historial de actividad" variant="notifications" />
         <section className={styles.container}>
           <div className="container">
             <div className={styles.loading}>Cargando...</div>
@@ -86,10 +118,16 @@ function Notificaciones() {
 
   return (
     <>
-      <PageHeader title="🔔 Notificaciones" subtitle="Tu historial de actividad" variant="default" />
+      <PageHeader title="Notificaciones" subtitle="Tu historial de actividad" variant="notifications" />
 
       <section className={styles.container}>
         <div className="container">
+          {notificaciones.length > 0 && (
+            <button className={styles.deleteAllBtn} onClick={handleEliminarTodas}>
+              <span className="material-symbols-outlined">delete_sweep</span>
+              Borrar todas
+            </button>
+          )}
           {notificaciones.length === 0 ? (
             <div className={styles.empty}>
               <span className="material-symbols-outlined">notifications_off</span>
@@ -101,7 +139,20 @@ function Notificaciones() {
                 <div
                   key={notif.id}
                   className={`${styles.item} ${!notif.leido ? styles.noLeida : ''}`}
-                  onClick={() => !notif.leido && handleMarcarLeida(notif.id)}
+                  onClick={async () => {
+                    if (!notif.leido) {
+                      await handleMarcarLeida(notif.id);
+                    }
+                    if (notif.tipo === 'solicitud_adopcion' || notif.tipo === 'solicitud_rechazada' || notif.tipo === 'solicitud_aprobada' || notif.tipo === 'cambio_estado') {
+                      navigate(isAdmin ? '/admin/solicitudes' : '/perfil');
+                    } else if (notif.tipo === 'solicitud_socio' || notif.tipo === 'solicitud_acogida') {
+                      navigate('/como-ayudar');
+                    } else if (notif.tipo === 'solicitud_eliminada') {
+                      navigate('/adopciones');
+                    } else if (notif.tipo === 'mensaje_contacto') {
+                      navigate('/contacto');
+                    }
+                  }}
                 >
                   <div className={styles.itemIcon}>
                     <span className="material-symbols-outlined">{getTipoIcon(notif.tipo)}</span>
@@ -114,6 +165,13 @@ function Notificaciones() {
                     <p className={styles.mensaje}>{notif.mensaje}</p>
                     {!notif.leido && <span className={styles.noLeidaBadge}>Nueva</span>}
                   </div>
+                  <button 
+                    className={styles.deleteBtn}
+                    onClick={(e) => handleEliminar(e, notif.id)}
+                    title="Eliminar notificación"
+                  >
+                    <span className="material-symbols-outlined">delete</span>
+                  </button>
                 </div>
               ))}
             </div>
