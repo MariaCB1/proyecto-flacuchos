@@ -38,7 +38,7 @@
 }
 
 .contact {
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+    background: linear-gradient(135deg, #00897B 0%, #00695C 100%);
 }
 
 .notifications {

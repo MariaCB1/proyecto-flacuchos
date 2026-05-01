@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import SocialLinks from '../components/SocialLinks';
+import { contactoApi } from '../api/api';
 import styles from './Contacto.module.css';
 
 function Contacto() {
@@ -11,11 +12,41 @@ function Contacto() {
         type: 'Información general',
         message: ''
     });
+    const [loading, setLoading] = useState(false);
+    const [feedback, setFeedback] = useState({ type: '', message: '' });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        alert('¡Gracias por tu mensaje! Te contactaremos pronto.');
-        setFormData({ name: '', email: '', phone: '', type: 'Información general', message: '' });
+        
+        if (!formData.name || !formData.email || !formData.type || !formData.message) {
+            setFeedback({ type: 'error', message: 'Todos los campos son requeridos' });
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            setFeedback({ type: 'error', message: 'Introduce un email válido' });
+            return;
+        }
+
+        setLoading(true);
+        setFeedback({ type: '', message: '' });
+
+        try {
+            await contactoApi.enviarMensaje({
+                nombre: formData.name,
+                email: formData.email,
+                telefono: formData.phone,
+                tipo: formData.type,
+                mensaje: formData.message
+            });
+            setFeedback({ type: 'success', message: '¡Gracias por tu mensaje! Te contactaremos pronto.' });
+            setFormData({ name: '', email: '', phone: '', type: 'Información general', message: '' });
+        } catch (error) {
+            setFeedback({ type: 'error', message: error.message || 'Error al enviar el mensaje. Inténtalo de nuevo.' });
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleChange = (e) => {
@@ -27,7 +58,6 @@ function Contacto() {
             <PageHeader title="Contacto" subtitle="Estamos aquí para ayudarte" variant="contact" />
 
             <section className={styles.contact}>
-                <div className="container">
                     <div className={styles.contactGrid}>
                         <div className={styles.contactInfoBox}>
                             <h3>¡Escríbenos!</h3>
@@ -49,18 +79,18 @@ function Contacto() {
                                 <div className={styles.contactIcon}><span className="material-symbols-outlined">share_location</span></div>
                                 <div>
                                     <h4>Dirección</h4>
-                                    <p>Calle de los Animales, 123</p>
+                                    <p>Diseminado Diseminados, 822</p>
                                     <p>14850 Baena, Córdoba</p>
-                                    <div className={styles.mapContainer}>
+<div className={styles.mapContainer}>
                                         <iframe 
-                                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d198.34107469085436!2d-4.672211501384235!3d37.30799656432178!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd6d671c0747bc49%3A0xb0e66afbd40ecd09!2sParroquia%20Ntra.%20Sra.%20del%20Socorro!5e0!3m2!1ses!2ses!4v1774353520216!5m2!1ses!2ses" 
-                                            title="Ubicación"
-                                            width="100%" 
-                                            height="200" 
-                                            style={{border: 0}} 
-                                            allowFullScreen="" 
-                                            loading="lazy" 
-                                            referrerPolicy="no-referrer-when-downgrade"
+                                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d712.6627617171671!2d-4.278751818061184!3d37.634503812148424!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd6da3974e41f4f5%3A0x78820a68e0d04d5d!2sPunto%20Limpio%20Baena!5e1!3m2!1ses!2ses!4v1777548964147!5m2!1ses!2ses" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" 
+                                                title="Ubicación"
+                                                width="100%" 
+                                                height="250" 
+                                                style={{border: 0}} 
+                                                allowFullScreen="" 
+                                                loading="lazy" 
+                                                referrerPolicy="no-referrer-when-downgrade"
                                         ></iframe>
                                     </div>
                                 </div>
@@ -79,9 +109,14 @@ function Contacto() {
                         </div>
                         <div className={styles.contactForm}>
                             <h3>Formulario de Contacto</h3>
+                            {feedback.message && (
+                                <div className={`${styles.feedback} ${styles[feedback.type]}`}>
+                                    {feedback.message}
+                                </div>
+                            )}
                             <form onSubmit={handleSubmit}>
                                 <div className={styles.formGroup}>
-                                    <label>Nombre completo</label>
+                                    <label>Nombre completo *</label>
                                     <input 
                                         type="text" 
                                         name="name"
@@ -92,7 +127,7 @@ function Contacto() {
                                     />
                                 </div>
                                 <div className={styles.formGroup}>
-                                    <label>Email</label>
+                                    <label>Email *</label>
                                     <input 
                                         type="email" 
                                         name="email"
@@ -113,11 +148,12 @@ function Contacto() {
                                     />
                                 </div>
                                 <div className={styles.formGroup}>
-                                    <label>Tipo de consulta</label>
+                                    <label>Tipo de consulta *</label>
                                     <select 
                                         name="type"
                                         value={formData.type}
                                         onChange={handleChange}
+                                        required
                                     >
                                         <option>Información general</option>
                                         <option>Adopción</option>
@@ -128,20 +164,22 @@ function Contacto() {
                                     </select>
                                 </div>
                                 <div className={styles.formGroup}>
-                                    <label>Mensaje</label>
+                                    <label>Mensaje *</label>
                                     <textarea 
                                         name="message"
                                         placeholder="¿En qué podemos ayudarte?"
                                         value={formData.message}
                                         onChange={handleChange}
+                                        required
                                     ></textarea>
                                 </div>
-                                <button type="submit" className="btn btn-primary" style={{width: '100%'}}>Enviar mensaje</button>
+                                <button type="submit" className="btn btn-primary" style={{width: '100%'}} disabled={loading}>
+                                    {loading ? 'Enviando...' : 'Enviar mensaje'}
+                                </button>
                             </form>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
         </>
     );
 }
