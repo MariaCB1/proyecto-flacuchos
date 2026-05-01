@@ -119,6 +119,10 @@ export const userApi = {
     setUser(data);
     return data;
   },
+
+  async cambiarContrasena(contrasenaActual, nuevaContrasena) {
+    return api.post('/usuarios/cambiar-contrasena', { contrasenaActual, nuevaContrasena });
+  },
 };
 
 export const notificationApi = {

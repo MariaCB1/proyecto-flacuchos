@@ -16,6 +16,7 @@ const Eventos = lazy(() => import('./pages/Eventos'));
 const Contacto = lazy(() => import('./pages/Contacto'));
 const Login = lazy(() => import('./pages/LoginAuth'));
 const Registro = lazy(() => import('./pages/RegistroAuth'));
+const Recuperar = lazy(() => import('./pages/RecuperarContrasena'));
 const Perfil = lazy(() => import('./pages/Perfil'));
 const Notificaciones = lazy(() => import('./pages/Notificaciones'));
 const FormularioAdopcion = lazy(() => import('./pages/FormularioAdopcion'));
@@ -28,7 +29,7 @@ function Loading() {
 function AppContent() {
   const location = useLocation();
   const isAuthPage = useMemo(() => 
-    ['/login', '/registro'].includes(location.pathname), 
+    ['/login', '/registro', '/recuperar'].includes(location.pathname), 
     [location.pathname]
   );
 
@@ -52,6 +53,7 @@ function AppContent() {
             <Route path="/contacto" element={<Contacto />} />
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />
+            <Route path="/recuperar" element={<Recuperar />} />
             <Route path="/perfil" element={
               <ProtectedRoute>
                 <Perfil />

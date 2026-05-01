@@ -1,8 +1,35 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { animalApi } from '../api/api';
+import { animalApi, userApi } from '../api/api';
 import styles from './Perfil.module.css';
+
+const calculateStrength = (password) => {
+  const result = {
+    score: 0,
+    hasUpper: false,
+    hasLower: false,
+    hasNumber: false,
+    hasSpecial: false,
+    hasLength: false,
+  };
+
+  if (!password) return result;
+
+  result.hasLength = password.length >= 8;
+  result.hasUpper = /[A-Z]/.test(password);
+  result.hasLower = /[a-z]/.test(password);
+  result.hasNumber = /[0-9]/.test(password);
+  result.hasSpecial = /[!@#$%^&*()_+\-=[\]{}|',.<>/?]/.test(password);
+
+  if (result.hasLength) result.score++;
+  if (result.hasUpper) result.score++;
+  if (result.hasLower) result.score++;
+  if (result.hasNumber) result.score++;
+  if (result.hasSpecial) result.score++;
+
+  return result;
+};
 
 function Perfil() {
   const { user, logout, updatePerfil } = useAuth();
@@ -11,10 +38,17 @@ function Perfil() {
   
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
-  const [contrasena, setContrasena] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const [contrasenaActual, setContrasenaActual] = useState('');
+  const [mostrarActual, setMostrarActual] = useState(false);
+  const [nuevaContrasena, setNuevaContrasena] = useState('');
+  const [mostrarNueva, setMostrarNueva] = useState(false);
+  const [confirmarContrasena, setConfirmarContrasena] = useState('');
+  const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
+  const [loadingPassword, setLoadingPassword] = useState(false);
 
   const [misSolicitudes, setMisSolicitudes] = useState([]);
   const [loadingSolicitudes, setLoadingSolicitudes] = useState(false);
@@ -119,7 +153,6 @@ function Perfil() {
       const datos = {};
       if (nombre !== user.nombre) datos.nombre = nombre;
       if (email !== user.email) datos.email = email;
-      if (contrasena) datos.contrasena = contrasena;
 
       if (Object.keys(datos).length === 0) {
         setSuccess('No hay cambios que guardar');
@@ -129,11 +162,40 @@ function Perfil() {
 
       await updatePerfil(datos);
       setSuccess('Perfil actualizado correctamente');
-      setContrasena('');
     } catch (err) {
       setError(err.message || 'Error al actualizar');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCambiarContrasena = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    const strength = calculateStrength(nuevaContrasena);
+    if (strength.score < 4) {
+      setError('La contraseña debe ser más fuerte (al menos 4 requisitos)');
+      return;
+    }
+
+    if (nuevaContrasena !== confirmarContrasena) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+
+    setLoadingPassword(true);
+    try {
+      await userApi.cambiarContrasena(contrasenaActual, nuevaContrasena);
+      setSuccess('Contraseña actualizada correctamente');
+      setContrasenaActual('');
+      setNuevaContrasena('');
+      setConfirmarContrasena('');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error al cambiar la contraseña');
+    } finally {
+      setLoadingPassword(false);
     }
   };
 
@@ -259,7 +321,19 @@ function Perfil() {
               <span className="material-symbols-outlined">person</span>
               <span className={styles.btnText}>
                 <span className={styles.btnTitle}>Editar Mis Datos</span>
-                <span className={styles.btnSubtitle}>Nombre, email, contraseña</span>
+                <span className={styles.btnSubtitle}>Nombre y email</span>
+              </span>
+              <span className="material-symbols-outlined arrow">chevron_right</span>
+            </button>
+
+            <button 
+              className={`${styles.menuBtn} ${activeTab === 'password' ? styles.active : ''}`}
+              onClick={() => setActiveTab('password')}
+            >
+              <span className="material-symbols-outlined">lock</span>
+              <span className={styles.btnText}>
+                <span className={styles.btnTitle}>Cambiar Contraseña</span>
+                <span className={styles.btnSubtitle}>Actual y nueva contraseña</span>
               </span>
               <span className="material-symbols-outlined arrow">chevron_right</span>
             </button>
@@ -304,12 +378,117 @@ function Perfil() {
                   <label htmlFor="email"><span className="material-symbols-outlined">mail</span>Email</label>
                   <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 </div>
-                <div className={styles.field}>
-                  <label htmlFor="contrasena"><span className="material-symbols-outlined">lock</span>Nueva contraseña (opcional)</label>
-                  <input type="password" id="contrasena" value={contrasena} onChange={(e) => setContrasena(e.target.value)} placeholder="Dejar vacío para mantener actual" />
-                </div>
                 <button type="submit" className={styles.button} disabled={loading}>
                   {loading ? <><span className={styles.spinner}></span>Guardando...</> : <><span className="material-symbols-outlined">save</span>Guardar Cambios</>}
+                </button>
+              </form>
+            )}
+
+            {activeTab === 'password' && (
+              <form onSubmit={handleCambiarContrasena} className={styles.form}>
+                <p className={styles.formDescription}>Introduce tu contraseña actual y luego la nueva contraseña.</p>
+                
+                <div className={styles.field}>
+                  <label htmlFor="contrasenaActual"><span className="material-symbols-outlined">lock</span>Contraseña actual</label>
+                  <div className={styles.passwordWrapper}>
+                    <input 
+                      type={mostrarActual ? 'text' : 'password'} 
+                      id="contrasenaActual" 
+                      value={contrasenaActual} 
+                      onChange={(e) => setContrasenaActual(e.target.value)} 
+                      required 
+                      placeholder="Tu contraseña actual"
+                    />
+                    <button type="button" className={styles.togglePassword} onClick={() => setMostrarActual(!mostrarActual)}>
+                      <span className="material-symbols-outlined">{mostrarActual ? 'visibility' : 'visibility_off'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles.field}>
+                  <label htmlFor="nuevaContrasena"><span className="material-symbols-outlined">lock</span>Nueva contraseña</label>
+                  <div className={styles.passwordWrapper}>
+                    <input 
+                      type={mostrarNueva ? 'text' : 'password'} 
+                      id="nuevaContrasena" 
+                      value={nuevaContrasena} 
+                      onChange={(e) => setNuevaContrasena(e.target.value)} 
+                      required 
+                      minLength={8}
+                      placeholder="Mínimo 8 caracteres"
+                    />
+                    <button type="button" className={styles.togglePassword} onClick={() => setMostrarNueva(!mostrarNueva)}>
+                      <span className="material-symbols-outlined">{mostrarNueva ? 'visibility' : 'visibility_off'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {nuevaContrasena && (() => {
+                  const strength = calculateStrength(nuevaContrasena);
+                  return (
+                    <div className={styles.requirements}>
+                      <div className={styles.strengthBar}>
+                        <div 
+                          className={styles.strengthFill} 
+                          style={{ 
+                            width: `${(strength.score / 5) * 100}%`,
+                            backgroundColor: strength.score <= 1 ? '#ef5350' : strength.score <= 2 ? '#ff9800' : strength.score <= 3 ? '#ffca28' : '#66bb6a'
+                          }}
+                        />
+                      </div>
+                      <p className={styles.strengthText}>
+                        {strength.score === 0 && 'Débil'}
+                        {strength.score === 1 && 'Muy débil'}
+                        {strength.score === 2 && 'Débil'}
+                        {strength.score === 3 && 'Media'}
+                        {strength.score === 4 && 'Fuerte'}
+                        {strength.score === 5 && 'Muy fuerte'}
+                      </p>
+                      <ul className={styles.requirementsList}>
+                        <li className={strength.hasLength ? styles.met : ''}>
+                          <span className="material-symbols-outlined">{strength.hasLength ? 'check_circle' : 'radio_button_unchecked'}</span>
+                          Mínimo 8 caracteres
+                        </li>
+                        <li className={strength.hasUpper ? styles.met : ''}>
+                          <span className="material-symbols-outlined">{strength.hasUpper ? 'check_circle' : 'radio_button_unchecked'}</span>
+                          Una mayúscula (A-Z)
+                        </li>
+                        <li className={strength.hasLower ? styles.met : ''}>
+                          <span className="material-symbols-outlined">{strength.hasLower ? 'check_circle' : 'radio_button_unchecked'}</span>
+                          Una minúscula (a-z)
+                        </li>
+                        <li className={strength.hasNumber ? styles.met : ''}>
+                          <span className="material-symbols-outlined">{strength.hasNumber ? 'check_circle' : 'radio_button_unchecked'}</span>
+                          Un número (0-9)
+                        </li>
+                        <li className={strength.hasSpecial ? styles.met : ''}>
+                          <span className="material-symbols-outlined">{strength.hasSpecial ? 'check_circle' : 'radio_button_unchecked'}</span>
+                          Un carácter especial (!@#$...)
+                        </li>
+                      </ul>
+                    </div>
+                  );
+                })()}
+
+                <div className={styles.field}>
+                  <label htmlFor="confirmarContrasena"><span className="material-symbols-outlined">lock</span>Confirmar contraseña</label>
+                  <div className={styles.passwordWrapper}>
+                    <input 
+                      type={mostrarConfirmar ? 'text' : 'password'} 
+                      id="confirmarContrasena" 
+                      value={confirmarContrasena} 
+                      onChange={(e) => setConfirmarContrasena(e.target.value)} 
+                      required 
+                      placeholder="Repite tu contraseña"
+                    />
+                    <button type="button" className={styles.togglePassword} onClick={() => setMostrarConfirmar(!mostrarConfirmar)}>
+                      <span className="material-symbols-outlined">{mostrarConfirmar ? 'visibility' : 'visibility_off'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <button type="submit" className={styles.button} disabled={loadingPassword}>
+                  {loadingPassword ? <><span className={styles.spinner}></span>Cambiando...</> : <><span className="material-symbols-outlined">save</span>Cambiar Contraseña</>}
                 </button>
               </form>
             )}

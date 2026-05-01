@@ -5,5 +5,6 @@ const authMiddleware = require('../middlewares/auth.middleware');
 
 router.get('/perfil', authMiddleware, userController.handleGetPerfil);
 router.put('/perfil', authMiddleware, userController.handleUpdatePerfil);
+router.post('/cambiar-contrasena', authMiddleware, userController.handleCambiarContrasena);
 
 module.exports = router;

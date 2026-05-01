@@ -4,7 +4,7 @@ const { query } = require('../config/db');
 const userRepository = {
   async findById(id) {
     const result = await query(
-      'SELECT id, nombre, email, rol, created_at, updated_at FROM usuarios WHERE id = $1',
+      'SELECT id, nombre, email, contrasena, rol, created_at, updated_at FROM usuarios WHERE id = $1',
       [id]
     );
     return result.rows[0];

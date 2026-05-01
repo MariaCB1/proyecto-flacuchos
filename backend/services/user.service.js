@@ -34,6 +34,25 @@ const userService = {
 
   async validarEmail(email, excludeUserId) {
     return userRepository.emailExists(email, excludeUserId);
+  },
+
+  async cambiarContrasena(usuarioId, contrasenaActual, nuevaContrasena) {
+    const usuario = await userRepository.findById(usuarioId);
+    if (!usuario) {
+      const error = new Error('Usuario no encontrado');
+      error.status = 404;
+      throw error;
+    }
+
+    const authRepository = require('../repositories/auth.repository');
+    const esValida = await authRepository.comparePassword(contrasenaActual, usuario.contrasena);
+    if (!esValida) {
+      const error = new Error('La contraseña actual es incorrecta');
+      error.status = 400;
+      throw error;
+    }
+
+    await userRepository.update(usuarioId, { contrasena: nuevaContrasena });
   }
 };
 
