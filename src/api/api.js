@@ -234,4 +234,10 @@ export const animalApi = {
   },
 };
 
+export const contactoApi = {
+  async enviarMensaje(data) {
+    return api.post('/contacto', data);
+  },
+};
+
 export default api;

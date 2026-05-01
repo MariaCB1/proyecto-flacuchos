@@ -7,6 +7,7 @@ const userRoutes = require('./routes/user.routes');
 const notificationRoutes = require('./routes/notification.routes');
 const animalRoutes = require('./routes/animal.routes');
 const uploadRoutes = require('./routes/upload.routes');
+const contactoRoutes = require('./routes/contacto.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -28,6 +29,7 @@ app.use('/usuarios', userRoutes);
 app.use('/notificaciones', notificationRoutes);
 app.use('/', animalRoutes);
 app.use('/upload', uploadRoutes);
+app.use('/contacto', contactoRoutes);
 
 app.use((err, req, res, next) => {
   console.error('❌ Error:', err);
