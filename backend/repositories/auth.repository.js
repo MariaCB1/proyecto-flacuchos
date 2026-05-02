@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const { query } = require('../config/db');
 
 const authRepository = {
@@ -63,6 +64,44 @@ const authRepository = {
       values
     );
     return result.rows[0];
+  },
+
+  async generarTokenRecuperacion(email) {
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiracion = new Date(Date.now() + 15 * 60 * 1000);
+    const result = await query(
+      `UPDATE usuarios SET token_recuperacion = $1, token_expiracion = $2 WHERE email = $3
+       RETURNING id, nombre, email`,
+      [token, expiracion, email]
+    );
+    return { token, usuario: result.rows[0] };
+  },
+
+  async findByToken(token) {
+    const result = await query(
+      `SELECT id, nombre, email FROM usuarios 
+       WHERE token_recuperacion = $1 AND token_expiracion > NOW()`,
+      [token]
+    );
+    return result.rows[0];
+  },
+
+  async actualizarContrasena(id, contrasena) {
+    const hashedPassword = await bcrypt.hash(contrasena, 10);
+    const result = await query(
+      `UPDATE usuarios SET contrasena = $1, token_recuperacion = NULL, token_expiracion = NULL 
+       WHERE id = $2
+       RETURNING id, nombre, email, rol`,
+      [hashedPassword, id]
+    );
+    return result.rows[0];
+  },
+
+  async clearToken(email) {
+    await query(
+      `UPDATE usuarios SET token_recuperacion = NULL, token_expiracion = NULL WHERE email = $1`,
+      [email]
+    );
   }
 };
 

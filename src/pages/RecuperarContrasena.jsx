@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import styles from './RegistroAuth.module.css';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import api from '../api/api';
+import styles from './RecuperarContrasena.module.css';
 
 const calculateStrength = (password) => {
   const result = {
@@ -30,45 +30,92 @@ const calculateStrength = (password) => {
   return result;
 };
 
-const RegistroAuth = () => {
-  const [nombre, setNombre] = useState('');
-  const [email, setEmail] = useState('');
+const RecuperarContrasena = () => {
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
+  const navigate = useNavigate();
+
   const [contrasena, setContrasena] = useState('');
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
   const [confirmarContrasena, setConfirmarContrasena] = useState('');
   const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { registro } = useAuth();
-  const navigate = useNavigate();
+  const [success, setSuccess] = useState(false);
 
   const strength = calculateStrength(contrasena);
 
-  const handleSubmit = async (e) => {
+  const handleRestablecer = async (e) => {
     e.preventDefault();
     setError('');
-
-    if (contrasena !== confirmarContrasena) {
-      setError('Las contraseñas no coinciden');
-      return;
-    }
 
     if (strength.score < 4) {
       setError('La contraseña debe ser más fuerte (al menos 4 requisitos)');
       return;
     }
 
+    if (contrasena !== confirmarContrasena) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await registro(nombre, email, contrasena);
-      navigate('/');
+      await api.post('/auth/recuperar-restablecer', {
+        token,
+        contrasena,
+      });
+      setSuccess(true);
+      setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
-      setError(err.message || 'Error al registrar');
+      setError(err.response?.data?.error || 'Error al restablecer la contraseña');
     } finally {
       setLoading(false);
     }
   };
+
+  if (!token) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.card}>
+          <div className={styles.header}>
+            <div className={styles.logoIcon}>
+              <img src="/img/logo.png" alt="Flacuchos" />
+            </div>
+            <h1 className={styles.title}>Enlace inválido</h1>
+            <p className={styles.subtitle}>El enlace de recuperación no es válido o ha expirado</p>
+          </div>
+          <div className={styles.footer}>
+            <Link to="/login" className={styles.button}>
+              Volver al login
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (success) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.card}>
+          <div className={styles.header}>
+            <div className={styles.logoIcon}>
+              <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'var(--primary)' }}>check_circle</span>
+            </div>
+            <h1 className={styles.title}>¡Contraseña actualizada!</h1>
+            <p className={styles.subtitle}>Serás redirigido al login en unos segundos...</p>
+          </div>
+          <div className={styles.footer}>
+            <Link to="/login" className={styles.button}>
+              Ir al login
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -80,47 +127,17 @@ const RegistroAuth = () => {
           <div className={styles.logoIcon}>
             <img src="/img/logo.png" alt="Flacuchos" />
           </div>
-          <h1 className={styles.title}>Crear Cuenta</h1>
-          <p className={styles.subtitle}>Únete a la familia Flacuchos</p>
+          <h1 className={styles.title}>Nueva contraseña</h1>
+          <p className={styles.subtitle}>Ingresa tu nueva contraseña</p>
         </div>
 
         {error && <div className={styles.error}>{error}</div>}
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.field}>
-            <label htmlFor="nombre">
-              <span className="material-symbols-outlined">badge</span>
-              Nombre completo
-            </label>
-            <input
-              type="text"
-              id="nombre"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              required
-              placeholder="Tu nombre y apellidos"
-            />
-          </div>
-
-          <div className={styles.field}>
-            <label htmlFor="email">
-              <span className="material-symbols-outlined">mail</span>
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="tu@email.com"
-            />
-          </div>
-
+        <form onSubmit={handleRestablecer} className={styles.form}>
           <div className={styles.field}>
             <label htmlFor="contrasena">
               <span className="material-symbols-outlined">lock</span>
-              Contraseña
+              Nueva contraseña
             </label>
             <div className={styles.passwordWrapper}>
               <input
@@ -185,12 +202,12 @@ const RegistroAuth = () => {
                   Un carácter especial (!@#$...)
                 </li>
               </ul>
-            </div>
+</div>
           )}
 
           <div className={styles.field}>
             <label htmlFor="confirmarContrasena">
-              <span className="material-symbols-outlined">lock_reset</span>
+              <span className="material-symbols-outlined">lock</span>
               Confirmar contraseña
             </label>
             <div className={styles.passwordWrapper}>
@@ -218,27 +235,19 @@ const RegistroAuth = () => {
             {loading ? (
               <>
                 <span className={styles.spinner}></span>
-                Creando cuenta...
+                Restableciendo...
               </>
             ) : (
               <>
-                <span className="material-symbols-outlined">how_to_reg</span>
-                Crear Cuenta
+                <span className="material-symbols-outlined">save</span>
+                Restablecer contraseña
               </>
             )}
           </button>
         </form>
-
-        <div className={styles.footer}>
-          <p>¿Ya tienes cuenta?</p>
-          <Link to="/login" className={styles.loginLink}>
-            <span className="material-symbols-outlined">login</span>
-            Iniciar Sesión
-          </Link>
-        </div>
       </div>
     </div>
   );
 };
 
-export default RegistroAuth;
+export default RecuperarContrasena;

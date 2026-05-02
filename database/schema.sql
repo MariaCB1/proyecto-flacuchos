@@ -54,6 +54,8 @@ CREATE TABLE usuarios (
     email TEXT NOT NULL UNIQUE,
     contrasena TEXT NOT NULL,
     rol rol_usuario NOT NULL DEFAULT 'usuario',
+    token_recuperacion TEXT,
+    token_expiracion TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

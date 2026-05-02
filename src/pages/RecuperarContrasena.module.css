@@ -95,6 +95,9 @@
   background: white;
   padding: 10px;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logoIcon::after {
@@ -220,6 +223,9 @@
   font-family: inherit;
   position: relative;
   overflow: hidden;
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .button::before {
@@ -272,51 +278,14 @@
   border-top: 1px solid #eee;
 }
 
-.footer p {
-  margin: 0 0 12px 0;
-  color: var(--gray);
-  font-size: 14px;
-}
+@media (max-width: 480px) {
+  .card {
+    padding: 40px 24px;
+  }
 
-.registerLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--primary);
-  font-weight: 700;
-  font-size: 15px;
-  text-decoration: none;
-  padding: 10px 20px;
-  background: #e8f5e9;
-  border-radius: 25px;
-  transition: var(--transition);
-}
-
-.registerLink .material-symbols-outlined {
-  font-size: 20px;
-}
-
-.registerLink:hover {
-  background: var(--primary);
-  color: white;
-  transform: scale(1.05);
-}
-
-.forgotLink {
-  background: none;
-  border: none;
-  color: var(--gray);
-  font-size: 14px;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 8px;
-  margin-top: 20px;
-  transition: var(--transition);
-  font-family: inherit;
-}
-
-.forgotLink:hover {
-  color: var(--primary);
+  .title {
+    font-size: 24px;
+  }
 }
 
 .passwordWrapper {
@@ -352,34 +321,60 @@
   font-size: 20px;
 }
 
-.success {
-  background: #e8f5e9;
-  color: #2e7d32;
-  padding: 20px;
+.requirements {
+  background: #fafafa;
   border-radius: 12px;
-  text-align: center;
+  padding: 16px;
+  margin-top: -8px;
+}
+
+.strengthBar {
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.strengthFill {
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 3px;
+}
+
+.strengthText {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.requirementsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
+  gap: 6px;
+}
+
+.requirementsList li {
+  display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--gray);
 }
 
-.success .material-symbols-outlined {
-  font-size: 40px;
+.requirementsList li .material-symbols-outlined {
+  font-size: 16px;
+  color: #bdbdbd;
 }
 
-.success p {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.5;
+.requirementsList li.met {
+  color: #2e7d32;
 }
 
-@media (max-width: 480px) {
-  .card {
-    padding: 40px 24px;
-  }
-
-  .title {
-    font-size: 24px;
-  }
+.requirementsList li.met .material-symbols-outlined {
+  color: #2e7d32;
 }

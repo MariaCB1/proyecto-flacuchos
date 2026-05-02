@@ -45,7 +45,7 @@ const getImageGradient = (imageUrl) => {
         } else {
           resolve(null);
         }
-      } catch (e) {
+      } catch {
         resolve(null);
       }
     };

@@ -7,5 +7,7 @@ router.post('/registro', authController.handleRegistro);
 router.post('/login', authController.handleLogin);
 router.post('/logout', authController.handleLogout);
 router.get('/verify', authMiddleware, authController.handleVerify);
+router.post('/recuperar-solicitud', authController.handleRecuperarSolicitud);
+router.post('/recuperar-restablecer', authController.handleRecuperarRestablecer);
 
 module.exports = router;

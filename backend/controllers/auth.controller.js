@@ -12,6 +12,15 @@ const loginSchema = Joi.object({
   contrasena: Joi.string().required(),
 });
 
+const recuperarSolicitudSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
+const recuperarRestablecerSchema = Joi.object({
+  token: Joi.string().required(),
+  contrasena: Joi.string().min(6).max(50).required(),
+});
+
 const authController = {
   async handleRegistro(req, res) {
     try {
@@ -56,6 +65,34 @@ const authController = {
           rol: usuario.rol,
         },
       });
+    } catch (err) {
+      res.status(err.status || 500).json({ error: err.message });
+    }
+  },
+
+  async handleRecuperarSolicitud(req, res) {
+    try {
+      const { error, value } = recuperarSolicitudSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
+
+      const result = await authService.solicitarRecuperacion(value.email);
+      res.json(result);
+    } catch (err) {
+      res.status(err.status || 500).json({ error: err.message });
+    }
+  },
+
+  async handleRecuperarRestablecer(req, res) {
+    try {
+      const { error, value } = recuperarRestablecerSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
+
+      const result = await authService.restablecerContrasena(value.token, value.contrasena);
+      res.json(result);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
     }
