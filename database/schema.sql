@@ -41,7 +41,8 @@ CREATE TYPE tipo_notificacion AS ENUM (
     'sistema',
     'solicitud_rechazada',
     'solicitud_aprobada',
-    'solicitud_eliminada'
+    'solicitud_eliminada',
+    'nueva_noticia'
 );
 
 -- ============================================
@@ -195,8 +196,10 @@ CREATE TABLE noticias (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     titulo TEXT NOT NULL,
     contenido TEXT,
+    categoria TEXT DEFAULT 'General',
     imagen_url TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================
@@ -208,9 +211,15 @@ CREATE TABLE eventos (
     titulo TEXT NOT NULL,
     descripcion TEXT,
     fecha DATE NOT NULL,
-    imagen_url TEXT,
+    hora TEXT,
     ubicacion TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    precio TEXT DEFAULT 'Gratis',
+    imagen_url TEXT,
+    categoria TEXT DEFAULT 'Otro',
+    estado TEXT DEFAULT 'activo',
+    permitir_inscripcion BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================
@@ -474,10 +483,26 @@ INSERT INTO noticias (titulo, contenido, imagen_url) VALUES
 ('Gracias a nuestros padrinos', 'Agradecemos a todas las personas que apadrinan a nuestros peludos. ¡Sois fundamentales!', 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400');
 
 -- Eventos de ejemplo
-INSERT INTO eventos (titulo, descripcion, fecha, ubicacion) VALUES
-('Jornada de adopción', 'Ven a conocer a nuestros amigos peludos y encuentra tu compañero ideal', '2026-05-15', 'Plaza del Pueblo'),
-('Mercadillo benéfico', 'Venta de productos hechos a mano para ayudar a los animales', '2026-06-01', 'Centro Cultural'),
-('Paseo con perros', 'Paseo gratuito con los perros del refugio', '2026-05-20', 'Parque Municipal');
+INSERT INTO eventos (titulo, descripcion, fecha, hora, ubicacion, precio, categoria, imagen_url, permitir_inscripcion) VALUES
+('Jornada de adopción', 'Ven a conocer a nuestros amigos peludos y encuentra tu compañero ideal', '2026-05-15', '11:00 - 18:00', 'Plaza del Pueblo', 'Gratis', 'Adopción', 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400', TRUE),
+('Mercadillo benéfico', 'Venta de productos hechos a mano para ayudar a los animales', '2026-06-01', '10:00 - 15:00', 'Centro Cultural', 'Gratis', 'Solidario', 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400', TRUE),
+('Paseo con perros', 'Paseo gratuito con los perros del refugio', '2026-05-20', '10:00 - 12:00', 'Parque Municipal', 'Gratis', 'Otro', 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400', TRUE),
+('Charla de adopción responsable', 'Charla informativa sobre la adopción responsável de mascotas. Aprende todo lo que necesitas saber antes de adoptar.', '2026-03-10', '18:00 - 20:00', 'Biblioteca Municipal', 'Gratis', 'Educativo', 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=400', TRUE);
+
+-- ============================================
+-- TABLA: INSCRIPCIONES A EVENTOS
+-- ============================================
+DROP TABLE IF EXISTS inscripciones_evento CASCADE;
+CREATE TABLE inscripciones_evento (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    usuario_id UUID REFERENCES usuarios(id) ON DELETE SET NULL,
+    evento_id UUID REFERENCES eventos(id) ON DELETE CASCADE,
+    estado TEXT DEFAULT 'confirmada',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_inscripciones_evento_usuario ON inscripciones_evento(usuario_id);
+CREATE INDEX idx_inscripciones_evento_evento ON inscripciones_evento(evento_id);
 
 -- ============================================
 -- FIN DEL ESQUEMA

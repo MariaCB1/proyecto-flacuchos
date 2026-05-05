@@ -69,8 +69,12 @@ const api = {
     });
   },
 
-  delete(endpoint) {
-    return this.request(endpoint, { method: 'DELETE' });
+  delete(endpoint, data = null) {
+    const options = { method: 'DELETE' };
+    if (data) {
+      options.body = JSON.stringify(data);
+    }
+    return this.request(endpoint, options);
   },
 };
 
@@ -241,6 +245,131 @@ export const animalApi = {
 export const contactoApi = {
   async enviarMensaje(data) {
     return api.post('/contacto', data);
+  },
+};
+
+export const noticiaApi = {
+  async getNoticias(filtros = {}) {
+    const params = new URLSearchParams();
+    if (filtros.categoria) params.append('categoria', filtros.categoria);
+    if (filtros.busqueda) params.append('busqueda', filtros.busqueda);
+    if (filtros.orden) params.append('orden', filtros.orden);
+    if (filtros.fechaDesde) params.append('fechaDesde', filtros.fechaDesde);
+    if (filtros.fechaHasta) params.append('fechaHasta', filtros.fechaHasta);
+    
+    const queryString = params.toString();
+    const endpoint = queryString ? `/noticias?${queryString}` : '/noticias';
+    return api.get(endpoint);
+  },
+
+  async getNoticiaById(id) {
+    return api.get(`/noticias/${id}`);
+  },
+
+  async createNoticia(data) {
+    return api.post('/noticias', data);
+  },
+
+  async updateNoticia(id, data) {
+    return api.put(`/noticias/${id}`, data);
+  },
+
+  async deleteNoticia(id) {
+    return api.delete(`/noticias/${id}`);
+  },
+
+  async uploadImage(file) {
+    const formData = new FormData();
+    formData.append('imagen', file);
+    
+    const response = await fetch(`${API_URL}/upload/imagen`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: formData
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Error al subir imagen');
+    }
+    
+    return response.json();
+  },
+};
+
+export const eventosApi = {
+  async getEventos(filtros = {}) {
+    const params = new URLSearchParams();
+    if (filtros.categoria) params.append('categoria', filtros.categoria);
+    if (filtros.busqueda) params.append('busqueda', filtros.busqueda);
+    if (filtros.tipo) params.append('tipo', filtros.tipo);
+    if (filtros.estado) params.append('estado', filtros.estado);
+    if (filtros.fechaDesde) params.append('fechaDesde', filtros.fechaDesde);
+    if (filtros.fechaHasta) params.append('fechaHasta', filtros.fechaHasta);
+    
+    const queryString = params.toString();
+    const endpoint = queryString ? `/eventos?${queryString}` : '/eventos';
+    return api.get(endpoint);
+  },
+
+  async getEventoById(id) {
+    return api.get(`/eventos/${id}`);
+  },
+
+  async createEvento(data) {
+    return api.post('/eventos', data);
+  },
+
+  async updateEvento(id, data) {
+    return api.put(`/eventos/${id}`, data);
+  },
+
+  async deleteEvento(id) {
+    return api.delete(`/eventos/${id}`);
+  },
+
+  async uploadImage(file) {
+    const formData = new FormData();
+    formData.append('imagen', file);
+    
+    const response = await fetch(`${API_URL}/upload/imagen`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: formData
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Error al subir imagen');
+    }
+    
+    return response.json();
+  },
+};
+
+export const inscripcionesApi = {
+  async inscribir(eventoId) {
+    return api.post('/inscripciones', { evento_id: eventoId });
+  },
+
+  async getMisInscripciones() {
+    return api.get('/inscripciones/mis-inscripciones');
+  },
+
+  async cancelarInscripcion(eventoId) {
+    return api.delete('/inscripciones', { evento_id: eventoId });
+  },
+
+  async getAllInscripciones() {
+    return api.get('/inscripciones');
+  },
+
+  async getInscripcionesEvento(eventoId) {
+    return api.get(`/inscripciones/evento/${eventoId}`);
   },
 };
 

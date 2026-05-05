@@ -3,63 +3,831 @@
     padding: 60px 0;
 }
 
+.filtersSection {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.filterRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.filterGroup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filterGroup label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--dark);
+}
+
+.filterSelect {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: var(--white);
+    min-width: 140px;
+    cursor: pointer;
+}
+
+.filterSelect:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.filterDate {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: var(--white);
+}
+
+.filterDate:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.searchRow {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.searchInput {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.clearBtn {
+    padding: 10px 15px;
+    background: transparent;
+    border: 1px solid var(--gray);
+    border-radius: 8px;
+    color: var(--gray);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.clearBtn:hover {
+    background: var(--light);
+    color: var(--dark);
+}
+
+.resultsCount {
+    font-size: 0.9rem;
+    color: var(--gray);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
 .newsList {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 25px;
 }
 
 .newsItem {
     display: grid;
     grid-template-columns: 200px 1fr;
-    gap: 25px;
+    gap: 0;
     background: var(--white);
     border-radius: 15px;
     overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.newsItem:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
 }
 
 .newsImage {
-    height: 100%;
-    min-height: 180px;
-    background: #ddd;
+    height: 200px;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+}
+
+.newsImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+}
+
+.newsItem:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+.newsEmoji {
     font-size: 4rem;
+    color: var(--secondary);
+    background: #FFF3E0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .newsContent {
-    padding: 20px;
+    padding: 20px 25px 20px 25px;
+    display: flex;
+    flex-direction: column;
 }
 
 .newsCategory {
     display: inline-block;
     background: var(--secondary);
     color: var(--white);
-    padding: 5px 12px;
+    padding: 5px 14px;
     border-radius: 15px;
     font-size: 0.75rem;
     font-weight: 700;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    align-self: flex-start;
 }
 
 .newsContent h3 {
-    font-size: 1rem;
+    font-size: 1.2rem;
     margin-bottom: 10px;
     line-height: 1.4;
+    color: var(--dark);
 }
 
-.newsContent p {
+.newsPreview {
     color: var(--gray);
-    font-size: 0.85rem;
-    margin-bottom: 10px;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    flex: 1;
+}
+
+.newsFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .newsDate {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     font-size: 0.8rem;
     color: var(--gray);
-    margin-top: 10px;
+}
+
+.adminButtons {
+    display: flex;
+    gap: 8px;
+}
+
+.adminBtnEdit, .adminBtnDelete {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.adminBtnEdit {
+    background: #F9A825;
+    color: var(--dark);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(249, 168, 37, 0.3);
+}
+
+.adminBtnEdit:hover {
+    background: #F57F17;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(249, 168, 37, 0.4);
+}
+
+.adminBtnDelete {
+    background: #D32F2F;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+}
+
+.adminBtnDelete:hover {
+    background: #B71C1C;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+}
+
+.addNewsBar {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.addNewsBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 30px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    min-width: 240px;
+}
+
+.addNewsBtn:hover {
+    background: #1B5E20;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+}
+
+.loading, .error, .noResults {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray);
+}
+
+.error {
+    color: #f44336;
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    cursor: pointer;
+}
+
+.modalContent {
+    background: white;
+    border-radius: 20px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 25px;
+    background: linear-gradient(135deg, #FF8F00 0%, #F57C00 100%);
+    flex-shrink: 0;
+}
+
+.modalHeader h3 {
+    color: white;
+    margin: 0;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.modalHeader .closeBtn {
+    background: white;
+    color: #FF8F00;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.modalHeader .closeBtn:hover {
+    background: #FF8F00;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(255, 143, 0, 0.4);
+}
+
+.modalForm {
+    padding: 30px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.field {
+    margin-bottom: 22px;
+}
+
+.field label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.9rem;
+}
+
+.field label .material-symbols-outlined {
+    color: #FF8F00;
+    font-size: 1.1rem;
+}
+
+.field input, .field select, .field textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    background: var(--white);
+}
+
+.field input:hover, .field select:hover, .field textarea:hover {
+    border-color: #A5D6A7;
+}
+
+.field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: #FF8F00;
+    box-shadow: 0 0 0 3px rgba(255, 143, 0, 0.1);
+}
+
+.fieldRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.fieldGroup {
+    background: var(--light);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.fieldGroupTitle {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #FF8F00;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fieldGroupTitle .material-symbols-outlined {
+    font-size: 1.1rem;
+}
+
+.fieldImagePreview {
+    margin-top: 15px;
+}
+
+.fieldImagePreview img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 3px solid #FF8F00;
+    box-shadow: 0 4px 12px rgba(255, 143, 0, 0.2);
+}
+
+.fileInput {
+    width: 100%;
+    padding: 12px;
+    border: 2px dashed #FFCC80;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--white);
+}
+
+.fileInput:hover {
+    border-color: #FF8F00;
+    background: rgba(255, 143, 0, 0.05);
+}
+
+.fileInput::file-selector-button {
+    background: #FF8F00;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 15px;
+    transition: background 0.2s;
+}
+
+.fileInput::file-selector-button:hover {
+    background: #F57C00;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.modalActions .btn-primary {
+    background: var(--primary);
+}
+
+.modalActions .btn-primary:hover {
+    background: #F57C00;
+}
+
+.modalActions .btn-secondary {
+    background: var(--gray);
+    color: white;
+}
+
+.modalActions .btn-secondary:hover {
+    background: #616161;
+}
+
+.field {
+    margin-bottom: 18px;
+}
+
+.field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--dark);
+}
+
+.field input[type="text"],
+.field input[type="file"],
+.field select,
+.field textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.field textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.viewModalContent {
+    background: var(--white);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 850px;
+    max-height: 92vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.viewModalContent .closeBtn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 10;
+    background: rgba(255,255,255,0.95);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.viewModalContent .closeBtn:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+.viewModalImage {
+    width: 100%;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    cursor: zoom-in;
+    max-height: 80vh;
+}
+
+.viewModalImage img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    cursor: move;
+}
+
+.zoomControls {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 5;
+}
+
+.zoomControls .zoomLevel {
+    background: rgba(255,255,255,0.9);
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--dark);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.zoomBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.9);
+    color: var(--dark);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.2s;
+}
+
+.zoomBtn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.lightboxOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    cursor: default;
+}
+
+.lightboxContent {
+    width: 90vw;
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+}
+
+.lightboxContent:active {
+    cursor: grabbing;
+}
+
+.lightboxImage {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    cursor: move;
+    user-select: none;
+}
+
+.lightboxClose {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 10001;
+}
+
+.lightboxClose:hover {
+    background: rgba(255,255,255,0.4);
+    transform: scale(1.1);
+}
+
+.lightboxControls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 10001;
+}
+
+.lightboxZoomBtn {
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.lightboxZoomBtn:hover {
+    background: rgba(255,255,255,0.4);
+}
+
+.zoomLevel {
+    color: white;
+    font-size: 0.9rem;
+    background: rgba(0,0,0,0.5);
+    padding: 8px 16px;
+    border-radius: 20px;
+}
+
+.viewModalImagePlaceholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8rem;
+}
+
+.viewModalBody {
+    padding: 40px;
+}
+
+.viewModalBody h2 {
+    font-size: 2rem;
+    margin: 20px 0;
+    color: var(--dark);
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+.viewModalDate {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gray);
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.viewModalDate .material-symbols-outlined {
+    font-size: 1.1rem;
+    color: var(--primary);
+}
+
+.viewModalText {
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: var(--dark);
+    white-space: pre-wrap;
+}
+
+.viewModalBody h2 {
+    font-size: 1.6rem;
+    margin: 15px 0;
+    color: var(--dark);
+    line-height: 1.3;
+}
+
+.viewModalDate {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gray);
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+.viewModalDate .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+.viewModalText {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--dark);
+    white-space: pre-wrap;
 }
 
 @media (max-width: 1000px) {
@@ -67,6 +835,44 @@
         grid-template-columns: 1fr;
     }
     .newsItem .newsImage {
+        min-height: 180px;
+    }
+    .filterRow {
+        flex-direction: column;
+    }
+    .filterGroup {
+        width: 100%;
+    }
+    .filterSelect {
+        flex: 1;
+    }
+    .searchRow {
+        flex-direction: column;
+    }
+    .searchInput {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .newsImage {
         min-height: 150px;
+    }
+    .newsContent {
+        padding: 15px;
+    }
+    .newsContent h3 {
+        font-size: 1rem;
+    }
+    .adminButtons {
+        flex-direction: column;
+        width: 100%;
+    }
+    .adminBtnEdit, .adminBtnDelete {
+        width: 100%;
+        justify-content: center;
+    }
+    .viewModalImage {
+        height: 200px;
     }
 }

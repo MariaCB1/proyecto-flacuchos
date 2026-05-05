@@ -34,5 +34,10 @@ CREATE TYPE tipo_notificacion AS ENUM (
     'solicitud_socio',
     'solicitud_acogida',
     'mensaje_contacto',
-    'sistema'
+    'sistema',
+    'nuevo_evento',
+    'evento_cancelado',
+    'evento_modificado',
+    'solicitud_inscripcion',
+    'inscripcion_cancelada'
 );

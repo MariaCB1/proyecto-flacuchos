@@ -56,6 +56,29 @@ const userRepository = {
       [email, excludeUserId || '00000000-0000-0000-0000-000000000000']
     );
     return result.rows.length > 0;
+  },
+
+  async getAllUsuariosExceptoAdmin() {
+    const result = await query(
+      'SELECT id, nombre, email, rol FROM usuarios WHERE rol = $1',
+      ['usuario']
+    );
+    return result.rows;
+  },
+
+  async getByRol(rol) {
+    const result = await query(
+      'SELECT id, nombre, email, rol FROM usuarios WHERE rol = $1',
+      [rol]
+    );
+    return result.rows;
+  },
+
+  async getAll() {
+    const result = await query(
+      'SELECT id, nombre, email, rol FROM usuarios'
+    );
+    return result.rows;
   }
 };
 

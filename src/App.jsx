@@ -21,6 +21,7 @@ const Perfil = lazy(() => import('./pages/Perfil'));
 const Notificaciones = lazy(() => import('./pages/Notificaciones'));
 const FormularioAdopcion = lazy(() => import('./pages/FormularioAdopcion'));
 const AdminSolicitudes = lazy(() => import('./pages/AdminSolicitudes'));
+const AdminInscripciones = lazy(() => import('./pages/AdminInscripciones'));
 
 function Loading() {
     return <div style={{ padding: '100px', textAlign: 'center' }}>Cargando...</div>;
@@ -67,6 +68,11 @@ function AppContent() {
             <Route path="/admin/solicitudes" element={
               <AdminRoute>
                 <AdminSolicitudes />
+              </AdminRoute>
+            } />
+            <Route path="/admin/inscripciones" element={
+              <AdminRoute>
+                <AdminInscripciones />
               </AdminRoute>
             } />
           </Routes>
