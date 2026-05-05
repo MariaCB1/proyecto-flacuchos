@@ -87,8 +87,34 @@ const NotificationBell = () => {
       solicitud_rechazada: 'Solicitud rechazada',
       solicitud_aprobada: 'Solicitud aprobada',
       sistema: 'Sistema',
+      nueva_noticia: 'Nueva noticia',
+      nuevo_evento: 'Nuevo evento',
+      evento_cancelado: 'Evento cancelado',
+      evento_modificado: 'Evento modificado',
+      solicitud_inscripcion: 'Nueva inscripción',
+      inscripcion_cancelada: 'Inscripción cancelada',
     };
     return labels[tipo] || tipo;
+  };
+
+  const getTipoIcon = (tipo) => {
+    const icons = {
+      solicitud_adopcion: 'pets',
+      cambio_estado: 'swap_horiz',
+      solicitud_socio: 'person_add',
+      solicitud_acogida: 'home',
+      mensaje_contacto: 'mail',
+      solicitud_eliminada: 'delete',
+      solicitud_rechazada: 'cancel',
+      solicitud_aprobada: 'check_circle',
+      sistema: 'settings',
+      nueva_noticia: 'newspaper',
+      nuevo_evento: 'event_available',
+      evento_cancelado: 'event_busy',
+      solicitud_inscripcion: 'how_to_reg',
+      inscripcion_cancelada: 'person_remove',
+    };
+    return icons[tipo] || 'notifications';
   };
 
   const handleClickNotif = async (notif) => {
@@ -103,6 +129,16 @@ const NotificationBell = () => {
       navigate('/adopciones');
     } else if (notif.tipo === 'mensaje_contacto') {
       navigate('/contacto');
+    } else if (notif.tipo === 'nueva_noticia' && notif.referencia_id) {
+      navigate(`/noticias?noticia=${notif.referencia_id}`);
+    } else if (notif.tipo === 'nueva_noticia') {
+      navigate('/noticias');
+    } else if ((notif.tipo === 'nuevo_evento' || notif.tipo === 'evento_cancelado') && notif.referencia_id) {
+      navigate(`/eventos?evento=${notif.referencia_id}`);
+    } else if (notif.tipo === 'nuevo_evento' || notif.tipo === 'evento_cancelado') {
+      navigate('/eventos');
+    } else if (notif.tipo === 'solicitud_inscripcion' || notif.tipo === 'inscripcion_cancelada') {
+      navigate(isAdmin ? '/admin/inscripciones' : '/perfil?tab=inscripciones');
     }
     setAbierto(false);
   };
@@ -148,7 +184,12 @@ const NotificationBell = () => {
                   onClick={() => handleClickNotif(notif)}
                 >
                   <div className={styles.itemHeader}>
-                    <span className={styles.tipo}>{getTipoLabel(notif.tipo)}</span>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: '1.1rem', marginRight: '6px' }}>
+                        {getTipoIcon(notif.tipo)}
+                      </span>
+                      <span className={styles.tipo}>{getTipoLabel(notif.tipo)}</span>
+                    </div>
                     <span className={styles.fecha}>
                       {formatFecha(notif.created_at)}
                     </span>

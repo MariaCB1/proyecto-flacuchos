@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { animalApi, userApi } from '../api/api';
+import { animalApi, userApi, inscripcionesApi } from '../api/api';
 import styles from './Perfil.module.css';
 
 const calculateStrength = (password) => {
@@ -34,7 +34,8 @@ const calculateStrength = (password) => {
 function Perfil() {
   const { user, logout, updatePerfil } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('');
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || '');
   
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
@@ -53,11 +54,17 @@ function Perfil() {
   const [misSolicitudes, setMisSolicitudes] = useState([]);
   const [loadingSolicitudes, setLoadingSolicitudes] = useState(false);
 
+  const [misInscripciones, setMisInscripciones] = useState([]);
+  const [loadingInscripciones, setLoadingInscripciones] = useState(false);
+
   const [animales, setAnimales] = useState([]);
   const [loadingAnimales, setLoadingAnimales] = useState(false);
 
   const [solicitudesAdmin, setSolicitudesAdmin] = useState([]);
   const [loadingSolicitudesAdmin, setLoadingSolicitudesAdmin] = useState(false);
+
+  const [inscripcionesAdmin, setInscripcionesAdmin] = useState([]);
+  const [loadingInscripcionesAdmin, setLoadingInscripcionesAdmin] = useState(false);
 
   const [detalleSolicitud, setDetalleSolicitud] = useState(null);
 
@@ -87,6 +94,9 @@ function Perfil() {
   useEffect(() => {
     if (activeTab === 'solicitudes') {
       fetchMisSolicitudes();
+    }
+    if (activeTab === 'inscripciones') {
+      fetchMisInscripciones();
     }
     if (activeTab === 'animales') {
       fetchAnimales();
@@ -119,6 +129,42 @@ function Perfil() {
     }
   };
 
+  const fetchMisInscripciones = async () => {
+    setLoadingInscripciones(true);
+    try {
+      const data = await inscripcionesApi.getMisInscripciones();
+      setMisInscripciones(data);
+    } catch (err) {
+      console.error('Error:', err);
+    } finally {
+      setLoadingInscripciones(false);
+    }
+  };
+
+  const handleCancelarInscripcion = async (inscripcionId, eventoId, eventoFecha, eventoHora) => {
+    const fechaEvento = new Date(eventoFecha);
+    if (eventoHora) {
+      const horaInicio = eventoHora.split(' - ')[0];
+      const [horas, minutos] = horaInicio.split(':').map(Number);
+      fechaEvento.setHours(horas, minutos, 0, 0);
+    }
+    const ahora = new Date();
+    
+    if (fechaEvento < ahora) {
+      alert('No puedes cancelar la inscripción de un evento que ya ha pasado');
+      return;
+    }
+    
+    if (!confirm('¿Cancelar esta inscripción?')) return;
+    try {
+      await inscripcionesApi.cancelarInscripcion(eventoId);
+      alert('Inscripción cancelada');
+      fetchMisInscripciones();
+    } catch (err) {
+      alert(err.message || 'Error al cancelar');
+    }
+  };
+
   const fetchAnimales = async () => {
     setLoadingAnimales(true);
     try {
@@ -140,6 +186,18 @@ function Perfil() {
       console.error('Error:', err);
     } finally {
       setLoadingSolicitudesAdmin(false);
+    }
+  };
+
+  const fetchInscripcionesAdmin = async () => {
+    setLoadingInscripcionesAdmin(true);
+    try {
+      const data = await inscripcionesApi.getAllInscripciones();
+      setInscripcionesAdmin(data);
+    } catch (err) {
+      console.error('Error:', err);
+    } finally {
+      setLoadingInscripcionesAdmin(false);
     }
   };
 
@@ -339,28 +397,53 @@ function Perfil() {
             </button>
 
             {!isAdmin && (
-              <button 
-                className={`${styles.menuBtn} ${activeTab === 'solicitudes' ? styles.active : ''}`}
-                onClick={() => setActiveTab('solicitudes')}
-              >
-                <span className="material-symbols-outlined">description</span>
-                <span className={styles.btnText}>
-                  <span className={styles.btnTitle}>Ver Mis Solicitudes</span>
-                  <span className={styles.btnSubtitle}>Estado de tus adopciones</span>
-                </span>
-                <span className="material-symbols-outlined arrow">chevron_right</span>
-              </button>
+              <>
+                <button 
+                  className={`${styles.menuBtn} ${activeTab === 'solicitudes' ? styles.active : ''}`}
+                  onClick={() => setActiveTab('solicitudes')}
+                >
+                  <span className="material-symbols-outlined">description</span>
+                  <span className={styles.btnText}>
+                    <span className={styles.btnTitle}>Ver Mis Solicitudes</span>
+                    <span className={styles.btnSubtitle}>Estado de tus adopciones</span>
+                  </span>
+                  <span className="material-symbols-outlined arrow">chevron_right</span>
+                </button>
+
+                <button 
+                  className={`${styles.menuBtn} ${activeTab === 'inscripciones' ? styles.active : ''}`}
+                  onClick={() => setActiveTab('inscripciones')}
+                >
+                  <span className="material-symbols-outlined">event</span>
+                  <span className={styles.btnText}>
+                    <span className={styles.btnTitle}>Mis Inscripciones</span>
+                    <span className={styles.btnSubtitle}>Eventos a los que te has inscrito</span>
+                  </span>
+                  <span className="material-symbols-outlined arrow">chevron_right</span>
+                </button>
+              </>
             )}
 
             {isAdmin && (
-              <Link to="/admin/solicitudes" className={styles.menuBtn}>
-                <span className="material-symbols-outlined">folder_open</span>
-                <span className={styles.btnText}>
-                  <span className={styles.btnTitle}>Gestionar Solicitudes</span>
-                  <span className={styles.btnSubtitle}>Aprobar o rechazar adopciones</span>
-                </span>
-                <span className="material-symbols-outlined arrow">chevron_right</span>
-              </Link>
+              <>
+                <Link to="/admin/solicitudes" className={styles.menuBtn}>
+                  <span className="material-symbols-outlined">folder_open</span>
+                  <span className={styles.btnText}>
+                    <span className={styles.btnTitle}>Gestionar Solicitudes</span>
+                    <span className={styles.btnSubtitle}>Aprobar o rechazar adopciones</span>
+                  </span>
+                  <span className="material-symbols-outlined arrow">chevron_right</span>
+                </Link>
+
+                <Link to="/admin/inscripciones" className={styles.menuBtn}>
+                  <span className="material-symbols-outlined">how_to_reg</span>
+                  <span className={styles.btnText}>
+                    <span className={styles.btnTitle}>Gestionar Inscripciones</span>
+                    <span className={styles.btnSubtitle}>Ver inscripciones a eventos</span>
+                  </span>
+                  <span className="material-symbols-outlined arrow">chevron_right</span>
+                </Link>
+              </>
             )}
           </div>
 
@@ -533,6 +616,61 @@ function Perfil() {
                               <span className="material-symbols-outlined">delete</span>
                             </button>
                           )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'inscripciones' && (
+              <div className={styles.solicitudesSection}>
+                <h3 className={styles.sectionTitle}>Mis Inscripciones a Eventos</h3>
+                {loadingInscripciones ? (
+                  <div className={styles.loading}>Cargando...</div>
+                ) : misInscripciones.length === 0 ? (
+                  <div className={styles.empty}>No te has inscrito a ningún evento</div>
+                ) : (
+                  <div className={styles.solicitudesList}>
+                    {misInscripciones.map(insc => (
+                      <div key={insc.id} className={styles.solicitudItem}>
+                        <div className={styles.solicitudInfo}>
+                          <div className={styles.animalThumb}>
+                            {insc.evento_imagen ? <img src={insc.evento_imagen} alt={insc.evento_titulo} /> : <span className="material-symbols-outlined">event</span>}
+                          </div>
+                          <div>
+                            <h4>{insc.evento_titulo || 'Evento'}</h4>
+                            <p className={styles.solicitudFecha}>
+                              {insc.evento_fecha && new Date(insc.evento_fecha).toLocaleDateString('es-ES')}
+                            </p>
+                          </div>
+                        </div>
+                        <div className={styles.solicitudActions}>
+                          {(() => {
+                            const eventoDate = new Date(insc.evento_fecha);
+                            if (insc.evento_hora) {
+                              const horaInicio = insc.evento_hora.split(' - ')[0];
+                              const [horas, minutos] = horaInicio.split(':').map(Number);
+                              eventoDate.setHours(horas, minutos, 0, 0);
+                            }
+                            const eventoPasado = eventoDate < new Date();
+                            
+                            return (
+                              <>
+                                <span className={`${styles.badge} ${styles.badgeSuccess}`}>Inscrito</span>
+                                {!eventoPasado && (
+                                  <button 
+                                    onClick={() => handleCancelarInscripcion(insc.id, insc.evento_id, insc.evento_fecha, insc.evento_hora)}
+                                    className={styles.btnEliminarSolicitud}
+                                    title="Cancelar inscripción"
+                                  >
+                                    <span className="material-symbols-outlined">delete</span>
+                                  </button>
+                                )}
+                              </>
+                            );
+                          })()}
                         </div>
                       </div>
                     ))}

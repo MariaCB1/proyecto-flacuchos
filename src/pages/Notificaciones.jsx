@@ -84,6 +84,12 @@ function Notificaciones() {
       solicitud_rechazada: 'Solicitud rechazada',
       solicitud_aprobada: 'Solicitud aprobada',
       sistema: 'Sistema',
+      nueva_noticia: 'Nueva noticia',
+      nuevo_evento: 'Nuevo evento',
+      evento_cancelado: 'Evento cancelado',
+      evento_modificado: 'Evento modificado',
+      solicitud_inscripcion: 'Nueva inscripción',
+      inscripcion_cancelada: 'Inscripción cancelada',
     };
     return labels[tipo] || tipo;
   };
@@ -99,6 +105,11 @@ function Notificaciones() {
       solicitud_rechazada: 'cancel',
       solicitud_aprobada: 'check_circle',
       sistema: 'info',
+      nueva_noticia: 'newspaper',
+      nuevo_evento: 'event_available',
+      evento_cancelado: 'event_busy',
+      solicitud_inscripcion: 'how_to_reg',
+      inscripcion_canceleda: 'person_remove',
     };
     return icons[tipo] || 'notifications';
   };
@@ -151,6 +162,14 @@ function Notificaciones() {
                       navigate('/adopciones');
                     } else if (notif.tipo === 'mensaje_contacto') {
                       navigate('/contacto');
+                    } else if (notif.tipo === 'nueva_noticia' && notif.referencia_id) {
+                      navigate(`/noticias?noticia=${notif.referencia_id}`);
+                    } else if ((notif.tipo === 'nuevo_evento' || notif.tipo === 'evento_cancelado') && notif.referencia_id) {
+                      navigate(`/eventos?evento=${notif.referencia_id}`);
+                    } else if (notif.tipo === 'solicitud_inscripcion' || notif.tipo === 'inscripcion_cancelada') {
+                      navigate(isAdmin ? '/admin/inscripciones' : '/perfil?tab=inscripciones');
+                    } else {
+                      navigate('/noticias');
                     }
                   }}
                 >

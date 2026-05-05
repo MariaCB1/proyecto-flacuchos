@@ -11,6 +11,10 @@ const userService = {
     return usuario;
   },
 
+  async getById(usuarioId) {
+    return userRepository.findById(usuarioId);
+  },
+
   async updatePerfil(usuarioId, datos) {
     const { nombre, email, contrasena } = datos;
 

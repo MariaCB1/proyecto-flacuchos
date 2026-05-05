@@ -1,4 +1,5 @@
 const notificationRepository = require('../repositories/notification.repository');
+const userRepository = require('../repositories/user.repository');
 
 const notificationService = {
   async getNotificaciones(usuarioId) {
@@ -24,6 +25,13 @@ const notificationService = {
   },
 
   async crearNotificacion({ usuarioId, tipo, mensaje, referenciaId }) {
+    if (usuarioId === null || usuarioId === undefined) {
+      const admins = await userRepository.getByRol('admin');
+      for (const admin of admins) {
+        await notificationRepository.create({ usuarioId: admin.id, tipo, mensaje, referenciaId });
+      }
+      return;
+    }
     return notificationRepository.create({ usuarioId, tipo, mensaje, referenciaId });
   },
 

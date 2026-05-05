@@ -8,6 +8,9 @@ const notificationRoutes = require('./routes/notification.routes');
 const animalRoutes = require('./routes/animal.routes');
 const uploadRoutes = require('./routes/upload.routes');
 const contactoRoutes = require('./routes/contacto.routes');
+const noticiaRoutes = require('./routes/noticia.routes');
+const eventosRoutes = require('./routes/eventos.routes');
+const inscripcionesRoutes = require('./routes/inscripciones.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -30,6 +33,9 @@ app.use('/notificaciones', notificationRoutes);
 app.use('/', animalRoutes);
 app.use('/upload', uploadRoutes);
 app.use('/contacto', contactoRoutes);
+app.use('/', noticiaRoutes);
+app.use('/eventos', eventosRoutes);
+app.use('/inscripciones', inscripcionesRoutes);
 
 app.use((err, req, res, next) => {
   console.error('❌ Error:', err);
@@ -64,6 +70,21 @@ app.listen(PORT, () => {
   console.log(`   PUT  /solicitudes/:id/aprobar`);
   console.log(`   PUT  /solicitudes/:id/rechazar`);
   console.log(`   GET  /adopciones/mis-adopciones`);
+  console.log(`   GET  /noticias`);
+  console.log(`   GET  /noticias/:id`);
+  console.log(`   POST /noticias (admin)`);
+  console.log(`   PUT  /noticias/:id (admin)`);
+  console.log(`   DELETE /noticias/:id (admin)`);
+  console.log(`   GET  /eventos`);
+  console.log(`   GET  /eventos/:id`);
+  console.log(`   POST /eventos (admin)`);
+  console.log(`   PUT  /eventos/:id (admin)`);
+  console.log(`   DELETE /eventos/:id (admin)`);
+  console.log(`   POST /inscripciones`);
+  console.log(`   GET  /inscripciones/mis-inscripciones`);
+  console.log(`   DELETE /inscripciones`);
+  console.log(`   GET  /inscripciones (admin)`);
+  console.log(`   GET  /inscripciones/evento/:eventoId (admin)`);
 });
 
 module.exports = app;

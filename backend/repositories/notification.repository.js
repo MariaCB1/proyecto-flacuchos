@@ -66,6 +66,14 @@ const notificationRepository = {
       [usuarioId]
     );
     return result.rowCount;
+  },
+
+  async deleteByReferenciaId(referenciaId) {
+    const result = await query(
+      'DELETE FROM notificaciones WHERE referencia_id = $1 RETURNING id',
+      [referenciaId]
+    );
+    return result.rowCount;
   }
 };
 
