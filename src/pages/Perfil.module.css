@@ -543,26 +543,62 @@
   gap: 10px;
 }
 
-.btnApprove {
-  padding: 8px 16px;
-  background: #27ae60;
+.btnApprove, .btnAprobar {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
 }
 
-.btnReject {
-  padding: 8px 16px;
-  background: #e74c3c;
+.btnApprove:hover, .btnAprobar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.btnApprove .material-symbols-outlined, .btnAprobar .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.btnReject, .btnRechazar {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+.btnReject:hover, .btnRechazar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+
+.btnReject .material-symbols-outlined, .btnRechazar .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.aceptarRechazarBtns {
+  margin-top: 15px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .gestionAnimales {
@@ -1210,4 +1246,662 @@
 
 .requirementsList li.met .material-symbols-outlined {
   color: #2e7d32;
+}
+
+.montoDonacion {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #00897B;
+}
+
+.badge.completada {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.roleContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.voluntarioActivo {
+  background: #e8f5e9;
+  color: #2e7d32;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.voluntarioInactivo {
+  background: #ffebee;
+  color: #c62828;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.socioActivo {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.socioActivoBadge {
+  background: #7b1fa2;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.voluntarioToggleBtn {
+  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+  border-color: #1976D2;
+}
+
+.voluntarioToggleBtn:hover {
+  background: linear-gradient(135deg, #BBDEFB 0%, #90CAF9 100%);
+}
+
+.voluntarioInfo {
+  margin-top: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+  border-radius: 12px;
+  border: 1px solid #90CAF9;
+}
+
+.voluntarioInfo h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 15px 0;
+  color: #0D47A1;
+  font-size: 1.1rem;
+}
+
+.voluntarioInfo h3 span {
+  color: #1976D2;
+}
+
+.voluntarioGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.voluntarioItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.voluntarioLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1565C0;
+  text-transform: uppercase;
+}
+
+.voluntarioValue {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.editButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 6px 12px;
+  background: #1976D2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.editButton:hover {
+  background: #1565C0;
+}
+
+.editButton span {
+  font-size: 1rem;
+}
+
+.voluntarioForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+}
+
+.dayCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: white;
+  border: 2px solid #A5D6A7;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.dayCheckbox input {
+  display: none;
+}
+
+.dayCheckbox.selected {
+  background: #2E7D32;
+  border-color: #2E7D32;
+  color: white;
+}
+
+.radioGroup {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.radioOption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: white;
+  border: 2px solid #A5D6A7;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.radioOption input {
+  display: none;
+}
+
+.radioOption.selected {
+  background: #2E7D32;
+  border-color: #2E7D32;
+  color: white;
+}
+
+.checkboxVehicle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background: white;
+  border: 2px solid #A5D6A7;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.formButtons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.acogidaCard {
+  background: white;
+  border: 2px solid #E3F2FD;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.acogidaCard:hover {
+  border-color: #1976D2;
+  box-shadow: 0 4px 15px rgba(25, 118, 210, 0.1);
+}
+
+.apadrinamientoCard {
+  background: white;
+  border: 2px solid #E3F2FD;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.apadrinamientoCard:hover {
+  border-color: #1976D2;
+  box-shadow: 0 4px 15px rgba(25, 118, 210, 0.1);
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modalContent h3 {
+  color: #1976D2;
+  margin: 15px 0 10px;
+  font-size: 1.3rem;
+}
+
+.modalContent p {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.modalButtons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.btnCancel {
+  padding: 12px 24px;
+  background: white;
+  color: #666;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btnCancel:hover {
+  background: #f5f5f5;
+}
+
+.btnConfirm {
+  padding: 12px 24px;
+  background: #1976D2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btnConfirm:hover {
+  background: #1565C0;
+}
+
+.formButtons .button {
+  flex: 1;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  text-align: center;
+  background: #1976D2;
+  color: white;
+}
+
+.formButtons .button:hover {
+  background: #1565C0;
+}
+
+.formButtons .cancelButton {
+  flex: 1;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  height: 55px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  text-align: center;
+  background: #78909C;
+  color: white;
+}
+
+.formButtons .cancelButton:hover {
+  background: #546E7A;
+}
+
+.socioCancelButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid #ef5350;
+  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+  color: #c62828;
+  margin-top: 24px;
+}
+
+.socioCancelButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 83, 80, 0.3);
+}
+
+.socioCancelButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.socioCancelButton .material-symbols-outlined {
+  font-size: 1.3rem;
+}
+
+@media (max-width: 580px) {
+  .formButtons {
+    flex-direction: column;
+  }
+
+  .formButtons .button,
+  .formButtons .cancelButton {
+    width: 100%;
+  }
+
+  .voluntarioForm .voluntarioGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .voluntarioForm .daysGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.voluntarioView {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.voluntarioView .editButton {
+  margin-top: 15px;
+  align-self: flex-start;
+}
+
+.voluntarioHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.voluntarioHeader .sectionTitle {
+  margin-bottom: 0;
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggleLabelActive {
+  color: #1976D2;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.toggleLabelInactive {
+  color: #78909C;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 28px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider {
+  background-color: #1976D2;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+input:disabled + .slider {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.errorText {
+  color: #C62828;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.voluntarioForm .voluntarioGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.voluntarioForm .voluntarioItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.voluntarioForm .voluntarioItem > label:first-child {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1565C0;
+}
+
+.voluntarioForm input[type="text"],
+.voluntarioForm input[type="tel"] {
+  padding: 10px 14px;
+  border: 2px solid #E3F2FD;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background: white;
+  color: #333;
+  transition: border-color 0.2s;
+  width: 100%;
+  min-width: 0;
+}
+
+.voluntarioForm input:focus {
+  outline: none;
+  border-color: #1976D2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+}
+
+.voluntarioForm .voluntarioItem > label:first-child:has(+ .errorText) {
+  color: #C62828;
+}
+
+.voluntarioTitle {
+  color: #0D47A1;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.voluntarioHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.voluntarioHeader .voluntarioTitle {
+  margin: 0;
+}
+
+.dayCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: white;
+  border: 2px solid #E3F2FD;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.dayCheckbox input {
+  display: none;
+}
+
+.dayCheckbox:hover {
+  border-color: #1976D2;
+}
+
+.dayCheckbox.selected {
+  background: white;
+  border-color: #1976D2;
+  color: #1976D2;
+}
+
+.dayCheckbox.selected span {
+  color: #1976D2;
+  font-weight: 600;
+}
+
+.radioGroup {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.radioOption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: white;
+  border: 2px solid #E3F2FD;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.radioOption input {
+  display: none;
+}
+
+.radioOption:hover {
+  border-color: #1976D2;
+}
+
+.radioOption.selected {
+  background: white;
+  border-color: #1976D2;
+  color: #1976D2;
+}
+
+.radioOption.selected span {
+  color: #1976D2;
+  font-weight: 600;
+}
+
+.checkboxVehicle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background: white;
+  border: 2px solid #E3F2FD;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.formButtons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }

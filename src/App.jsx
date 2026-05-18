@@ -20,8 +20,15 @@ const Recuperar = lazy(() => import('./pages/RecuperarContrasena'));
 const Perfil = lazy(() => import('./pages/Perfil'));
 const Notificaciones = lazy(() => import('./pages/Notificaciones'));
 const FormularioAdopcion = lazy(() => import('./pages/FormularioAdopcion'));
+const FormularioAcogida = lazy(() => import('./pages/FormularioAcogida'));
 const AdminSolicitudes = lazy(() => import('./pages/AdminSolicitudes'));
 const AdminInscripciones = lazy(() => import('./pages/AdminInscripciones'));
+
+const AdminAyudas = lazy(() => import('./pages/AdminAyudas'));
+const FormularioSocio = lazy(() => import('./pages/FormularioSocio'));
+const FormularioApadrinamiento = lazy(() => import('./pages/FormularioApadrinamiento'));
+const FormularioVoluntario = lazy(() => import('./pages/FormularioVoluntario'));
+const AdminVoluntarios = lazy(() => import('./pages/AdminVoluntarios'));
 
 function Loading() {
     return <div style={{ padding: '100px', textAlign: 'center' }}>Cargando...</div>;
@@ -48,6 +55,7 @@ function AppContent() {
               </ProtectedRoute>
             } />
             <Route path="/como-ayudar" element={<ComoAyudar />} />
+            <Route path="/acogida" element={<FormularioAcogida />} />
             <Route path="/transparencia" element={<Transparencia />} />
             <Route path="/noticias" element={<Noticias />} />
             <Route path="/eventos" element={<Eventos />} />
@@ -70,9 +78,31 @@ function AppContent() {
                 <AdminSolicitudes />
               </AdminRoute>
             } />
+            
             <Route path="/admin/inscripciones" element={
               <AdminRoute>
                 <AdminInscripciones />
+              </AdminRoute>
+            } />
+            <Route path="/admin/ayudas" element={
+              <AdminRoute>
+                <AdminAyudas />
+              </AdminRoute>
+            } />
+            <Route path="/socio" element={
+              <ProtectedRoute>
+                <FormularioSocio />
+              </ProtectedRoute>
+            } />
+            <Route path="/apadrinar" element={
+              <ProtectedRoute>
+                <FormularioApadrinamiento />
+              </ProtectedRoute>
+            } />
+            <Route path="/voluntario" element={<FormularioVoluntario />} />
+            <Route path="/admin/voluntarios" element={
+              <AdminRoute>
+                <AdminVoluntarios />
               </AdminRoute>
             } />
           </Routes>

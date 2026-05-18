@@ -319,6 +319,580 @@ const emailService = {
   async getTodosLosUsuarios() {
     const usuarios = await userRepository.getAllUsuariosExceptoAdmin();
     return usuarios;
+  },
+
+  async enviarEmailVoluntarioRegistrado(usuario, voluntario) {
+    try {
+      await transporter.sendMail({
+        from: process.env.SMTP_USER,
+        to: usuario.email,
+        subject: '¡Te has registrado como voluntario! - Flacuchos Baena',
+        html: this.generarHtmlVoluntarioRegistrado(usuario, voluntario)
+      });
+    } catch (err) {
+      console.error(`Error sending email to ${usuario.email}:`, err);
+    }
+  },
+
+  generarHtmlVoluntarioRegistrado(usuario, datos) {
+    const diasLabels = {
+      lunes: 'Lunes',
+      martes: 'Martes',
+      miercoles: 'Miércoles',
+      jueves: 'Jueves',
+      viernes: 'Viernes',
+      sabado: 'Sábado',
+      domingo: 'Domingo'
+    };
+    const horariosLabels = {
+      manana: 'Mañanas',
+      tarde: 'Tardes',
+      todo: 'Todo el día'
+    };
+
+    let diasTexto = 'No especificada';
+    if (datos.disponibilidad_dias) {
+      let diasArray = [];
+      if (Array.isArray(datos.disponibilidad_dias)) {
+        diasArray = datos.disponibilidad_dias;
+      } else if (typeof datos.disponibilidad_dias === 'string') {
+        if (datos.disponibilidad_dias.startsWith('[')) {
+          try {
+            diasArray = JSON.parse(datos.disponibilidad_dias);
+          } catch {
+            diasArray = datos.disponibilidad_dias.split(',').map(d => d.trim());
+          }
+        } else {
+          diasArray = datos.disponibilidad_dias.split(',').map(d => d.trim());
+        }
+      }
+      diasTexto = diasArray.map(d => diasLabels[d.trim()] || d.trim()).join(', ');
+    }
+
+    const horarioTexto = datos.disponibilidad_horario
+      ? horariosLabels[datos.disponibilidad_horario] || datos.disponibilidad_horario
+      : 'No especificado';
+
+    return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+    .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+    .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+    .email-body { padding: 30px 40px; }
+    .greeting { font-size: 16px; color: #333333; margin-bottom: 20px; }
+    .success-card { background: #E8F5E9; border-radius: 12px; padding: 25px; border-left: 4px solid #00897B; margin-bottom: 20px; }
+    .success-title { color: #00695C; font-size: 20px; font-weight: 700; margin-bottom: 10px; text-align: center; }
+    .info-item { margin-bottom: 10px; font-size: 14px; }
+    .info-label { font-weight: 600; color: #00695C; }
+    .info-value { color: #333333; }
+    .email-footer { background: #00897B; padding: 20px 40px; text-align: center; }
+    .email-footer p { color: rgba(255,255,255,0.9); font-size: 12px; }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .email-container { border-radius: 0; }
+      .email-header, .email-body, .email-footer { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <h1>Flacuchos Baena</h1>
+      <p>Confirmación de voluntariado</p>
+    </div>
+    <div class="email-body">
+      <p class="greeting">Hola <strong>${usuario.nombre}</strong>,</p>
+      <div class="success-card">
+        <div class="success-title">¡Gracias por unirte como voluntario!</div>
+        <p style="text-align: center; color: #555555; font-size: 14px; margin-top: 10px;">
+          Tu registro como voluntario se ha completado correctamente.
+        </p>
+        <div class="info-item" style="margin-top: 20px;">
+          <span class="info-label">Teléfono:</span>
+          <span class="info-value"> ${datos.telefono}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Días disponibles:</span>
+          <span class="info-value"> ${diasTexto}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Horario:</span>
+          <span class="info-value"> ${horarioTexto}</span>
+        </div>
+        ${datos.tiene_vehiculo ? `
+        <div class="info-item">
+          <span class="info-label">Vehículo:</span>
+          <span class="info-value"> Disponible para traslados</span>
+        </div>
+        ` : ''}
+      </div>
+      <p style="color: #555555; font-size: 14px; text-align: center;">
+        ¡Gracias por tu compromiso con los animales! Juntos podemos hacer la diferencia.
+      </p>
+    </div>
+    <div class="email-footer">
+      <p>Flacuchos Baena - Protectora de animales</p>
+    </div>
+  </div>
+</body>
+</html>
+    `.trim();
+  },
+
+  async enviarEmailSocioRegistrado(datos) {
+    try {
+      await transporter.sendMail({
+        from: process.env.SMTP_USER,
+        to: datos.email,
+        subject: `¡Bienvenido/a Socio de Flacuchos!`,
+        html: this.generarHtmlSocioRegistrado(datos)
+      });
+    } catch (err) {
+      console.error(`Error sending socio registered email to ${datos.email}:`, err);
+    }
+  },
+
+  generarHtmlSocioRegistrado(datos) {
+    return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+    .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+    .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+    .email-body { padding: 30px 40px; }
+    .greeting { font-size: 16px; color: #333333; margin-bottom: 20px; }
+    .success-card { background: #E8F5E9; border-radius: 12px; padding: 25px; border-left: 4px solid #00897B; margin-bottom: 20px; }
+    .success-title { color: #00695C; font-size: 20px; font-weight: 700; margin-bottom: 10px; text-align: center; }
+    .info-item { margin-bottom: 8px; font-size: 14px; }
+    .info-label { font-weight: 600; color: #00695C; }
+    .info-value { color: #333333; }
+    .email-footer { background: #00897B; padding: 20px 40px; text-align: center; }
+    .email-footer p { color: rgba(255,255,255,0.9); font-size: 12px; }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .email-container { border-radius: 0; }
+      .email-header, .email-body, .email-footer { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <h1>Flacuchos Baena</h1>
+      <p>Confirmación de Socio</p>
+    </div>
+    <div class="email-body">
+      <p class="greeting">Hola <strong>${datos.nombre}</strong>,</p>
+      <div class="success-card">
+        <div class="success-title">¡Bienvenido/a Socio de Flacuchos!</div>
+        <p style="text-align: center; color: #555555; font-size: 14px; margin-top: 10px;">
+          Tu aportacion como socio se ha registrado correctamente.
+        </p>
+        <div class="info-item" style="margin-top: 20px; text-align: center;">
+          <span class="info-label">Tu aportacion mensual:</span>
+          <span class="info-value" style="font-size: 24px; color: #00897B; font-weight: bold;"> ${datos.aportacion}€/mes</span>
+        </div>
+      </div>
+      <p style="color: #555555; font-size: 14px; text-align: center;">
+        Gracias a personas como tú, podemos seguir rescueando y cuidando a los animales que más lo necesitan.
+      </p>
+      <div style="background: #FFF3E0; border-radius: 8px; padding: 15px; margin-top: 20px; text-align: center;">
+        <p style="color: #E65100; font-size: 14px; margin: 0;">
+          <strong>¿Cuándo se cobrará tu cuota?</strong><br>
+          Tu domiciliación bancaria está activa. El primer cobro se procesará en <strong>1-2 días hábiles</strong>.
+        </p>
+      </div>
+      <p style="color: #888888; font-size: 12px; text-align: center; margin-top: 15px;">
+        Si el pago es rechazado por el banco, te notificaremos para que puedas usar otro método de pago.
+      </p>
+    </div>
+    <div class="email-footer">
+      <p>Flacuchos Baena - Protectora de animales</p>
+    </div>
+  </div>
+</body>
+</html>
+    `.trim();
+  },
+
+  async enviarEmailSocioCancelado(datos) {
+    try {
+      await transporter.sendMail({
+        from: process.env.SMTP_USER,
+        to: datos.email,
+        subject: `Confirmacion de baja como socio - Flacuchos`,
+        html: this.generarHtmlSocioCancelado(datos)
+      });
+    } catch (err) {
+      console.error(`Error sending socio canceled email to ${datos.email}:`, err);
+    }
+  },
+
+  generarHtmlSocioCancelado(datos) {
+    return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+    .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .email-header { background: linear-gradient(135deg, #607D8B 0%, #455A64 100%); padding: 30px 40px; text-align: center; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+    .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+    .email-body { padding: 30px 40px; }
+    .greeting { font-size: 16px; color: #333333; margin-bottom: 20px; }
+    .cancel-card { background: #ECEFF1; border-radius: 12px; padding: 25px; border-left: 4px solid #607D8B; margin-bottom: 20px; }
+    .cancel-title { color: #455A64; font-size: 20px; font-weight: 700; margin-bottom: 10px; text-align: center; }
+    .message { color: #555555; font-size: 14px; line-height: 1.6; text-align: center; }
+    .email-footer { background: #607D8B; padding: 20px 40px; text-align: center; }
+    .email-footer p { color: rgba(255,255,255,0.9); font-size: 12px; }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .email-container { border-radius: 0; }
+      .email-header, .email-body, .email-footer { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <h1>Flacuchos Baena</h1>
+      <p>Confirmacion de baja</p>
+    </div>
+    <div class="email-body">
+      <p class="greeting">Hola <strong>${datos.nombre}</strong>,</p>
+      <div class="cancel-card">
+        <div class="cancel-title">Has causado baja como socio</div>
+        <p class="message" style="margin-top: 15px;">
+          Tu membresía como socio de Flacuchos ha sido cancelada correctamente.
+        </p>
+        <p class="message" style="margin-top: 15px;">
+          Gracias por todo el tiempo que has estado con nosotros. Esperamos que en el futuro puedas volver a unirte a nuestra familia.
+        </p>
+      </div>
+    </div>
+    <div class="email-footer">
+      <p>Flacuchos Baena - Protectora de animales</p>
+    </div>
+  </div>
+</body>
+</html>
+    `.trim();
+  },
+
+  async enviarEmailSolicitudApadrinamiento(datos) {
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: datos.email,
+      subject: 'Tu solicitud de apadrinamiento - Flacuchos Baena',
+      html: this.generarHtmlSolicitudApadrinamiento(datos)
+    };
+    await transporter.sendMail(mailOptions);
+  },
+
+  generarHtmlSolicitudApadrinamiento(datos) {
+    return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+    .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
+    .email-header h1 { color: white; font-size: 24px; margin-bottom: 5px; }
+    .email-header p { color: #B2DFDB; font-size: 14px; }
+    .email-body { padding: 40px; }
+    .greeting { font-size: 16px; color: #333; margin-bottom: 20px; }
+    .info-card { background: #E8F5E9; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #00897B; }
+    .info-card p { margin: 8px 0; color: #333; }
+    .info-card strong { color: #00897B; }
+    .message { font-size: 14px; color: #666; line-height: 1.6; }
+    .email-footer { background: #f5f5f5; padding: 20px; text-align: center; color: #999; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <h1>Flacuchos Baena</h1>
+      <p>Solicitud de Apadrinamiento</p>
+    </div>
+    <div class="email-body">
+      <p class="greeting">Hola <strong>${datos.nombre}</strong>,</p>
+      <div class="info-card">
+        <p><strong>Animal:</strong> ${datos.animal}</p>
+        <p><strong>Importe:</strong> ${datos.importe}€/mes</p>
+      </div>
+      <p class="message">Tu solicitud de apadrinamiento ha sido enviada correctamente. Un administrador la revisará pronto y te informaremos.</p>
+      <p class="message" style="margin-top: 15px;">¡Gracias por tu apoyo a los animales de Flacuchos!</p>
+    </div>
+    <div class="email-footer">
+      <p>Flacuchos Baena - Protectora de animales</p>
+    </div>
+  </div>
+</body>
+</html>
+    `.trim();
+  },
+
+  async enviarEmailAdminNuevoApadrinamiento(datos) {
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: datos.email,
+      subject: `Nueva solicitud de apadrinamiento: ${datos.animal}`,
+      html: this.generarHtmlAdminNuevoApadrinamiento(datos)
+    };
+    await transporter.sendMail(mailOptions);
+  },
+
+  generarHtmlAdminNuevoApadrinamiento(datos) {
+    return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+    .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .email-header { background: linear-gradient(135deg, #FF6F00 0%, #E65100 100%); padding: 30px 40px; text-align: center; }
+    .email-header h1 { color: white; font-size: 24px; }
+    .email-body { padding: 40px; }
+    .info-card { background: #FFF3E0; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #FF6F00; }
+    .info-card p { margin: 8px 0; color: #333; }
+    .info-card strong { color: #E65100; }
+    .email-footer { background: #f5f5f5; padding: 20px; text-align: center; color: #999; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <h1>Nueva Solicitud de Apadrinamiento</h1>
+    </div>
+    <div class="email-body">
+      <div class="info-card">
+        <p><strong>Usuario:</strong> ${datos.nombre}</p>
+        <p><strong>Email:</strong> ${datos.emailUsuario}</p>
+        <p><strong>Animal:</strong> ${datos.animal}</p>
+        <p><strong>Importe:</strong> ${datos.importe}€/mes</p>
+      </div>
+      <p>Hay una nueva solicitud de apadrinamiento pendiente de revisión en el panel de administración.</p>
+    </div>
+    <div class="email-footer">
+      <p>Flacuchos Baena - Protectora de animales</p>
+    </div>
+  </div>
+</body>
+</html>
+    `.trim();
+  },
+
+  async enviarEmailApadrinamientoAprobado(datos) {
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: datos.email,
+      subject: 'Tu apadrinamiento ha sido aprobado - Flacuchos Baena',
+      html: this.generarHtmlApadrinamientoAprobado(datos)
+    };
+    await transporter.sendMail(mailOptions);
+  },
+
+  generarHtmlApadrinamientoAprobado(datos) {
+    return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+    .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .email-header { background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%); padding: 30px 40px; text-align: center; }
+    .email-header h1 { color: white; font-size: 24px; }
+    .email-body { padding: 40px; }
+    .greeting { font-size: 16px; color: #333; margin-bottom: 20px; }
+    .success-card { background: #E8F5E9; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #2E7D32; text-align: center; }
+    .success-card h2 { color: #2E7D32; margin-bottom: 10px; }
+    .info-card { background: #F1F8E9; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #2E7D32; }
+    .info-card p { margin: 8px 0; color: #333; }
+    .info-card strong { color: #2E7D32; }
+    .message { font-size: 14px; color: #666; line-height: 1.6; }
+    .email-footer { background: #f5f5f5; padding: 20px; text-align: center; color: #999; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <h1>Apadrinamiento Aprobado</h1>
+    </div>
+    <div class="email-body">
+      <p class="greeting">Hola <strong>${datos.nombre}</strong>,</p>
+      <div class="success-card">
+        <h2>¡Enhorabuena!</h2>
+        <p>Tu apadrinamiento ha sido aprobado</p>
+      </div>
+      <div class="info-card">
+        <p><strong>Animal apadrinado:</strong> ${datos.animal}</p>
+        <p><strong>Aportación mensual:</strong> ${datos.importe}€/mes</p>
+      </div>
+      ${datos.primerCobroExitoso ? `
+      <p class="message">El primer cobro de ${datos.importe}€ ha sido realizado correctamente. Los cobros mensuales se procesarán automáticamente.</p>
+      ` : `
+      <p class="message" style="background: #FFF3E0; padding: 15px; border-radius: 8px; border-left: 4px solid #FF9800;">
+        <strong>Nota:</strong> El primer cobro no se ha podido procesar automáticamente. Nos pondremos en contacto contigo para solucionarlo.
+      </p>
+      `}
+      <p class="message">Tu apoyo es fundamental para nosotros. Gracias a personas como tú, podemos seguir cuidando de los animales.</p>
+      <p class="message" style="margin-top: 15px;">¡Muchas gracias por tu generosidad!</p>
+    </div>
+    <div class="email-footer">
+      <p>Flacuchos Baena - Protectora de animales</p>
+    </div>
+  </div>
+</body>
+</html>
+    `.trim();
+  },
+
+  async enviarEmailApadrinamientoRechazado(datos) {
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: datos.email,
+      subject: 'Tu solicitud de apadrinamiento - Flacuchos Baena',
+      html: this.generarHtmlApadrinamientoRechazado(datos)
+    };
+    await transporter.sendMail(mailOptions);
+  },
+
+  generarHtmlApadrinamientoRechazado(datos) {
+    const motivoHtml = datos.motivo ? `<p class="motivo"><strong>Motivo:</strong> ${datos.motivo}</p>` : '';
+    return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+    .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .email-header { background: linear-gradient(135deg, #C62828 0%, #B71C1C 100%); padding: 30px 40px; text-align: center; }
+    .email-header h1 { color: white; font-size: 24px; }
+    .email-body { padding: 40px; }
+    .greeting { font-size: 16px; color: #333; margin-bottom: 20px; }
+    .reject-card { background: #FFEBEE; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #C62828; }
+    .reject-card h2 { color: #C62828; margin-bottom: 10px; }
+    .motivo { margin-top: 15px; color: #666; }
+    .message { font-size: 14px; color: #666; line-height: 1.6; }
+    .email-footer { background: #f5f5f5; padding: 20px; text-align: center; color: #999; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <h1>Solicitud de Apadrinamiento</h1>
+    </div>
+    <div class="email-body">
+      <p class="greeting">Hola <strong>${datos.nombre}</strong>,</p>
+      <div class="reject-card">
+        <h2>Tu solicitud ha sido rechazada</h2>
+        <p>Lamentamos informarte que tu solicitud de apadrinamiento para <strong>${datos.animal}</strong> no ha sido aprobada.</p>
+        ${motivoHtml}
+      </div>
+      <p class="message">Si tienes alguna pregunta, no dudes en contactarnos.</p>
+    </div>
+    <div class="email-footer">
+      <p>Flacuchos Baena - Protectora de animales</p>
+    </div>
+  </div>
+</body>
+</html>
+    `.trim();
+  },
+
+  async enviarEmailCobroMensual(datos) {
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: datos.email,
+      subject: 'Cobro mensual de apadrinamiento - Flacuchos Baena',
+      html: this.generarHtmlCobroMensual(datos)
+    };
+    await transporter.sendMail(mailOptions);
+  },
+
+  generarHtmlCobroMensual(datos) {
+    return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+    .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .email-header { background: linear-gradient(135deg, #7B1FA2 0%, #4A148C 100%); padding: 30px 40px; text-align: center; }
+    .email-header h1 { color: white; font-size: 24px; }
+    .email-body { padding: 40px; }
+    .greeting { font-size: 16px; color: #333; margin-bottom: 20px; }
+    .info-card { background: #F3E5F5; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #7B1FA2; }
+    .info-card p { margin: 8px 0; color: #333; }
+    .info-card strong { color: #7B1FA2; }
+    .monto { font-size: 28px; color: #7B1FA2; font-weight: bold; text-align: center; margin: 20px 0; }
+    .message { font-size: 14px; color: #666; line-height: 1.6; }
+    .email-footer { background: #f5f5f5; padding: 20px; text-align: center; color: #999; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <h1>Cobro Mensual de Apadrinamiento</h1>
+    </div>
+    <div class="email-body">
+      <p class="greeting">Hola <strong>${datos.nombre}</strong>,</p>
+      <p class="message">Se ha procesado el cobro mensual de tu apadrinamiento:</p>
+      <div class="info-card">
+        <p><strong>Animal:</strong> ${datos.animal}</p>
+        <p><strong>Importe:</strong></p>
+        <div class="monto">${datos.importe}€</div>
+      </div>
+      <p class="message">Gracias por tu apoyo continuo. Tu contribución hace posible el cuidado de los animales.</p>
+    </div>
+    <div class="email-footer">
+      <p>Flacuchos Baena - Protectora de animales</p>
+    </div>
+  </div>
+</body>
+</html>
+    `.trim();
   }
 };
 

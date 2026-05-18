@@ -261,6 +261,25 @@
     color: var(--white);
 }
 
+.padrinoTag {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: linear-gradient(135deg, #00897B 0%, #00695C 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.padrinoTag .material-symbols-outlined {
+    font-size: 14px;
+}
+
 .petContent {
     padding: 15px;
 }

@@ -16,6 +16,7 @@ function FormularioAdopcion() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [pasoActual, setPasoActual] = useState(0);
+  const [fieldErrors, setFieldErrors] = useState({});
   
   const [formData, setFormData] = useState({
     nombre_perro: '',
@@ -90,13 +91,38 @@ function FormularioAdopcion() {
   };
 
   useEffect(() => {
-    if (!isAuthenticated || user?.rol === 'admin') {
+    if (!isAuthenticated) {
       navigate('/login');
       return;
     }
     fetchAnimal();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [animalId]);
+
+  if (user?.rol === 'admin') {
+    return (
+      <>
+        <PageHeader title="Eres administrador" variant="help" />
+        <section className={styles.formSection}>
+          <div className="container">
+            <div className={styles.loginPrompt}>
+              <span className="material-symbols-outlined">admin_panel_settings</span>
+              <h3>Eres administrador</h3>
+              <p>Las solicitudes de adopción se gestionan desde el panel de administración</p>
+              <div className={styles.loginButtons}>
+                <Link to="/admin/adopciones" className={styles.btnPrimary}>
+                  Ver gestión
+                </Link>
+                <Link to="/" className={styles.btnSecondary}>
+                  Volver al inicio
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </>
+    );
+  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -106,76 +132,12 @@ function FormularioAdopcion() {
     }));
   };
 
-const validarPaso = (paso) => {
-    if (paso === 0) return true;
-    
-    // Paso 1: Datos Personales
-    if (paso === 1) {
-      // Verificar edad primero
-      if (formData.fecha_nacimiento) {
-        const fechaNac = new Date(formData.fecha_nacimiento);
-        const hoy = new Date();
-        let edad = hoy.getFullYear() - fechaNac.getFullYear();
-        const mesActual = hoy.getMonth();
-        const mesNac = fechaNac.getMonth();
-        if (mesNac > mesActual || (mesNac === mesActual && hoy.getDate() < fechaNac.getDate())) {
-          edad--;
-        }
-        if (edad < 18) {
-          return false;
-        }
-      }
-      
-      if (!formData.nombre_completo || !formData.fecha_nacimiento || 
-          !formData.residencia) {
-        return false;
-      }
-      if (!formData.telefono || formData.telefono.length !== 9) {
-        return false;
-      }
-      if (formData.es_extranjero && 
-          (!formData.tiempo_en_espana || !formData.posibilidad_regreso || !formData.plan_con_animal)) {
-        return false;
-      }
-      return true;
-    }
-    
-    // Paso 2: Vivienda y Familia
-    if (paso === 2) {
-      if (!formData.tipo_vivienda || !formData.metros_cuadrados || 
-          !formData.personas_hogar || !formData.lugar_dormir ||
-          !formData.ocupaciones_horarios || !formData.actividades || 
-          !formData.problema_ladridos || !formData.plan_mudanza) {
-        return false;
-      }
-      return true;
-    }
-    
-    // Paso 3: Cuidado del Animal
-    if (paso === 3) {
-      if (!formData.necesidades_perro || !formData.acepta_cambios_estimacion ||
-          !formData.relacion_con_perros || !formData.gestion_problemas_conducta) {
-        return false;
-      }
-      return true;
-    }
-    
-    // Paso 4: Historial y Compromiso
-    if (paso === 4) {
-      if (!formData.ha_tenido_animales || !formData.ha_visitado_refugio ||
-          !formData.adoptaria_otro_animal || !formData.como_conocio ||
-          formData.acepta_seguimiento !== true || formData.acepta_tasa_adopcion !== true) {
-        return false;
-      }
-      return true;
-    }
-    
-    return true;
-  };
+const getFieldErrors = (paso) => {
+    const errors = {};
 
-  const getErrorMessage = (paso) => {
+    if (paso === 0) return errors;
+
     if (paso === 1) {
-      // Primero verificar edad
       if (formData.fecha_nacimiento) {
         const fechaNac = new Date(formData.fecha_nacimiento);
         const hoy = new Date();
@@ -186,75 +148,68 @@ const validarPaso = (paso) => {
           edad--;
         }
         if (edad < 18) {
-          return 'Debes ser mayor de 18 años para adoptar';
+          errors.fecha_nacimiento = 'Debes ser mayor de 18 años';
         }
       }
-      
-      // Luego verificar teléfono
-      if (!formData.telefono || formData.telefono.length !== 9) {
-        return 'El teléfono debe tener exactamente 9 dígitos';
-      }
-      
-      // Finalmente verificar campos vacíos
-      const camposFaltantes = [];
-      if (!formData.nombre_completo) camposFaltantes.push('nombre completo');
-      if (!formData.fecha_nacimiento) camposFaltantes.push('fecha de nacimiento');
-      if (!formData.residencia) camposFaltantes.push('residencia');
+      if (!formData.nombre_completo) errors.nombre_completo = 'El nombre es obligatorio';
+      if (!formData.fecha_nacimiento) errors.fecha_nacimiento = errors.fecha_nacimiento || 'La fecha de nacimiento es obligatoria';
+      if (!formData.residencia) errors.residencia = 'La dirección es obligatoria';
+      if (!formData.telefono) errors.telefono = 'El teléfono es obligatorio';
+      else if (formData.telefono.length !== 9) errors.telefono = 'El teléfono debe tener 9 dígitos';
       if (formData.es_extranjero) {
-        if (!formData.tiempo_en_espana) camposFaltantes.push('tiempo en España');
-        if (!formData.posibilidad_regreso) camposFaltantes.push('posibilidad de regreso');
-        if (!formData.plan_con_animal) camposFaltantes.push('plan con el animal');
+        if (!formData.tiempo_en_espana) errors.tiempo_en_espana = 'El tiempo en España es obligatorio';
+        if (!formData.posibilidad_regreso) errors.posibilidad_regreso = 'Selecciona una opción';
+        if (!formData.plan_con_animal) errors.plan_con_animal = 'Describe qué harías con el animal';
       }
-      if (camposFaltantes.length > 0) {
-        return `Faltan campos por completar: ${camposFaltantes.join(', ')}`;
-      }
+      return errors;
     }
+
     if (paso === 2) {
-      const camposFaltantes = [];
-      if (!formData.tipo_vivienda) camposFaltantes.push('tipo de vivienda');
-      if (!formData.metros_cuadrados) camposFaltantes.push('metros cuadrados');
-      if (!formData.personas_hogar) camposFaltantes.push('número de personas');
-      if (!formData.lugar_dormir) camposFaltantes.push('lugar donde dormirá');
-      if (!formData.ocupaciones_horarios) camposFaltantes.push('ocupaciones y horarios');
-      if (!formData.actividades) camposFaltantes.push('actividades');
-      if (!formData.problema_ladridos) camposFaltantes.push('opinión sobre ladridos');
-      if (!formData.plan_mudanza) camposFaltantes.push('plan de mudanza');
-      if (camposFaltantes.length > 0) {
-        return `Faltan campos por completar en Vivienda y Familia: ${camposFaltantes.join(', ')}`;
-      }
+      if (!formData.tipo_vivienda) errors.tipo_vivienda = 'Selecciona el tipo de vivienda';
+      if (!formData.metros_cuadrados) errors.metros_cuadrados = 'Indica los metros cuadrados';
+      if (!formData.personas_hogar) errors.personas_hogar = 'Indica el número de personas';
+      if (!formData.lugar_dormir) errors.lugar_dormir = 'Indica dónde dormirá el animal';
+      if (!formData.ocupaciones_horarios) errors.ocupaciones_horarios = 'Describe tus ocupaciones y horarios';
+      if (!formData.actividades) errors.actividades = 'Describe las actividades';
+      if (!formData.problema_ladridos) errors.problema_ladridos = 'Indica tu opinión sobre los ladridos';
+      if (!formData.plan_mudanza) errors.plan_mudanza = 'Describe tu plan de mudanza';
+      return errors;
     }
+
     if (paso === 3) {
-      const camposFaltantes = [];
-      if (!formData.necesidades_perro) camposFaltantes.push('necesidades del perro');
-      if (!formData.acepta_cambios_estimacion) camposFaltantes.push('aceptar diferencias de tamaño/edad');
-      if (!formData.relacion_con_perros) camposFaltantes.push('relación con otros perros');
-      if (!formData.gestion_problemas_conducta) camposFaltantes.push('gestión de problemas de conducta');
-      if (camposFaltantes.length > 0) {
-        return `Faltan campos por completar en Cuidado del Animal: ${camposFaltantes.join(', ')}`;
-      }
+      if (!formData.necesidades_perro) errors.necesidades_perro = 'Describe las necesidades del perro';
+      if (!formData.acepta_cambios_estimacion) errors.acepta_cambios_estimacion = 'Indica si aceptas las diferencias';
+      if (!formData.relacion_con_perros) errors.relacion_con_perros = 'Describe tu relación con otros perros';
+      if (!formData.gestion_problemas_conducta) errors.gestion_problemas_conducta = 'Describe cómo gestionarías problemas';
+      return errors;
     }
+
     if (paso === 4) {
-      const camposFaltantes = [];
-      if (!formData.ha_tenido_animales) camposFaltantes.push('has tenido animales antes');
-      if (!formData.ha_visitado_refugio) camposFaltantes.push('has visitado un refugio');
-      if (!formData.adoptaria_otro_animal) camposFaltantes.push('adoptarías otro animal');
-      if (!formData.como_conocio) camposFaltantes.push('cómo nos conociste');
-      if (formData.acepta_seguimiento !== true) return 'Debes aceptar el seguimiento post-adopción';
-      if (formData.acepta_tasa_adopcion !== true) return 'Debes aceptar la tasa de adopción';
-      if (camposFaltantes.length > 0) {
-        return `Faltan campos por completar: ${camposFaltantes.join(', ')}`;
-      }
+      if (!formData.ha_tenido_animales) errors.ha_tenido_animales = 'Indica si has tenido animales';
+      if (!formData.ha_visitado_refugio) errors.ha_visitado_refugio = 'Indica si has visitado un refugio';
+      if (!formData.adoptaria_otro_animal) errors.adoptaria_otro_animal = 'Indica si adoptaría otro animal';
+      if (!formData.como_conocio) errors.como_conocio = 'Indica cómo nos conociste';
+      return errors;
     }
-    return 'Faltan campos por completar';
+
+    return errors;
   };
 
   const handleSiguiente = () => {
-    if (validarPaso(pasoActual)) {
-      setPasoActual(prev => prev + 1);
+    if (pasoActual === 0) {
+      setPasoActual(1);
       window.scrollTo(0, 0);
-    } else {
-      alert(getErrorMessage(pasoActual));
+      return;
     }
+    const errors = getFieldErrors(pasoActual);
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      const firstField = Object.keys(errors)[0];
+      document.getElementById(firstField)?.focus();
+      return;
+    }
+    setPasoActual(prev => prev + 1);
+    window.scrollTo(0, 0);
   };
 
   const handleAtras = () => {
@@ -462,8 +417,9 @@ const validarPaso = (paso) => {
                       value={formData.nombre_completo}
                       onChange={handleChange}
                       required
-                      className={styles.input}
+                      className={`${styles.input} ${fieldErrors.nombre_completo ? styles.inputError : ''}`}
                     />
+                    {fieldErrors.nombre_completo && <span className={styles.errorText}>{fieldErrors.nombre_completo}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -475,8 +431,9 @@ const validarPaso = (paso) => {
                       value={formData.fecha_nacimiento}
                       onChange={handleChange}
                       required
-                      className={styles.input}
+                      className={`${styles.input} ${fieldErrors.fecha_nacimiento ? styles.inputError : ''}`}
                     />
+                    {fieldErrors.fecha_nacimiento && <span className={styles.errorText}>{fieldErrors.fecha_nacimiento}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -488,8 +445,9 @@ const validarPaso = (paso) => {
                       value={formData.residencia}
                       onChange={handleChange}
                       required
-                      className={styles.input}
+                      className={`${styles.input} ${fieldErrors.residencia ? styles.inputError : ''}`}
                     />
+                    {fieldErrors.residencia && <span className={styles.errorText}>{fieldErrors.residencia}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -508,8 +466,9 @@ const validarPaso = (paso) => {
                       minLength={9}
                       placeholder="Ej: 612345678"
                       title="Introduce un número de teléfono válido de 9 dígitos"
-                      className={styles.input}
+                      className={`${styles.input} ${fieldErrors.telefono ? styles.inputError : ''}`}
                     />
+                    {fieldErrors.telefono && <span className={styles.errorText}>{fieldErrors.telefono}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -548,8 +507,9 @@ const validarPaso = (paso) => {
                           value={formData.tiempo_en_espana}
                           onChange={handleChange}
                           required
-                          className={styles.input}
+                          className={`${styles.input} ${fieldErrors.tiempo_en_espana ? styles.inputError : ''}`}
                         />
+                        {fieldErrors.tiempo_en_espana && <span className={styles.errorText}>{fieldErrors.tiempo_en_espana}</span>}
                       </div>
 
                       <div className={styles.formGroup}>
@@ -560,13 +520,14 @@ const validarPaso = (paso) => {
                           value={formData.posibilidad_regreso}
                           onChange={handleChange}
                           required
-                          className={styles.select}
+                          className={`${styles.select} ${fieldErrors.posibilidad_regreso ? styles.inputError : ''}`}
                         >
                           <option value="">Selecciona...</option>
                           <option value="si">Sí</option>
                           <option value="no">No</option>
                           <option value="quiza">Quizás</option>
                         </select>
+                        {fieldErrors.posibilidad_regreso && <span className={styles.errorText}>{fieldErrors.posibilidad_regreso}</span>}
                       </div>
 
                       <div className={styles.formGroup}>
@@ -578,8 +539,9 @@ const validarPaso = (paso) => {
                           onChange={handleChange}
                           required
                           rows={3}
-                          className={styles.textarea}
+                          className={`${styles.textarea} ${fieldErrors.plan_con_animal ? styles.inputError : ''}`}
                         />
+                        {fieldErrors.plan_con_animal && <span className={styles.errorText}>{fieldErrors.plan_con_animal}</span>}
                       </div>
                     </>
                   )}
@@ -600,7 +562,7 @@ const validarPaso = (paso) => {
                       value={formData.tipo_vivienda}
                       onChange={handleChange}
                       required
-                      className={styles.select}
+                      className={`${styles.select} ${fieldErrors.tipo_vivienda ? styles.inputError : ''}`}
                     >
                       <option value="">Selecciona...</option>
                       <option value="piso">Piso</option>
@@ -608,6 +570,7 @@ const validarPaso = (paso) => {
                       <option value="apartamento">Apartamento</option>
                       <option value="otro">Otro</option>
                     </select>
+                    {fieldErrors.tipo_vivienda && <span className={styles.errorText}>{fieldErrors.tipo_vivienda}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -622,8 +585,9 @@ const validarPaso = (paso) => {
                         setFormData(prev => ({ ...prev, metros_cuadrados: value }));
                       }}
                       required
-                      className={styles.input}
+                      className={`${styles.input} ${fieldErrors.metros_cuadrados ? styles.inputError : ''}`}
                     />
+                    {fieldErrors.metros_cuadrados && <span className={styles.errorText}>{fieldErrors.metros_cuadrados}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -677,9 +641,10 @@ const validarPaso = (paso) => {
                       value={formData.lugar_dormir}
                       onChange={handleChange}
                       required
-                      className={styles.input}
+                      className={`${styles.input} ${fieldErrors.lugar_dormir ? styles.inputError : ''}`}
                       placeholder="Interior, exterior, habitación..."
                     />
+                    {fieldErrors.lugar_dormir && <span className={styles.errorText}>{fieldErrors.lugar_dormir}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -695,8 +660,9 @@ const validarPaso = (paso) => {
                       }}
                       required
                       min="1"
-                      className={styles.input}
+                      className={`${styles.input} ${fieldErrors.personas_hogar ? styles.inputError : ''}`}
                     />
+                    {fieldErrors.personas_hogar && <span className={styles.errorText}>{fieldErrors.personas_hogar}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -780,9 +746,10 @@ const validarPaso = (paso) => {
                       onChange={handleChange}
                       required
                       rows={2}
-                      className={styles.textarea}
+                      className={`${styles.textarea} ${fieldErrors.ocupaciones_horarios ? styles.inputError : ''}`}
                       placeholder="Ej: Juan trabaja de 9 a 17h, María estudia por las mañanas..."
                     />
+                    {fieldErrors.ocupaciones_horarios && <span className={styles.errorText}>{fieldErrors.ocupaciones_horarios}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -806,12 +773,13 @@ const validarPaso = (paso) => {
                       value={formData.problema_ladridos}
                       onChange={handleChange}
                       required
-                      className={styles.select}
+                      className={`${styles.select} ${fieldErrors.problema_ladridos ? styles.inputError : ''}`}
                     >
                       <option value="">Selecciona...</option>
                       <option value="si">Sí, podría ser un problema</option>
                       <option value="no">No, tengo paciencia y buscaré soluciones</option>
                     </select>
+                    {fieldErrors.problema_ladridos && <span className={styles.errorText}>{fieldErrors.problema_ladridos}</span>}
                   </div>
 
                   {formData.problema_ladridos === 'si' && (
@@ -837,9 +805,10 @@ const validarPaso = (paso) => {
                       onChange={handleChange}
                       required
                       rows={2}
-                      className={styles.textarea}
+                      className={`${styles.textarea} ${fieldErrors.plan_mudanza ? styles.inputError : ''}`}
                       placeholder="Me lo llevaría, buscaría vivienda que permita animales, etc."
                     />
+                    {fieldErrors.plan_mudanza && <span className={styles.errorText}>{fieldErrors.plan_mudanza}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -851,9 +820,10 @@ const validarPaso = (paso) => {
                       onChange={handleChange}
                       required
                       rows={2}
-                      className={styles.textarea}
+                      className={`${styles.textarea} ${fieldErrors.actividades ? styles.inputError : ''}`}
                       placeholder="Paseos, juegos, entrenamiento, etc."
                     />
+                    {fieldErrors.actividades && <span className={styles.errorText}>{fieldErrors.actividades}</span>}
                   </div>
 
                   {formData.posibilidad_bebe === 'si' && (
@@ -1007,13 +977,14 @@ const validarPaso = (paso) => {
                       value={formData.puede_asumir_costes}
                       onChange={handleChange}
                       required
-                      className={styles.select}
+                      className={`${styles.select} ${fieldErrors.puede_asumir_costes ? styles.inputError : ''}`}
                     >
                       <option value="">Selecciona...</option>
                       <option value="si">Sí</option>
                       <option value="no">No</option>
                       <option value="ayuda">Necesitaría ayuda</option>
                     </select>
+                    {fieldErrors.puede_asumir_costes && <span className={styles.errorText}>{fieldErrors.puede_asumir_costes}</span>}
                   </div>
 
                   {formData.puede_asumir_costes === 'no' && (
@@ -1039,9 +1010,10 @@ const validarPaso = (paso) => {
                       onChange={handleChange}
                       required
                       rows={2}
-                      className={styles.textarea}
+                      className={`${styles.textarea} ${fieldErrors.necesidades_perro ? styles.inputError : ''}`}
                       placeholder="Comida, ejercicio, compañía, veterinario..."
                     />
+                    {fieldErrors.necesidades_perro && <span className={styles.errorText}>{fieldErrors.necesidades_perro}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -1065,12 +1037,13 @@ const validarPaso = (paso) => {
                       value={formData.acepta_cambios_estimacion}
                       onChange={handleChange}
                       required
-                      className={styles.select}
+                      className={`${styles.select} ${fieldErrors.acepta_cambios_estimacion ? styles.inputError : ''}`}
                     >
                       <option value="">Selecciona...</option>
                       <option value="si">No, lo acepto</option>
                       <option value="no">Sí, me importa</option>
                     </select>
+                    {fieldErrors.acepta_cambios_estimacion && <span className={styles.errorText}>{fieldErrors.acepta_cambios_estimacion}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -1081,13 +1054,14 @@ const validarPaso = (paso) => {
                       value={formData.relacion_con_perros}
                       onChange={handleChange}
                       required
-                      className={styles.select}
+                      className={`${styles.select} ${fieldErrors.relacion_con_perros ? styles.inputError : ''}`}
                     >
                       <option value="">Selecciona...</option>
                       <option value="si">Sí, es importante</option>
                       <option value="no">Prefiero que no tenga</option>
                       <option value="indiferente">Me es indiferente</option>
                     </select>
+                    {fieldErrors.relacion_con_perros && <span className={styles.errorText}>{fieldErrors.relacion_con_perros}</span>}
                   </div>
 
                   {formData.relacion_con_perros === 'si' && (
@@ -1113,8 +1087,9 @@ const validarPaso = (paso) => {
                       onChange={handleChange}
                       required
                       rows={2}
-                      className={styles.textarea}
+                      className={`${styles.textarea} ${fieldErrors.gestion_problemas_conducta ? styles.inputError : ''}`}
                     />
+                    {fieldErrors.gestion_problemas_conducta && <span className={styles.errorText}>{fieldErrors.gestion_problemas_conducta}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -1171,12 +1146,13 @@ const validarPaso = (paso) => {
                       value={formData.ha_tenido_animales}
                       onChange={handleChange}
                       required
-                      className={styles.select}
+                      className={`${styles.select} ${fieldErrors.ha_tenido_animales ? styles.inputError : ''}`}
                     >
                       <option value="">Selecciona...</option>
                       <option value="si">Sí</option>
                       <option value="no">No</option>
                     </select>
+                    {fieldErrors.ha_tenido_animales && <span className={styles.errorText}>{fieldErrors.ha_tenido_animales}</span>}
                   </div>
 
                   {formData.ha_tenido_animales === 'si' && (
@@ -1215,12 +1191,13 @@ const validarPaso = (paso) => {
                       value={formData.ha_visitado_refugio}
                       onChange={handleChange}
                       required
-                      className={styles.select}
+                      className={`${styles.select} ${fieldErrors.ha_visitado_refugio ? styles.inputError : ''}`}
                     >
                       <option value="">Selecciona...</option>
                       <option value="si">Sí</option>
                       <option value="no">No</option>
                     </select>
+                    {fieldErrors.ha_visitado_refugio && <span className={styles.errorText}>{fieldErrors.ha_visitado_refugio}</span>}
                   </div>
 
                   {formData.ha_visitado_refugio === 'si' && (
@@ -1258,12 +1235,13 @@ const validarPaso = (paso) => {
                       value={formData.adoptaria_otro_animal}
                       onChange={handleChange}
                       required
-                      className={styles.select}
+                      className={`${styles.select} ${fieldErrors.adoptaria_otro_animal ? styles.inputError : ''}`}
                     >
                       <option value="">Selecciona...</option>
                       <option value="si">Sí, me interesa</option>
                       <option value="no">No, solo me interesa este</option>
                     </select>
+                    {fieldErrors.adoptaria_otro_animal && <span className={styles.errorText}>{fieldErrors.adoptaria_otro_animal}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -1274,7 +1252,7 @@ const validarPaso = (paso) => {
                       value={formData.como_conocio}
                       onChange={handleChange}
                       required
-                      className={styles.select}
+                      className={`${styles.select} ${fieldErrors.como_conocio ? styles.inputError : ''}`}
                     >
                       <option value="">Selecciona...</option>
                       <option value="redes">Redes sociales (Facebook, Instagram)</option>
@@ -1283,6 +1261,7 @@ const validarPaso = (paso) => {
                       <option value="voluntario">Soy voluntario de la protectora</option>
                       <option value="otro">Otro</option>
                     </select>
+                    {fieldErrors.como_conocio && <span className={styles.errorText}>{fieldErrors.como_conocio}</span>}
                   </div>
                 </div>
 
@@ -1323,7 +1302,7 @@ const validarPaso = (paso) => {
                 <button 
                   type="button" 
                   onClick={handleAtras}
-                  className="btn btn-secondary"
+                  className={styles.btnSecondary}
                 >
                   Atrás
                 </button>
@@ -1333,23 +1312,25 @@ const validarPaso = (paso) => {
                 <button 
                   type="button" 
                   onClick={handleSiguiente}
-                  className="btn btn-primary"
+                  className={styles.btnPrimary}
                 >
                   Siguiente
                 </button>
               ) : (
                 <button 
                   type="submit" 
-                  className="btn btn-primary"
+                  className={styles.btnPrimary}
                   disabled={enviando}
                 >
                   {enviando ? 'Enviando...' : 'Enviar Solicitud'}
                 </button>
               )}
               
-              <Link to="/adopciones" className="btn btn-outline">
-                Cancelar
-              </Link>
+              {pasoActual > 0 && (
+                <Link to="/adopciones" className={styles.btnOutline}>
+                  Cancelar
+                </Link>
+              )}
             </div>
           </form>
         </div>

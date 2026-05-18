@@ -478,18 +478,6 @@ const handleEditarEvento = (evento) => {
 const showProximos = filtros.tipo === 'proximos' || filtros.tipo === 'todos';
   const showPasados = filtros.tipo === 'pasados' || filtros.tipo === 'todos';
 
-  const getCategoryIcon = (categoria) => {
-    const icons = {
-      'Adopción': 'pets',
-      'Solidario': 'volunteer_activism',
-      'Educativo': 'school',
-      'Deportivo': 'directions_run',
-      'Cultural': 'museum',
-      'Otro': 'event'
-    };
-    return icons[categoria] || 'event';
-  };
-
   return (
     <>
       <PageHeader title="Eventos" subtitle="Únete a nuestras actividades solidarias" variant="events" />

@@ -85,7 +85,6 @@ function AdminInscripciones() {
     return eventoDate < new Date();
   };
 
-  const todosEventos = eventos;
   const pasadasCount = eventos.filter(e => isEventoPasado(e)).length;
   const futurasCount = eventos.filter(e => !isEventoPasado(e)).length;
   const conInscripcionesCount = eventos.filter(e => getCount(e.id) > 0).length;

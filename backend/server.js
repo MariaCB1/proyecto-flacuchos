@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const cron = require('node-cron');
 
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
@@ -11,6 +12,9 @@ const contactoRoutes = require('./routes/contacto.routes');
 const noticiaRoutes = require('./routes/noticia.routes');
 const eventosRoutes = require('./routes/eventos.routes');
 const inscripcionesRoutes = require('./routes/inscripciones.routes');
+const stripeRoutes = require('./routes/stripe.routes');
+const socioRoutes = require('./routes/socio.routes');
+const voluntarioRoutes = require('./routes/voluntario.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -36,6 +40,25 @@ app.use('/contacto', contactoRoutes);
 app.use('/', noticiaRoutes);
 app.use('/eventos', eventosRoutes);
 app.use('/inscripciones', inscripcionesRoutes);
+app.use('/stripe', stripeRoutes);
+app.use('/socios', socioRoutes);
+app.use('/voluntarios', voluntarioRoutes);
+const apadrinamientoRoutes = require('./routes/apadrinamiento.routes');
+const resumenRoutes = require('./routes/resumen.routes');
+app.use('/apadrinamientos', apadrinamientoRoutes);
+app.use('/admin', resumenRoutes);
+
+cron.schedule('0 8 1 * *', async () => {
+  console.log('🔄 Iniciando cobro mensual de apadrinamientos...');
+  try {
+    const apadrinamientoService = require('./services/apadrinamiento.service');
+    const resultados = await apadrinamientoService.ejecutarCobrosMensuales();
+    console.log('📊 Resultados cobros mensuales:', JSON.stringify(resultados));
+  } catch (err) {
+    console.error('❌ Error en cobro mensual:', err.message);
+  }
+});
+console.log('✅ Cron job de cobros mensuales programado (día 1 de cada mes a las 8:00)');
 
 app.use((err, req, res, next) => {
   console.error('❌ Error:', err);

@@ -410,6 +410,18 @@
     box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
 }
 
+.inputError {
+    border-color: #e74c3c !important;
+    background: #fff5f5;
+}
+
+.errorText {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    display: block;
+}
+
 .textarea {
     resize: vertical;
     min-height: 80px;
@@ -488,33 +500,73 @@
     border-top: 2px solid #e0e0e0;
 }
 
-.formActions .btn-primary {
+.btnPrimary {
+    background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+    color: white;
+    padding: 14px 35px;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
     min-width: 180px;
+    justify-content: center;
 }
-
-.formActions .btn-secondary {
-    min-width: 120px;
+.btnPrimary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
 }
-
-.formActions .btn-outline {
-    min-width: 120px;
-    border: 2px solid #ddd;
+.btnPrimary:disabled {
+    background: #B0BEC5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+.btnSecondary {
+    background: white;
+    color: #2E7D32;
+    border: 2px solid #2E7D32;
+    padding: 14px 35px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 180px;
+    justify-content: center;
+}
+.btnSecondary:hover {
+    background: #E8F5E9;
+    transform: translateY(-2px);
+}
+.btnOutline {
+    border: 2px solid #c62828;
     background: transparent;
-    color: var(--gray);
+    color: #c62828;
     text-decoration: none;
     padding: 12px 20px;
-    border-radius: 8px;
+    border-radius: 25px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
     transition: all 0.2s;
+    min-width: 120px;
+}
+.btnOutline:hover {
+    background: #c62828;
+    color: white;
 }
 
-.formActions .btn-outline:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-}
+
 
 .successMessage {
     text-align: center;
@@ -633,4 +685,66 @@
     .formGrid {
         grid-template-columns: 1fr;
     }
+}
+
+.loginPrompt {
+    text-align: center;
+    padding: 50px;
+    background: white;
+    border-radius: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0 4px 25px rgba(25, 118, 210, 0.1);
+}
+
+.loginPrompt span {
+    font-size: 4rem;
+    color: #1976D2;
+}
+
+.loginPrompt h3 {
+    color: #0D47A1;
+    margin: 20px 0 15px;
+}
+
+.loginPrompt p {
+    color: #546E7A;
+    margin-bottom: 25px;
+}
+
+.loginButtons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btnPrimary {
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btnPrimary:hover {
+    background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+    transform: translateY(-2px);
+}
+
+.btnSecondary {
+    background: white;
+    color: #1976D2;
+    border: 2px solid #1976D2;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btnSecondary:hover {
+    background: #E3F2FD;
+    transform: translateY(-2px);
 }

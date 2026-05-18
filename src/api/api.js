@@ -246,6 +246,50 @@ export const contactoApi = {
   async enviarMensaje(data) {
     return api.post('/contacto', data);
   },
+
+  async crearSolicitudAcogida(data) {
+    return api.post('/contacto/solicitud-acogida', data);
+  },
+
+  async getAnimalesDisponibles() {
+    return api.get('/contacto/animales-disponibles');
+  },
+
+  async getSolicitudesAcogida(filtros = {}) {
+    const params = new URLSearchParams();
+    if (filtros.estado) params.append('estado', filtros.estado);
+    const queryString = params.toString();
+    const endpoint = queryString ? `/contacto/solicitudes-acogida?${queryString}` : '/contacto/solicitudes-acogida';
+    return api.get(endpoint);
+  },
+
+  async getMisAcogidas() {
+    return api.get('/contacto/mis-acogidas');
+  },
+
+  async eliminarSolicitudAcogida(id) {
+    return api.delete(`/contacto/solicitudes-acogida/${id}`);
+  },
+
+  async aprobarAcogida(id) {
+    return api.put(`/contacto/solicitud-acogida/${id}/aprobar`, {});
+  },
+
+  async rechazarAcogida(id, motivo) {
+    return api.put(`/contacto/solicitud-acogida/${id}/rechazar`, { motivo });
+  },
+
+  async asignarAnimalAcogida(solicitudId, animalId) {
+    return api.put(`/contacto/solicitud-acogida/${solicitudId}/asignar`, { animal_id: animalId });
+  },
+
+  async aceptarAnimalAsignado(id) {
+    return api.put(`/contacto/solicitud-acogida/${id}/aceptar`, {});
+  },
+
+  async rechazarAnimalAsignado(id) {
+    return api.put(`/contacto/solicitud-acogida/${id}/rechazar-animal`, {});
+  },
 };
 
 export const noticiaApi = {
@@ -370,6 +414,165 @@ export const inscripcionesApi = {
 
   async getInscripcionesEvento(eventoId) {
     return api.get(`/inscripciones/evento/${eventoId}`);
+  },
+};
+
+export const stripeApi = {
+  async getConfig() {
+    return api.get('/stripe/config');
+  },
+
+  async createPaymentIntent(amount, email, nombre, metodoPago = 'card', usuarioId = null) {
+    return api.post('/stripe/create-payment-intent', { amount, email, nombre, metodoPago, usuarioId });
+  },
+
+  async cancelPaymentIntent(paymentId) {
+    return api.post('/stripe/cancel-payment-intent', { paymentId });
+  },
+
+  async createSubscription(priceId, email, nombre, usuarioId, metodoPago = 'card', datosPersonales = null) {
+    return api.post('/stripe/create-subscription', { priceId, email, nombre, usuarioId, metodoPago, datosPersonales });
+  },
+
+  async crearSuscripcionReal(paymentIntentId, usuarioId) {
+    return api.post('/stripe/crear-suscripcion-real', { paymentIntentId, usuarioId });
+  },
+
+  async confirmSepaSetup(setupIntentId, priceId, usuarioId, datosPersonales = null) {
+    return api.post('/stripe/confirm-sepa-setup', { setupIntentId, priceId, usuarioId, datosPersonales });
+  },
+
+  async createSepaMandate(email, nombre) {
+    return api.post('/stripe/create-sepa-mandate', { email, nombre });
+  },
+
+  async checkDonacion(paymentId) {
+    return api.get(`/stripe/check-donacion?paymentId=${paymentId}`);
+  },
+
+  async getDonaciones() {
+    return api.get('/stripe/donaciones');
+  },
+
+  async actualizarDonaciones() {
+    return api.post('/stripe/donaciones/actualizar');
+  },
+
+  async getMisDonaciones() {
+    return api.get('/stripe/donaciones/mis-donaciones');
+  },
+
+  async marcarSocioFallido(setupIntentId, usuarioId, errorMessage) {
+    return api.post('/stripe/marcar-socio-fallido', { setupIntentId, usuarioId, errorMessage });
+  },
+};
+
+export const socioApi = {
+  async getMiSocio() {
+    return api.get('/socios/mis-socio');
+  },
+
+  async getSocios() {
+    return api.get('/socios');
+  },
+
+  async getSociosStats() {
+    return api.get('/socios/stats');
+  },
+
+  async cancelarMiSocio() {
+    return api.delete('/socios/mi-socio');
+  },
+
+  async checkFueSocioEsteMes() {
+    return api.get('/socios/check-fue-socio');
+  },
+
+  async getTotalHistorico() {
+    return api.get('/socios/total-historico');
+  },
+};
+
+export const voluntarioApi = {
+  async crearVoluntario(data) {
+    return api.post('/voluntarios', data);
+  },
+
+  async getMisDatos() {
+    return api.get('/voluntarios/mis-datos');
+  },
+
+  async getAll() {
+    return api.get('/voluntarios');
+  },
+
+  async toggleMiEstado(activo) {
+    return api.put('/voluntarios/mi-estado', { activo });
+  },
+
+  async toggleActivo(usuarioId, activo) {
+    return api.put(`/voluntarios/${usuarioId}/toggle`, { activo });
+  },
+
+  async actualizarVoluntario(data) {
+    return api.put('/voluntarios', data);
+  },
+};
+
+export const apadrinamientoApi = {
+  async getAnimalesDisponibles(usuarioId = null) {
+    const params = usuarioId ? `?usuarioId=${encodeURIComponent(usuarioId)}` : '';
+    return api.get(`/apadrinamientos/disponibles${params}`);
+  },
+
+  async getAnimalesConPadrino() {
+    return api.get('/apadrinamientos/con-padrino');
+  },
+
+  async getMisApadrinamientos() {
+    return api.get('/apadrinamientos/mis-apadrinamientos');
+  },
+
+  async checkTuvoApadrinamientoPrevio() {
+    return api.get('/apadrinamientos/check-previo');
+  },
+
+  async getAllAdmin() {
+    return api.get('/apadrinamientos/admin');
+  },
+
+  async crear(data) {
+    return api.post('/apadrinamientos', data);
+  },
+
+  async aceptar(id) {
+    return api.put(`/apadrinamientos/${id}/aceptar`);
+  },
+
+  async rechazar(id, motivo) {
+    return api.put(`/apadrinamientos/${id}/rechazar`, { motivo });
+  },
+
+  async cancelar(id) {
+    return api.put(`/apadrinamientos/${id}/cancelar`);
+  },
+
+  async eliminar(id) {
+    return api.delete(`/apadrinamientos/${id}`);
+  },
+
+  async getCobros() {
+    return api.get('/apadrinamientos/cobros');
+  },
+
+  async ejecutarCobros() {
+    return api.post('/apadrinamientos/cobros-ejecutar');
+  },
+};
+
+export const resumenApi = {
+  async getResumenAyudas(periodo = 'ano') {
+    return api.get(`/admin/resumen-ayudas?periodo=${periodo}`);
   },
 };
 

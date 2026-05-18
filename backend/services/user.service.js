@@ -15,6 +15,10 @@ const userService = {
     return userRepository.findById(usuarioId);
   },
 
+  async getAdmins() {
+    return await userRepository.getByRol('admin');
+  },
+
   async updatePerfil(usuarioId, datos) {
     const { nombre, email, contrasena } = datos;
 
@@ -57,6 +61,14 @@ const userService = {
     }
 
     await userRepository.update(usuarioId, { contrasena: nuevaContrasena });
+  },
+
+  async setEsSocio(usuarioId, esSocio) {
+    return await userRepository.setEsSocio(usuarioId, esSocio);
+  },
+
+  async getUsuarioById(usuarioId) {
+    return await userRepository.findById(usuarioId);
   }
 };
 

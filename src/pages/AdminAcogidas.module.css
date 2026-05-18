@@ -1,0 +1,371 @@
+.container {
+    background: var(--white);
+    padding: 40px 0;
+    min-height: calc(100vh - 200px);
+}
+
+.loading, .error, .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray);
+}
+
+.empty .material-symbols-outlined {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    color: #ccc;
+}
+
+.error {
+    color: #e74c3c;
+    background: #fdecea;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.statsBar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.statItem {
+    flex: 1;
+    min-width: 100px;
+    background: var(--light);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+.statValue {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.statPurple { color: #7B1FA2; }
+.statGreen { color: #27ae60; }
+.statOrange { color: #f39c12; }
+.statBlue { color: #1976D2; }
+.statGray { color: #7f8c8d; }
+
+.statLabel {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 2px solid #7B1FA2;
+    background: transparent;
+    color: #7B1FA2;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.filterBtn.active, .filterBtn:hover {
+    background: #7B1FA2;
+    color: white;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: var(--light);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.cardTitle h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+    color: var(--dark);
+}
+
+.date {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.pending { background: #fff3e0; color: #f39c12; }
+.approved { background: #e8f5e9; color: #27ae60; }
+.rejected { background: #ffebee; color: #e74c3c; }
+.asignado { background: #f3e5f5; color: #7B1FA2; }
+.aceptado { background: #e3f2fd; color: #1976D2; }
+
+.cardBody {
+    padding: 15px 20px;
+}
+
+.infoRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--dark);
+}
+
+.infoRow .material-symbols-outlined {
+    font-size: 1rem;
+    color: #7B1FA2;
+}
+
+.motivoRechazo {
+    background: #ffebee;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+}
+
+.motivoRechazo strong {
+    color: #c62828;
+}
+
+.motivoRechazo p {
+    margin: 5px 0 0 0;
+    color: var(--dark);
+}
+
+.animalAsignado {
+    background: #f3e5f5;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.animalAsignado strong {
+    color: #7B1FA2;
+    font-size: 0.85rem;
+}
+
+.animalInfo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.animalInfo img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.animalName {
+    display: block;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.animalDetails {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.cardActions {
+    display: flex;
+    gap: 10px;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+}
+
+.cardActions button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+}
+
+.cardActions button .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+.btnAprobar {
+    background: #27ae60;
+    color: white;
+}
+
+.btnAprobar:hover {
+    background: #219a52;
+}
+
+.btnRechazar {
+    background: #e74c3c;
+    color: white;
+}
+
+.btnRechazar:hover {
+    background: #c0392b;
+}
+
+.btnAsignar {
+    background: #7B1FA2;
+    color: white;
+}
+
+.btnAsignar:hover {
+    background: #6a1b9a;
+}
+
+.cardActions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal h3 {
+    margin: 0 0 10px 0;
+    color: var(--dark);
+}
+
+.modal p {
+    color: var(--gray);
+    margin-bottom: 15px;
+}
+
+.modal textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.modal textarea:focus {
+    outline: none;
+    border-color: #7B1FA2;
+}
+
+.select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    font-family: inherit;
+    margin-bottom: 15px;
+}
+
+.select:focus {
+    outline: none;
+    border-color: #7B1FA2;
+}
+
+.modalActions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.btnCancelar {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    color: var(--dark);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btnConfirmar {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: #7B1FA2;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btnConfirmar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .statsBar {
+        flex-direction: column;
+    }
+    
+    .statItem {
+        min-width: auto;
+    }
+}

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const animalController = require('../controllers/animal.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
-const roleMiddleware = require('../middlewares/role.middleware');
+const { roleMiddleware } = require('../middlewares/role.middleware');
 
 router.get('/animales', animalController.getAnimales);
 router.get('/animales/todos', authMiddleware, roleMiddleware('admin'), animalController.getAllAnimalesAdmin);

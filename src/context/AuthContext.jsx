@@ -22,8 +22,8 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          await authApi.verify();
-          setUser(authApi.getCurrentUser());
+          const result = await authApi.verify();
+          setUser(result.user);
         } catch {
           authApi.logout();
         }

@@ -222,19 +222,34 @@ CREATE TABLE eventos (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+
+
 -- ============================================
--- TABLA: SOLICITUD_SOCIO
+-- TABLA: SOCIOS
 -- ============================================
-DROP TABLE IF EXISTS solicitud_socio CASCADE;
-CREATE TABLE solicitud_socio (
+DROP TABLE IF EXISTS socios CASCADE;
+CREATE TABLE socios (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     usuario_id UUID REFERENCES usuarios(id) ON DELETE SET NULL,
+    stripe_subscription_id TEXT NOT NULL,
+    stripe_customer_id TEXT,
+    stripe_price_id TEXT NOT NULL,
+    nombre_apellidos TEXT,
+    dni_nie TEXT,
+    telefono TEXT,
+    email TEXT,
     direccion TEXT,
     codigo_postal TEXT,
     ciudad_provincia TEXT,
-    aportacion TEXT,
+    aportacion INTEGER NOT NULL,
+    forma_pago TEXT DEFAULT 'tarjeta',
     participacion BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    quiere_voluntario BOOLEAN DEFAULT FALSE,
+    comentarios TEXT,
+    metodo_pago TEXT NOT NULL DEFAULT 'card',
+    estado TEXT NOT NULL DEFAULT 'active',
+    started_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    canceled_at TIMESTAMP WITH TIME ZONE
 );
 
 -- ============================================
@@ -244,20 +259,31 @@ DROP TABLE IF EXISTS solicitud_casa_acogida CASCADE;
 CREATE TABLE solicitud_casa_acogida (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     usuario_id UUID REFERENCES usuarios(id) ON DELETE SET NULL,
-    tipo_vivienda tipo_vivienda_acogida,
-    propiedad_vivienda propiedad_vivienda,
-    animales BOOLEAN DEFAULT FALSE,
-    espacio_extra BOOLEAN DEFAULT FALSE,
-    mas_personas BOOLEAN DEFAULT FALSE,
-    concordia BOOLEAN DEFAULT FALSE,
-    ninos BOOLEAN DEFAULT FALSE,
-    otros_animales BOOLEAN DEFAULT FALSE,
-    tipo_animal TEXT,
-    vacunas BOOLEAN DEFAULT FALSE,
-    disponibilidad disponibilidad_acogida,
+    nombre_completo TEXT NOT NULL,
+    dni TEXT NOT NULL,
+    telefono TEXT NOT NULL,
+    correo TEXT NOT NULL,
+    tipo_vivienda TEXT,
+    otra_vivienda TEXT,
+    vivienda_propia TEXT,
+    permiso_alquiler BOOLEAN DEFAULT FALSE,
+    tiene_exterior BOOLEAN DEFAULT FALSE,
+    exterior_descripcion TEXT,
+    otras_personas BOOLEAN DEFAULT FALSE,
+    num_personas INTEGER,
+    todos_de_acuerdo BOOLEAN DEFAULT FALSE,
+    hay_ninos BOOLEAN DEFAULT FALSE,
+    edad_ninos TEXT,
+    tiene_otros_animales BOOLEAN DEFAULT FALSE,
+    tipo_otros_animales TEXT,
+    vaccinated_otros BOOLEAN DEFAULT FALSE,
+    tiempo_acogida TEXT,
     horas_solo TEXT,
-    tipo_animal_acoger TEXT,
+    tipo_animal TEXT,
     experiencia_previa BOOLEAN DEFAULT FALSE,
+    experiencia_detalles TEXT,
+    motivo_acogida TEXT,
+    comentarios TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -318,6 +344,16 @@ CREATE INDEX IF NOT EXISTS idx_eventos_fecha ON eventos(fecha);
 -- Notificaciones
 CREATE INDEX IF NOT EXISTS idx_notificaciones_usuario ON notificaciones(usuario_id);
 CREATE INDEX IF NOT EXISTS idx_notificaciones_leido ON notificaciones(leido);
+
+-- Solicitudes Socio
+CREATE INDEX IF NOT EXISTS idx_solicitud_socio_usuario ON solicitud_socio(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_solicitud_socio_estado ON solicitud_socio(estado);
+CREATE INDEX IF NOT EXISTS idx_solicitud_socio_created_at ON solicitud_socio(created_at);
+
+-- Socios
+CREATE INDEX IF NOT EXISTS idx_socios_usuario ON socios(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_socios_estado ON socios(estado);
+CREATE INDEX IF NOT EXISTS idx_socios_email ON socios(email);
 
 -- ============================================
 -- FUNCIONES Y TRIGGERS
@@ -503,6 +539,36 @@ CREATE TABLE inscripciones_evento (
 
 CREATE INDEX idx_inscripciones_evento_usuario ON inscripciones_evento(usuario_id);
 CREATE INDEX idx_inscripciones_evento_evento ON inscripciones_evento(evento_id);
+
+-- ============================================
+-- TABLA: SOCIOS
+
+
+-- ============================================
+-- TABLA: DONACIONES
+-- ============================================
+DROP TABLE IF EXISTS donaciones CASCADE;
+CREATE TABLE donaciones (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    usuario_id UUID REFERENCES usuarios(id) ON DELETE SET NULL,
+    stripe_payment_id TEXT NOT NULL,
+    nombre TEXT NOT NULL,
+    email TEXT NOT NULL,
+    monto DECIMAL(10,2) NOT NULL,
+    tipo TEXT DEFAULT 'puntual',
+    estado TEXT DEFAULT 'pending' CHECK (estado IN ('pending', 'completada', 'cancelada')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_donaciones_usuario ON donaciones(usuario_id);
+CREATE INDEX idx_donaciones_estado ON donaciones(estado);
+CREATE INDEX idx_donaciones_stripe ON donaciones(stripe_payment_id);
+
+-- Añadir tipo de notificación para donaciones
+ALTER TYPE tipo_notificacion ADD VALUE 'donacion_exitosa';
+ALTER TYPE tipo_notificacion ADD VALUE 'donacion_cancelada';
+ALTER TYPE tipo_notificacion ADD VALUE 'donacion_pending';
 
 -- ============================================
 -- FIN DEL ESQUEMA

@@ -192,12 +192,22 @@ DROP TABLE IF EXISTS solicitud_socio CASCADE;
 CREATE TABLE solicitud_socio (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     usuario_id UUID REFERENCES usuarios(id) ON DELETE SET NULL,
-    direccion TEXT,
-    codigo_postal TEXT,
-    ciudad_provincia TEXT,
-    aportacion TEXT,
+    nombre_apellidos TEXT NOT NULL,
+    dni_nie TEXT NOT NULL,
+    telefono TEXT NOT NULL,
+    email TEXT NOT NULL,
+    direccion TEXT NOT NULL,
+    codigo_postal TEXT NOT NULL,
+    ciudad_provincia TEXT NOT NULL,
+    aportacion INTEGER NOT NULL CHECK (aportacion IN (5, 10)),
+    forma_pago TEXT NOT NULL CHECK (forma_pago IN ('domiciliacion', 'tarjeta')),
     participacion BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    quiere_voluntario BOOLEAN DEFAULT FALSE,
+    comentarios TEXT,
+    politica_privacidad BOOLEAN DEFAULT FALSE,
+    estado TEXT DEFAULT 'pending' CHECK (estado IN ('pending', 'approved', 'rejected')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 COMMENT ON TABLE solicitud_socio IS 'Solicitudes de socio/anuario';
