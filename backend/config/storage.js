@@ -14,13 +14,13 @@ switch (providerName) {
 }
 
 module.exports = {
-  upload: async (buffer, fileName, contentType) => {
-    return storageAdapter.upload(buffer, fileName, contentType);
+  upload: async (buffer, fileName, contentType, bucketName) => {
+    return storageAdapter.upload(buffer, fileName, contentType, bucketName);
   },
-  
-  delete: async (fileName) => {
-    return storageAdapter.delete(fileName);
+
+  delete: async (fileName, bucketName) => {
+    return storageAdapter.delete(fileName, bucketName);
   },
-  
+
   getProviderName: () => storageAdapter.getProviderName()
 };

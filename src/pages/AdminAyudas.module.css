@@ -4,24 +4,28 @@
 
 .tabs {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 30px;
   border-bottom: 2px solid #e0e0e0;
   padding-bottom: 10px;
+  overflow-x: auto;
+  flex-wrap: wrap;
 }
 
 .tabBtn {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
+  padding: 14px 24px;
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #666;
-  border-radius: 8px 8px 0 0;
+  border-radius: 10px 10px 0 0;
   transition: all 0.2s ease;
+  white-space: nowrap;
+  font-weight: 500;
 }
 
 .tabBtn:hover {
@@ -196,12 +200,13 @@
 }
 
 .totalLabel {
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .totalAmount {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
+  word-break: break-word;
 }
 
 .tableHeader {
@@ -279,8 +284,8 @@
 
 .voluntariosGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
   margin-top: 20px;
 }
 
@@ -329,27 +334,27 @@
 .voluntarioInfo h4 {
   margin: 0 0 4px 0;
   color: #0D47A1;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
 }
 
 .voluntarioInfo p {
   margin: 0;
   color: #666;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .voluntarioDetails {
-  padding: 15px 20px;
+  padding: 12px 15px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .voluntarioDetail {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.95rem;
+  gap: 8px;
+  font-size: 0.85rem;
   color: #444;
 }
 
@@ -502,6 +507,43 @@ input:checked + .slider:before {
 @media (max-width: 500px) {
   .voluntariosGrid {
     grid-template-columns: 1fr;
+  }
+
+  .tabBtn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+
+  .statsBar {
+    flex-direction: column;
+  }
+
+  .stat {
+    min-width: 100%;
+  }
+
+  .tableWrapper {
+    overflow-x: auto;
+  }
+
+  .table th,
+  .table td {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+
+  .filterBar {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .modalContent {
+    margin: 10px;
+    padding: 15px;
   }
 }
 
@@ -685,8 +727,8 @@ input:checked + .slider:before {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 .card {
@@ -1021,6 +1063,39 @@ input:checked + .slider:before {
   .resumenCards {
     grid-template-columns: 1fr;
   }
+
+  .resumenContent {
+    padding: 15px;
+  }
+
+  .resumenHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .resumenHeader h2 {
+    font-size: 1.3rem;
+  }
+
+  .resumenCardHeader {
+    padding: 12px 15px;
+    font-size: 0.9rem;
+  }
+
+  .resumenCardBody {
+    padding: 15px;
+  }
+
+  .resumenCardRow {
+    font-size: 0.85rem;
+    flex-wrap: wrap;
+  }
+
+  .resumenCardRow span,
+  .resumenCardRow strong {
+    font-size: 0.85rem;
+  }
 }
 
 .resumenCard {
@@ -1071,6 +1146,7 @@ input:checked + .slider:before {
   border-radius: 16px;
   padding: 30px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  overflow: hidden;
 }
 
 .graficoTitle {
@@ -1099,6 +1175,38 @@ input:checked + .slider:before {
   height: 280px;
   padding: 20px 15px;
   gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .graficoContainer {
+    padding: 15px;
+  }
+
+  .graficoTitle {
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+
+  .grafico {
+    height: 200px;
+    padding: 10px 5px;
+    gap: 4px;
+  }
+
+  .graficoLabel {
+    font-size: 0.65rem;
+  }
+
+  .graficoBarras {
+    width: 20px;
+  }
+
+  .graficoTooltip {
+    font-size: 0.75rem;
+    padding: 8px;
+  }
 }
 
 .graficoBar {
@@ -1209,9 +1317,23 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #555;
   font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .graficoLeyenda {
+    gap: 15px;
+    margin-top: 15px;
+    padding-top: 15px;
+    flex-wrap: wrap;
+  }
+
+  .graficoLeyenda span {
+    font-size: 0.75rem;
+    gap: 5px;
+  }
 }
 
 .legendDonaciones, .legendSocios, .legendApadr {
@@ -1258,4 +1380,38 @@ input:checked + .slider:before {
   background: #E3F2FD;
   padding: 8px 16px;
   border-radius: 20px;
+}
+
+@media (max-width: 768px) {
+  .tabs {
+    gap: 5px;
+  }
+
+  .tabBtn {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+
+  .statsBar {
+    flex-direction: column;
+  }
+
+  .stat {
+    width: 100%;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .totalBox {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .totalAmount {
+    font-size: 2rem;
+  }
 }
