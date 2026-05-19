@@ -45,7 +45,7 @@ const validarDNI = (dni) => {
 
 const ibanOptions = { style: { base: { fontSize: '16px', color: '#424770' } }, supportedCountries: ['SEPA'] };
 
-function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onError, setLoading, loading, setPendingMessage, onBack, envioPagoIniciado }) {
+function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onError, setLoading, loading, onBack, envioPagoIniciado, paymentError }) {
   const stripe = useStripe();
   const elements = useElements();
   const [sepaStep, setSepaStep] = useState(1);
@@ -58,7 +58,6 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
     }
 
     setLoading(true);
-    setPendingMessage('');
 
     try {
       const email = user?.email;
@@ -108,7 +107,6 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
       }
 
       if (setupIntent?.status === 'succeeded' || setupIntent?.status === 'processing') {
-        setPendingMessage('Tu método de pago ha sido guardado. El primer cobro se realizará cuando un administrador apruebe tu solicitud.');
         setTimeout(() => {
           onSuccess(null, customerId, setupIntent?.payment_method);
         }, 2000);
@@ -130,7 +128,6 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
     }
 
     setLoading(true);
-    setPendingMessage('');
 
     try {
       if (sepaStep === 1) {
@@ -147,47 +144,43 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
         );
         const result = await response.json();
 
-        if (result.clientSecret) {
-          setSetupData(result);
-          setSepaStep(2);
-        } else {
-          onError('Error al iniciar el proceso SEPA. Por favor, prueba con tarjeta.');
-        }
-      } else if (sepaStep === 2 && setupData) {
-        const ibanElement = elements.getElement(IbanElement);
-        if (!ibanElement) {
-          throw new Error('El elemento IBAN no está disponible');
-        }
-
-        const { error: setupError, setupIntent } = await stripe.confirmSepaDebitSetup(setupData.clientSecret, {
-          payment_method: {
-            sepa_debit: ibanElement,
-            billing_details: { name: user?.nombre || 'Padrino', email: user?.email || 'cliente@ejemplo.com' }
-          }
-        });
-
-        if (setupError) {
-          if (setupError.code === 'canceled' || setupError.code === 'invalid_debit') {
-            onError('El IBAN ha sido rechazado. Por favor, prueba con otro IBAN o método de pago.');
-          } else {
-            onError(setupError.message || 'Error al procesar el pago SEPA.');
-          }
+        if (result.error) {
+          onError(result.error);
           setLoading(false);
           return;
         }
 
-        if (setupIntent?.status === 'succeeded' || setupIntent?.status === 'pending' || setupIntent?.status === 'processing') {
-          setPendingMessage('Tu método de pago ha sido guardado. El primer cobro se realizará cuando un administrador apruebe tu solicitud.');
-          setTimeout(() => {
-            onSuccess(null, setupData.customerId, setupIntent?.payment_method);
-          }, 2000);
-        } else if (['canceled', 'requires_payment_method'].includes(setupIntent?.status)) {
-          onError('El proceso ha sido cancelado. Por favor, intenta de nuevo.');
-        } else if (setupIntent?.last_setup_error) {
-          onError(setupIntent.last_setup_error.message || 'Error al procesar el pago SEPA.');
+        setSetupData(result);
+        setSepaStep(2);
+        setLoading(false);
+        return;
+      }
+
+      const { error: setupError, setupIntent } = await stripe.confirmSepaDebitSetup(
+        setupData.clientSecret,
+        { payment_method: { sepa_debit: elements.getElement(IbanElement). Bran }
+      });
+
+      if (setupError) {
+        if (setupError.code === 'canceled' || setupError.code === 'invalid_debit') {
+          onError('El IBAN ha sido rechazado. Por favor, prueba con otro IBAN o método de pago.');
         } else {
-          onError('No se ha podido procesar el pago SEPA. Por favor, intenta de nuevo.');
+          onError(setupError.message || 'Error al procesar el pago SEPA.');
         }
+        setLoading(false);
+        return;
+      }
+
+      if (setupIntent?.status === 'succeeded' || setupIntent?.status === 'pending' || setupIntent?.status === 'processing') {
+        setTimeout(() => {
+          onSuccess(null, setupData.customerId, setupIntent?.payment_method);
+        }, 2000);
+      } else if (['canceled', 'requires_payment_method'].includes(setupIntent?.status)) {
+        onError('El proceso ha sido cancelado. Por favor, intenta de nuevo.');
+      } else if (setupIntent?.last_setup_error) {
+        onError(setupIntent.last_setup_error.message || 'Error al procesar el pago SEPA.');
+      } else {
+        onError('No se ha podido procesar el pago SEPA. Por favor, intenta de nuevo.');
       }
     } catch (err) {
       onError(err.message || 'Error al procesar');
@@ -283,6 +276,10 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
           </form>
         )}
 
+        {paymentError && (
+          <div className={styles.pagoError}>{paymentError}</div>
+        )}
+
         <button type="button" onClick={onBack} className={styles.pagoBackBtn}>
           Volver
         </button>
@@ -300,7 +297,7 @@ function FormularioApadrinamiento() {
   const [loadingAnimales, setLoadingAnimales] = useState(true);
   const [selectedAnimal, setSelectedAnimal] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [paymentError, setPaymentError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [envioPagoIniciado, setEnvioPagoIniciado] = useState(false);
 
@@ -308,7 +305,6 @@ function FormularioApadrinamiento() {
   const [dniNie, setDniNie] = useState('');
   const [telefono, setTelefono] = useState('');
   const [mostrarPublico, setMostrarPublico] = useState(false);
-  const [pendingMessage, setPendingMessage] = useState('');
   const [metodoPago, setMetodoPago] = useState('card');
   const [fieldErrors, setFieldErrors] = useState({});
   const [apadrinamientoPrevio, setApadrinamientoPrevio] = useState(false);
@@ -401,7 +397,6 @@ function FormularioApadrinamiento() {
     if (Object.keys(errors).length > 0) {
       return;
     }
-    setError(null);
     setStep(step + 1);
     window.scrollTo(0, 0);
   };
@@ -422,12 +417,10 @@ function FormularioApadrinamiento() {
       setSuccess(true);
       refreshUser();
     } catch (err) {
-      setError(err.message || 'Error al guardar el apadrinamiento');
+      setPaymentError(err.message || 'Error al guardar el apadrinamiento');
       setEnvioPagoIniciado(false);
     }
   };
-
-  
 
   if (success) {
     return (
@@ -507,8 +500,6 @@ function FormularioApadrinamiento() {
             ))}
           </div>
 
-          {error && <div className={styles.error}>{error}</div>}
-
           {step === 1 && (
             <div className={styles.form}>
               <h3 className={styles.stepTitle}>
@@ -528,7 +519,6 @@ function FormularioApadrinamiento() {
                       className={`${styles.animalCard} ${selectedAnimal?.id === animal.id ? styles.selectedCard : ''}`}
                       onClick={() => {
                         setSelectedAnimal(animal);
-                        setError(null);
                         setFieldErrors(prev => ({ ...prev, selectedAnimal: '' }));
                       }}
                     >
@@ -587,7 +577,7 @@ function FormularioApadrinamiento() {
                 {fieldErrors.telefono && <span className={styles.errorText}>{fieldErrors.telefono}</span>}
               </div>
               <div className={styles.buttons}>
-                <button type="button" onClick={() => { setStep(1); setFieldErrors({}); setError(null); }} className={styles.btnSecondary}>Atrás</button>
+                <button type="button" onClick={() => { setStep(1); setFieldErrors({}); }} className={styles.btnSecondary}>Atrás</button>
                 <button type="button" onClick={handleNext} className={styles.btnPrimary}>Siguiente</button>
               </div>
             </div>
@@ -604,7 +594,15 @@ function FormularioApadrinamiento() {
                   type="number"
                   value={importe}
                   onChange={(e) => {
-                    setImporte(e.target.value);
+                    const value = e.target.value;
+                    const cleaned = value.replace(/[^0-9.]/g, '');
+                    const parts = cleaned.split('.');
+                    if (parts.length > 2) return;
+                    if (parts[1] && parts[1].length > 2) {
+                      setImporte(parts[0] + '.' + parts[1].slice(0, 2));
+                    } else {
+                      setImporte(cleaned);
+                    }
                     if (fieldErrors.importe) setFieldErrors(prev => ({ ...prev, importe: '' }));
                   }}
                   placeholder="10"
@@ -683,8 +681,6 @@ function FormularioApadrinamiento() {
                   </div>
                 </div>
               )}
-              {error && <div className={styles.pagoError}>{error}</div>}
-              {pendingMessage && <div className={styles.pagoSuccess}>{pendingMessage}</div>}
 
               {stripePromise ? (
                 <Elements stripe={stripePromise}>
@@ -694,12 +690,12 @@ function FormularioApadrinamiento() {
                     setMetodoPago={setMetodoPago}
                     user={user}
                     onSuccess={handlePagoSuccess}
-                    onError={setError}
+                    onError={setPaymentError}
                     setLoading={setLoading}
                     loading={loading}
-                    setPendingMessage={setPendingMessage}
                     onBack={() => setStep(4)}
                     envioPagoIniciado={envioPagoIniciado}
+                    paymentError={paymentError}
                   />
                 </Elements>
               ) : (

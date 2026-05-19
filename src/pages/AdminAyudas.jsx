@@ -27,7 +27,7 @@ function formatearDiasSimple(dias) {
 
 function AdminAyudas() {
   const [searchParams] = useSearchParams();
-  const initialTab = searchParams.get('tab') || 'donaciones';
+  const initialTab = searchParams.get('tab') || 'acogidas';
   const [activeTab, setActiveTab] = useState(initialTab);
 
   const [donaciones, setDonaciones] = useState([]);
@@ -359,11 +359,18 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
         <div className="container">
           <div className={styles.tabs}>
             <button 
-              className={`${styles.tabBtn} ${activeTab === 'donaciones' ? styles.activeTab : ''}`}
-              onClick={() => setActiveTab('donaciones')}
+              className={`${styles.tabBtn} ${activeTab === 'acogidas' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('acogidas')}
             >
-              <span className="material-symbols-outlined">volunteer_activism</span>
-              Donaciones
+              <span className="material-symbols-outlined">home</span>
+              Acogidas
+            </button>
+            <button 
+              className={`${styles.tabBtn} ${activeTab === 'apadrinar' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('apadrinar')}
+            >
+              <span className="material-symbols-outlined">favorite</span>
+              Apadrinar
             </button>
             <button 
               className={`${styles.tabBtn} ${activeTab === 'voluntarios' ? styles.activeTab : ''}`}
@@ -380,18 +387,11 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
               Socios
             </button>
             <button 
-              className={`${styles.tabBtn} ${activeTab === 'apadrinar' ? styles.activeTab : ''}`}
-              onClick={() => setActiveTab('apadrinar')}
+              className={`${styles.tabBtn} ${activeTab === 'donaciones' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('donaciones')}
             >
-              <span className="material-symbols-outlined">favorite</span>
-              Apadrinar
-            </button>
-            <button 
-              className={`${styles.tabBtn} ${activeTab === 'acogidas' ? styles.activeTab : ''}`}
-              onClick={() => setActiveTab('acogidas')}
-            >
-              <span className="material-symbols-outlined">home</span>
-              Acogidas
+              <span className="material-symbols-outlined">volunteer_activism</span>
+              Donaciones
             </button>
             <button 
               className={`${styles.tabBtn} ${activeTab === 'resumen' ? styles.activeTab : ''}`}
@@ -1016,7 +1016,7 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
                           </div>
                           <div className={styles.infoRow}>
                             <span className="material-symbols-outlined">mail</span>
-                            <span>{solicitud.correo}</span>
+                            <span>{solicitud.email}</span>
                           </div>
                           <div className={styles.infoRow}>
                             <span className="material-symbols-outlined">home</span>

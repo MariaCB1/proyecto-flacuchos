@@ -262,7 +262,6 @@ CREATE TABLE solicitud_casa_acogida (
     nombre_completo TEXT NOT NULL,
     dni TEXT NOT NULL,
     telefono TEXT NOT NULL,
-    correo TEXT NOT NULL,
     tipo_vivienda TEXT,
     otra_vivienda TEXT,
     vivienda_propia TEXT,

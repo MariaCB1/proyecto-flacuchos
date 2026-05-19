@@ -36,7 +36,7 @@ const contactoRepository = {
   async createSolicitudAcogida(data) {
     const query = `
       INSERT INTO solicitud_casa_acogida (
-        nombre_completo, dni, telefono, correo,
+        nombre_completo, dni, telefono,
         tipo_vivienda, otra_vivienda, vivienda_propia, permiso_alquiler,
         tiene_exterior, exterior_descripcion,
         otras_personas, num_personas, todos_de_acuerdo,
@@ -47,11 +47,11 @@ const contactoRepository = {
         experiencia_previa, experiencia_detalles,
         motivo_acogida, comentarios,
         usuario_id, estado
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26)
       RETURNING *
     `;
     const values = [
-      data.nombre_completo, data.dni, data.telefono, data.correo,
+      data.nombre_completo, data.dni, data.telefono,
       data.tipo_vivienda, data.otra_vivienda, data.vivienda_propia, data.permiso_alquiler,
       data.tiene_exterior, data.exterior_descripcion,
       data.otras_personas, data.num_personas, data.todos_de_acuerdo,
@@ -75,9 +75,11 @@ const contactoRepository = {
              a.imagen_url as animal_imagen,
              a.especie as animal_especie,
              a.edad as animal_edad,
-             a.tamano as animal_tamano
+             a.tamano as animal_tamano,
+             u.email as email
       FROM solicitud_casa_acogida sca
       LEFT JOIN animales a ON sca.animal_asignado_id = a.id
+      LEFT JOIN usuarios u ON sca.usuario_id = u.id
       WHERE 1=1
     `;
     const values = [];
@@ -104,9 +106,11 @@ const contactoRepository = {
       `SELECT sca.*, 
               a.nombre as animal_nombre, 
               a.imagen_url as animal_imagen,
-              a.especie as animal_especie
+              a.especie as animal_especie,
+              u.email as email
        FROM solicitud_casa_acogida sca
        LEFT JOIN animales a ON sca.animal_asignado_id = a.id
+       LEFT JOIN usuarios u ON sca.usuario_id = u.id
        WHERE sca.id = $1`,
       [id]
     );

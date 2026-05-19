@@ -145,7 +145,7 @@ const contactoService = {
   async enviarEmailAcogidaRecibida(data) {
     const mailOptions = {
       from: process.env.SMTP_USER,
-      to: data.correo,
+      to: data.email,
       subject: 'Tu solicitud de casa de acogida ha sido recibida - Flacuchos Baena',
       html: `
 <!DOCTYPE html>

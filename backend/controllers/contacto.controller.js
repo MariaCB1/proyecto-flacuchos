@@ -32,7 +32,7 @@ const contactoController = {
       const userId = req.user?.id || null;
       
       const {
-        nombre_completo, dni, telefono, correo,
+        nombre_completo, dni, telefono,
         tipo_vivienda, otra_vivienda, vivienda_propia, permiso_alquiler,
         tiene_exterior, exterior_descripcion,
         otras_personas, num_personas, todos_de_acuerdo,
@@ -44,7 +44,9 @@ const contactoController = {
         motivo_acogida, comentarios
       } = req.body;
 
-      if (!nombre_completo || !dni || !telefono || !correo) {
+      const userEmail = req.user?.email || null;
+
+      if (!nombre_completo || !dni || !telefono || !userEmail) {
         return res.status(400).json({ error: 'Los campos marcados con * son requeridos' });
       }
 
@@ -54,7 +56,7 @@ const contactoController = {
         nombre_completo: nombre_completo || null,
         dni: dni || null,
         telefono: telefono || null,
-        correo: correo || null,
+        email: userEmail,
         tipo_vivienda: tipo_vivienda || null,
         otra_vivienda: otra_vivienda || null,
         vivienda_propia: vivienda_propia || null,

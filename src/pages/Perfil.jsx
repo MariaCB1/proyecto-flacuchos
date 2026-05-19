@@ -790,32 +790,32 @@ function Perfil() {
               </button>
             )}
 
+            <button
+              className={`${styles.menuBtn} ${activeTab === 'datos' ? styles.active : ''}`}
+              onClick={() => setActiveTab('datos')}
+            >
+              <span className="material-symbols-outlined">person</span>
+              <span className={styles.btnText}>
+                <span className={styles.btnTitle}>Editar Mi Perfil</span>
+                <span className={styles.btnSubtitle}>Nombre y email</span>
+              </span>
+              <span className="material-symbols-outlined arrow">chevron_right</span>
+            </button>
+
+            <button
+              className={`${styles.menuBtn} ${activeTab === 'password' ? styles.active : ''}`}
+              onClick={() => setActiveTab('password')}
+            >
+              <span className="material-symbols-outlined">lock</span>
+              <span className={styles.btnText}>
+                <span className={styles.btnTitle}>Cambiar Contraseña</span>
+                <span className={styles.btnSubtitle}>Actual y nueva contraseña</span>
+              </span>
+              <span className="material-symbols-outlined arrow">chevron_right</span>
+            </button>
+
             {user.rol !== 'admin' && (
               <>
-                <button
-                  className={`${styles.menuBtn} ${activeTab === 'datos' ? styles.active : ''}`}
-                  onClick={() => setActiveTab('datos')}
-                >
-                  <span className="material-symbols-outlined">person</span>
-                  <span className={styles.btnText}>
-                    <span className={styles.btnTitle}>Editar Mis Datos</span>
-                    <span className={styles.btnSubtitle}>Nombre y email</span>
-                  </span>
-                  <span className="material-symbols-outlined arrow">chevron_right</span>
-                </button>
-
-                <button
-                  className={`${styles.menuBtn} ${activeTab === 'password' ? styles.active : ''}`}
-                  onClick={() => setActiveTab('password')}
-                >
-                  <span className="material-symbols-outlined">lock</span>
-                  <span className={styles.btnText}>
-                    <span className={styles.btnTitle}>Cambiar Contraseña</span>
-                    <span className={styles.btnSubtitle}>Actual y nueva contraseña</span>
-                  </span>
-                  <span className="material-symbols-outlined arrow">chevron_right</span>
-                </button>
-
                 <button
                   className={`${styles.menuBtn} ${activeTab === 'solicitudes' ? styles.active : ''}`}
                   onClick={() => setActiveTab('solicitudes')}

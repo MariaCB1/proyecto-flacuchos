@@ -255,7 +255,7 @@ function AdminAcogidas() {
                     </div>
                     <div className={styles.infoRow}>
                       <span className="material-symbols-outlined">mail</span>
-                      <span>{solicitud.correo}</span>
+                      <span>{solicitud.email}</span>
                     </div>
                     <div className={styles.infoRow}>
                       <span className="material-symbols-outlined">home</span>

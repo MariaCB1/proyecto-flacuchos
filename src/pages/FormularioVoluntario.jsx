@@ -211,7 +211,7 @@ function FormularioVoluntario() {
               <h3>{titulo}</h3>
               <p>{mensaje}</p>
               <div className={styles.loginButtons}>
-                <Link to="/perfil?tab=datos" className={styles.btnPrimary}>
+                <Link to="/admin/ayudas?tab=voluntarios" className={styles.btnPrimary}>
                   Ver mi perfil
                 </Link>
                 <Link to="/" className={styles.btnSecondary}>

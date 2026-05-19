@@ -6,20 +6,19 @@ import PageHeader from '../components/PageHeader';
 import styles from './FormularioAcogida.module.css';
 
 const PASOS = [
-  { titulo: 'Datos Personales', subtitle: 'Tu información', icon: 'person' },
-  { titulo: 'Vivienda', subtitle: 'Tu hogar', icon: 'home' },
-  { titulo: 'Convivencia', subtitle: 'Familia', icon: 'group' },
-  { titulo: 'Otros Animales', subtitle: 'Mascotas', icon: 'pets' },
-  { titulo: 'Disponibilidad', subtitle: 'Tiempo', icon: 'schedule' },
-  { titulo: 'Tipo de Acogida', subtitle: 'Preferencias', icon: 'favorite' },
-  { titulo: 'Cuidados', subtitle: 'Compromiso', icon: 'medical_services' }
+  { titulo: 'Datos', icon: 'person' },
+  { titulo: 'Vivienda', icon: 'home' },
+  { titulo: 'Convivencia', icon: 'group' },
+  { titulo: 'Otros Animales', icon: 'pets' },
+  { titulo: 'Disponibilidad', icon: 'schedule' },
+  { titulo: 'Tipo de Acogida', icon: 'favorite' },
+  { titulo: 'Cuidados', icon: 'medical_services' }
 ];
 
 const initialFormData = {
   nombre_completo: '',
   dni: '',
   telefono: '',
-  correo: '',
   tipo_vivienda: '',
   otra_vivienda: '',
   vivienda_propia: '',
@@ -59,8 +58,7 @@ function FormularioAcogida() {
     if (user) {
       setFormData(prev => ({
         ...prev,
-        nombre_completo: user.nombre_completo || user.nombre || '',
-        correo: user.email || ''
+        nombre_completo: user.nombre_completo || user.nombre || ''
       }));
       fetchMiSolicitud();
     }
@@ -186,7 +184,7 @@ function FormularioAcogida() {
               <h3>Eres administrador</h3>
               <p>Las solicitudes de casa de acogida se gestionan desde el panel de administración</p>
               <div className={styles.loginButtons}>
-                <Link to="/admin/acogidas" className={styles.btnPrimary}>
+                <Link to="/admin/ayudas?tab=acogidas" className={styles.btnPrimary}>
                   Ver gestión
                 </Link>
                 <Link to="/" className={styles.btnSecondary}>
@@ -252,7 +250,6 @@ function FormularioAcogida() {
                     </div>
                     <span className={styles.progressLabel}>
                       <span className={styles.stepTitle}>{paso.titulo}</span>
-                      <span className={styles.stepSubtitle}>{paso.subtitle}</span>
                     </span>
                   </div>
                 ))}
@@ -286,9 +283,8 @@ function FormularioAcogida() {
                         {fieldErrors.telefono && <span className={styles.fieldError}>{fieldErrors.telefono}</span>}
                       </div>
                       <div className={styles.formGroup}>
-                        <label>Correo electrónico *</label>
-                        <input type="email" name="correo" value={formData.correo} onChange={handleChange} disabled className={`${fieldErrors.correo ? styles.inputError : ''} ${styles.inputDisabled}`} />
-                        {fieldErrors.correo && <span className={styles.fieldError}>{fieldErrors.correo}</span>}
+                        <label>Correo electrónico</label>
+                        <input type="email" value={user?.email || ''} disabled className={styles.inputDisabled} />
                       </div>
                     </div>
                     <div className={styles.formActions}>
