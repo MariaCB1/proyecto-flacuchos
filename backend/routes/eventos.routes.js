@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const eventosController = require('../controllers/eventos.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
-const roleMiddleware = require('../middlewares/role.middleware');
+const { roleMiddleware } = require('../middlewares/role.middleware');
 
 router.get('/', eventosController.getEventos);
 router.get('/:id', eventosController.getEventoById);

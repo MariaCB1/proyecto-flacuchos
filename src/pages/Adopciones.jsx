@@ -345,6 +345,17 @@ function Adopciones() {
                       <span className={`${styles.petStatus} ${styles[animal.estado]}`}>
                         {animal.estado === 'disponible' ? 'Disponible' : 'Adoptado'}
                       </span>
+                      {animal.padrinos && animal.padrinos.length > 0 && (() => {
+                        const padrinosVisibles = animal.padrinos.filter(p => p.mostrar);
+                        if (padrinosVisibles.length === 0) return null;
+                        const nombres = padrinosVisibles.map(p => p.nombre).join(', ');
+                        return (
+                          <span className={styles.padrinoTag}>
+                            <span className="material-symbols-outlined">favorite</span>
+                            Apadrinado por {nombres}
+                          </span>
+                        );
+                      })()}
                     </div>
                     <div className={styles.petContent}>
                       <h3>{animal.nombre}</h3>

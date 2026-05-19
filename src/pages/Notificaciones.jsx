@@ -79,6 +79,11 @@ function Notificaciones() {
       cambio_estado: 'Estado actualizado',
       solicitud_socio: 'Nuevo socio',
       solicitud_acogida: 'Nueva acogida',
+      solicitud_acogida_recibida: 'Acogida recibida',
+      solicitud_acogida_aprobada: 'Acogida aprobada',
+      solicitud_acogida_rechazada: 'Acogida rechazada',
+      solicitud_acogida_asignada: 'Animal asignado',
+      solicitud_acogida_aceptada: 'Acogida confirmada',
       mensaje_contacto: 'Nuevo mensaje',
       solicitud_eliminada: 'Animal eliminado',
       solicitud_rechazada: 'Solicitud rechazada',
@@ -90,8 +95,22 @@ function Notificaciones() {
       evento_modificado: 'Evento modificado',
       solicitud_inscripcion: 'Nueva inscripción',
       inscripcion_cancelada: 'Inscripción cancelada',
+      donacion_exitosa: 'Nueva donación',
+      donacion_cancelada: 'Donación cancelada',
+      donacion_pending: 'Donación pendiente',
+      solicitud_voluntario: 'Nuevo voluntario',
+      voluntario_registrado: 'Registro completado',
+      socio_aprobado: 'Socio aprobado',
+      nuevo_socio: 'Nuevo socio',
+      socio_cancelado: 'Baja de socio',
+      socio_caido: 'Socio dado de baja',
+      solicitud_apadrinamiento: 'Nueva solicitud de apadrinamiento',
+      apadrinamiento_aprobado: 'Apadrinamiento aprobado',
+      apadrinamiento_rechazado: 'Apadrinamiento rechazado',
+      apadrinamiento_cancelado: 'Apadrinamiento cancelado',
+      cobro_apadrinamiento: 'Cobro apadrinamiento',
     };
-    return labels[tipo] || tipo;
+    return labels[tipo] || tipo.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
 
   const getTipoIcon = (tipo) => {
@@ -100,6 +119,11 @@ function Notificaciones() {
       cambio_estado: 'swap_horiz',
       solicitud_socio: 'card_membership',
       solicitud_acogida: 'home',
+      solicitud_acogida_recibida: 'check_circle',
+      solicitud_acogida_aprobada: 'check_circle',
+      solicitud_acogida_rechazada: 'cancel',
+      solicitud_acogida_asigned: 'pets',
+      solicitud_acogida_aceptada: 'celebration',
       mensaje_contacto: 'email',
       solicitud_eliminada: 'delete',
       solicitud_rechazada: 'cancel',
@@ -108,8 +132,23 @@ function Notificaciones() {
       nueva_noticia: 'newspaper',
       nuevo_evento: 'event_available',
       evento_cancelado: 'event_busy',
+      evento_modificado: 'sync',
       solicitud_inscripcion: 'how_to_reg',
-      inscripcion_canceleda: 'person_remove',
+      inscripcion_cancelada: 'person_remove',
+      donacion_exitosa: 'volunteer_activism',
+      donacion_cancelada: 'cancel',
+      donacion_pending: 'hourglass_empty',
+      solicitud_voluntario: 'person_add',
+      voluntario_registrado: 'how_to_reg',
+      socio_aprobado: 'card_membership',
+      nuevo_socio: 'person_add',
+      socio_cancelado: 'person_remove',
+      socio_caido: 'person_remove',
+      solicitud_apadrinamiento: 'pets',
+      apadrinamiento_aprobado: 'celebration',
+      apadrinamiento_rechazado: 'cancel',
+      apadrinamiento_cancelado: 'heart_broken',
+      cobro_apadrinamiento: 'payments',
     };
     return icons[tipo] || 'notifications';
   };
@@ -156,8 +195,10 @@ function Notificaciones() {
                     }
                     if (notif.tipo === 'solicitud_adopcion' || notif.tipo === 'solicitud_rechazada' || notif.tipo === 'solicitud_aprobada' || notif.tipo === 'cambio_estado') {
                       navigate(isAdmin ? '/admin/solicitudes' : '/perfil');
-                    } else if (notif.tipo === 'solicitud_socio' || notif.tipo === 'solicitud_acogida') {
-                      navigate('/como-ayudar');
+                    } else if (notif.tipo === 'solicitud_socio' || notif.tipo === 'solicitud_acogida' || notif.tipo === 'solicitud_acogida_recibida' || notif.tipo === 'solicitud_acogida_aprobada' || notif.tipo === 'solicitud_acogida_rechazada') {
+                      navigate(isAdmin ? '/admin/ayudas?tab=acogidas' : '/perfil?tab=acogidas');
+                    } else if (notif.tipo === 'solicitud_acogida_asignada' || notif.tipo === 'solicitud_acogida_aceptada') {
+                      navigate(isAdmin ? '/admin/ayudas?tab=acogidas' : '/perfil?tab=acogidas');
                     } else if (notif.tipo === 'solicitud_eliminada') {
                       navigate('/adopciones');
                     } else if (notif.tipo === 'mensaje_contacto') {
@@ -168,6 +209,18 @@ function Notificaciones() {
                       navigate(`/eventos?evento=${notif.referencia_id}`);
                     } else if (notif.tipo === 'solicitud_inscripcion' || notif.tipo === 'inscripcion_cancelada') {
                       navigate(isAdmin ? '/admin/inscripciones' : '/perfil?tab=inscripciones');
+                    } else if (notif.tipo === 'donacion_exitosa' || notif.tipo === 'donacion_cancelada' || notif.tipo === 'donacion_pending') {
+                      navigate(isAdmin ? '/admin/ayudas' : '/perfil?tab=donaciones');
+                    } else if (notif.tipo === 'solicitud_voluntario') {
+                      navigate('/admin/ayudas?tab=voluntarios');
+                    } else if (notif.tipo === 'solicitud_apadrinamiento' || notif.tipo === 'apadrinamiento_aprobado' || notif.tipo === 'apadrinamiento_rechazado' || notif.tipo === 'apadrinamiento_cancelado' || notif.tipo === 'cobro_apadrinamiento') {
+                      navigate(isAdmin ? '/admin/ayudas?tab=apadrinar' : '/perfil?tab=apadrinamientos');
+                    } else if (notif.tipo === 'voluntario_registrado') {
+                      navigate('/perfil?tab=datos');
+                    } else if (notif.tipo === 'nuevo_socio' || notif.tipo === 'socio_caido') {
+                      navigate('/admin/ayudas?tab=socios');
+                    } else if (notif.tipo === 'socio_aprobado' || notif.tipo === 'socio_cancelado') {
+                      navigate('/perfil?tab=socio');
                     } else {
                       navigate('/noticias');
                     }

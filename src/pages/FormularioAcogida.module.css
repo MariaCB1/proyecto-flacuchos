@@ -1,0 +1,588 @@
+.formSection {
+    background: #f8f9fa;
+    padding: 40px 0;
+}
+
+.container {
+    max-width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
+
+.introBox {
+    text-align: center;
+    background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+    padding: 30px 40px;
+    border-radius: 20px;
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.introBox p {
+    margin: 0;
+    color: #1565C0;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.introBox p:first-child {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.progressBar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    position: relative;
+    padding: 0 20px;
+    width: 100%;
+    gap: 10px;
+}
+
+.progressBar::before {
+    content: '';
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    right: 40px;
+    height: 4px;
+    background: #E3F2FD;
+    border-radius: 2px;
+    z-index: 0;
+}
+
+.progressStep {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 1;
+    min-width: 70px;
+}
+
+.progressIcon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #E3F2FD;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.progressIcon span {
+    color: #90CAF9;
+    font-size: 1.5rem;
+}
+
+.progressStep.completed .progressIcon {
+    background: #1976D2;
+    border-color: #1976D2;
+}
+
+.progressStep.completed .progressIcon span {
+    color: white;
+}
+
+.progressStep.active .progressIcon {
+    background: #1976D2;
+    border-color: #1976D2;
+    transform: scale(1.1);
+}
+
+.progressStep.active .progressIcon span {
+  color: white;
+}
+
+.progressStep.current .progressIcon {
+  background: #1976D2;
+  border-color: #1976D2;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(25, 118, 210, 0); }
+}
+
+.progressLabel {
+    font-size: 0.85rem;
+    color: #90CAF9;
+    text-align: center;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.progressLabel .stepTitle {
+    font-size: 0.9rem;
+}
+
+.progressStep.completed .progressLabel,
+.progressStep.active .progressLabel {
+    color: #1976D2;
+    font-weight: 600;
+}
+
+.form {
+    max-width: 100%;
+}
+
+.formStep {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin: 20px auto 0;
+    max-width: 900px;
+}
+
+.form h3 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #1976D2;
+    margin-bottom: 30px;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+
+.form h3 span {
+    font-size: 1.6rem;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.formGroup label {
+    color: #37474F;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+    padding: 14px 18px;
+    border: 2px solid #E3F2FD;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #333;
+    transition: all 0.3s ease;
+    background: #FAFDFF;
+    font-family: inherit;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+    outline: none;
+    border-color: #1976D2;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    background: white;
+}
+
+.formGroup input::placeholder,
+.formGroup textarea::placeholder {
+    color: #B0BEC5;
+}
+
+.formGroup textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.inputError {
+    border-color: #e74c3c !important;
+    background: #fff5f5 !important;
+}
+
+.fieldError {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    display: block;
+}
+
+.errorText {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    display: block;
+}
+
+.checkboxGroup,
+.radioGroup {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.checkbox,
+.radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: #546E7A;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.checkbox:hover,
+.radio:hover {
+    background: #E3F2FD;
+}
+
+.checkbox input,
+.radio input {
+    width: 20px;
+    height: 20px;
+    accent-color: #1976D2;
+    cursor: pointer;
+}
+
+.checkboxGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.checkboxGrid .checkbox {
+    padding: 12px 18px;
+    background: #F5F5F5;
+    border-radius: 12px;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.checkboxGrid .checkbox:hover {
+    background: #E3F2FD;
+    transform: translateY(-2px);
+}
+
+.checkboxGrid .checkbox input {
+    width: 18px;
+    height: 18px;
+}
+
+.error {
+    color: #e74c3c;
+    background: #fdecea;
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 500;
+    border-left: 4px solid #e74c3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.error .material-symbols-outlined {
+    font-size: 24px;
+}
+
+.formActions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #e0e0e0;
+}
+
+.btnPrimary {
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    color: white;
+    padding: 14px 35px;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+    min-width: 180px;
+    justify-content: center;
+}
+
+.btnPrimary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+}
+
+.btnPrimary:disabled {
+    background: #B0BEC5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btnSecondary {
+    background: white;
+    color: #1976D2;
+    border: 2px solid #1976D2;
+    padding: 14px 35px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 180px;
+    justify-content: center;
+}
+
+.btnSecondary:hover {
+    background: #E3F2FD;
+    transform: translateY(-2px);
+}
+
+.successBox {
+    text-align: center;
+    padding: 60px 30px;
+    max-width: 500px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+.successBox h2 {
+    color: #1976D2;
+    margin: 25px 0 15px;
+    font-size: 1.8rem;
+}
+
+.successBox p {
+    color: #546E7A;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+.successBox button {
+    margin-top: 25px;
+    padding: 14px 40px;
+    background: #1976D2;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.successBox button:hover {
+    background: #1565C0;
+    transform: translateY(-2px);
+}
+
+.inputDisabled {
+    background-color: #f5f5f5 !important;
+    color: #666;
+    cursor: not-allowed;
+    border-color: #e0e0e0;
+}
+
+.loginPrompt {
+    text-align: center;
+    padding: 50px;
+    background: white;
+    border-radius: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0 4px 25px rgba(25, 118, 210, 0.1);
+}
+
+.loginPrompt span {
+    font-size: 4rem;
+    color: #1976D2;
+}
+
+.loginPrompt h3 {
+    color: #0D47A1;
+    margin: 20px 0 15px;
+}
+
+.loginPrompt p {
+    color: #546E7A;
+    margin-bottom: 25px;
+}
+
+.loginButtons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.loginButtons .btnPrimary {
+    background: linear-gradient(135deg, #1976D2 0%, #0D47A1 100%);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.loginButtons .btnPrimary:hover {
+    transform: translateY(-2px);
+}
+
+.loginButtons .btnSecondary {
+    background: white;
+    color: #1976D2;
+    border: 2px solid #1976D2;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.loginButtons .btnSecondary:hover {
+    background: #E3F2FD;
+}
+
+@media (max-width: 768px) {
+    .progressBar {
+        flex-direction: column;
+        gap: 0;
+        padding: 0 20px;
+    }
+
+    .progressBar::before {
+        display: none;
+    }
+
+    .progressStep {
+        flex-direction: row;
+        gap: 15px;
+        position: relative;
+        padding: 10px 0;
+        min-width: auto;
+    }
+
+    .progressStep:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        left: 28px;
+        top: 70px;
+        width: 4px;
+        height: 31px;
+        background: #E3F2FD;
+        border-radius: 2px;
+    }
+
+    .progressStep.active:not(:last-child)::after {
+        background: #1976D2;
+    }
+
+    .progressIcon {
+        width: 55px;
+        height: 55px;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+
+    .progressLabel {
+        text-align: left;
+        font-size: 0.9rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .progressLabel .stepTitle {
+        font-weight: 600;
+        color: #1976D2;
+    }
+
+.container {
+        padding: 0 15px;
+    }
+
+    .formStep {
+        padding: 20px;
+    }
+
+    .formActions {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .btnPrimary,
+    .btnSecondary {
+        width: 100%;
+        min-width: unset;
+    }
+}
+
+@media (max-width: 900px) {
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .checkboxGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form {
+        padding: 25px;
+    }
+
+    .introBox {
+        padding: 20px;
+    }
+}

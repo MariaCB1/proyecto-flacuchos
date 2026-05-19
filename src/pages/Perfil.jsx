@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { animalApi, userApi, inscripcionesApi } from '../api/api';
+import { animalApi, userApi, inscripcionesApi, contactoApi, stripeApi, voluntarioApi, socioApi, apadrinamientoApi } from '../api/api';
 import styles from './Perfil.module.css';
 
 const calculateStrength = (password) => {
@@ -31,8 +31,57 @@ const calculateStrength = (password) => {
   return result;
 };
 
+function formatearDias(dias) {
+  if (!dias) return [];
+  if (Array.isArray(dias)) return dias;
+  if (typeof dias === 'string') {
+    if (dias.startsWith('{')) {
+      const contenido = dias.slice(1, -1);
+      if (!contenido) return [];
+      return contenido.split(',').map(d => d.trim().replace(/"/g, '').replace(/'/g, '').toLowerCase()).filter(d => d);
+    }
+    if (dias.startsWith('[')) {
+      try {
+        return JSON.parse(dias);
+      } catch {
+        return dias.split(',').map(d => d.trim().replace(/"/g, '').toLowerCase());
+      }
+    }
+    return dias.split(',').map(d => d.trim().replace(/"/g, '').toLowerCase());
+  }
+  return [];
+}
+
+const validarTelefono = (telefono) => {
+  const regex = /^[6-9]\d{8}$/;
+  return regex.test(telefono);
+};
+
+const validarDNI = (dni) => {
+  const nifRegex = /^[0-9]{8}[A-Z]$/;
+  const nieRegex = /^[XYZxyz][0-9]{7}[A-Z]$/;
+  
+  if (nifRegex.test(dni)) {
+    const letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
+    const numero = parseInt(dni.substring(0, 8), 10);
+    const letraCalculada = letras[numero % 23];
+    return dni[8] === letraCalculada;
+  }
+  
+  if (nieRegex.test(dni)) {
+    const letrasNie = 'XYZ';
+    const numeroCompleto = dni.replace(/[XYZ]/i, (match) => letrasNie.indexOf(match.toUpperCase()));
+    const letrasFinales = 'TRWAGMYFPDXBNJZSQVHLCKE';
+    const numero = parseInt(numeroCompleto.substring(0, 8), 10);
+    const letraCalculada = letrasFinales[numero % 23];
+    return dni[8] === letraCalculada;
+  }
+  
+  return false;
+};
+
 function Perfil() {
-  const { user, logout, updatePerfil } = useAuth();
+  const { user, logout, updatePerfil, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || '');
@@ -57,14 +106,20 @@ function Perfil() {
   const [misInscripciones, setMisInscripciones] = useState([]);
   const [loadingInscripciones, setLoadingInscripciones] = useState(false);
 
+  const [misAcogidas, setMisAcogidas] = useState([]);
+  const [loadingAcogidas, setLoadingAcogidas] = useState(false);
+  const [modalAcogida, setModalAcogida] = useState({ show: false });
+
+  const [misDonaciones, setMisDonaciones] = useState([]);
+  const [loadingDonaciones, setLoadingDonaciones] = useState(false);
+
   const [animales, setAnimales] = useState([]);
   const [loadingAnimales, setLoadingAnimales] = useState(false);
 
+  const [misVoluntario, setMisVoluntario] = useState(null);
+
   const [solicitudesAdmin, setSolicitudesAdmin] = useState([]);
   const [loadingSolicitudesAdmin, setLoadingSolicitudesAdmin] = useState(false);
-
-  const [inscripcionesAdmin, setInscripcionesAdmin] = useState([]);
-  const [loadingInscripcionesAdmin, setLoadingInscripcionesAdmin] = useState(false);
 
   const [detalleSolicitud, setDetalleSolicitud] = useState(null);
 
@@ -82,6 +137,266 @@ function Perfil() {
     urgente: false
   });
 
+  const [voluntarioActivo, setVoluntarioActivo] = useState(false);
+  const [loadingToggle, setLoadingToggle] = useState(false);
+  const [editandoVoluntario, setEditandoVoluntario] = useState(false);
+  const [guardandoVoluntario, setGuardandoVoluntario] = useState(false);
+
+  const [voluntarioFormData, setVoluntarioFormData] = useState({
+    telefono: '',
+    dni: '',
+    disponibilidad_dias: [],
+    disponibilidad_horario: '',
+    tiene_vehiculo: false,
+    motivacion: '',
+    experiencia: '',
+    comentarios: ''
+  });
+
+  const [voluntarioErrores, setVoluntarioErrores] = useState({
+    telefono: '',
+    dni: '',
+    disponibilidad_dias: '',
+    disponibilidad_horario: ''
+  });
+
+  const [misSocios, setMisSocios] = useState(null);
+  const [loadingSocio, setLoadingSocio] = useState(false);
+  const [cancelandoSocio, setCancelandoSocio] = useState(false);
+
+  const [misApadrinamientos, setMisApadrinamientos] = useState([]);
+  const [loadingApadrinamientos, setLoadingApadrinamientos] = useState(false);
+  const [cancelandoApadrinamiento, setCancelandoApadrinamiento] = useState(false);
+
+  const DIAS_SEMANA = [
+    { id: 'lunes', label: 'Lunes' },
+    { id: 'martes', label: 'Martes' },
+    { id: 'miercoles', label: 'Miércoles' },
+    { id: 'jueves', label: 'Jueves' },
+    { id: 'viernes', label: 'Viernes' },
+    { id: 'sabado', label: 'Sábado' },
+    { id: 'domingo', label: 'Domingo' }
+  ];
+
+  const HORARIOS = [
+    { id: 'manana', label: 'Mañanas' },
+    { id: 'tarde', label: 'Tardes' },
+    { id: 'todo', label: 'Todo el día' }
+  ];
+
+  const fetchVoluntario = async () => {
+    if (!user?.es_voluntario) return;
+    try {
+      const data = await voluntarioApi.getMisDatos();
+      setMisVoluntario(data);
+    } catch (err) {
+      console.error('Error fetching voluntario:', err);
+    }
+  };
+
+  const fetchSocio = async () => {
+    if (!user?.es_socio) return;
+    setLoadingSocio(true);
+    try {
+      const data = await socioApi.getMiSocio();
+      setMisSocios(data);
+    } catch (err) {
+      console.error('Error fetching socio:', err);
+    } finally {
+      setLoadingSocio(false);
+    }
+  };
+
+  const handleCancelarSocio = async () => {
+    if (!confirm('¿Estás seguro de darte de baja como socio? Ya no formarás parte del programa de socios.')) return;
+    
+    setCancelandoSocio(true);
+    try {
+      await socioApi.cancelarMiSocio();
+      alert('Has causado baja como socio. Gracias por todo el tiempo que has estado con nosotros.');
+      setMisSocios(null);
+      await refreshUser();
+    } catch (err) {
+      alert(err.message || 'Error al darte de baja');
+    } finally {
+      setCancelandoSocio(false);
+    }
+  };
+
+  const fetchApadrinamientos = async () => {
+    setLoadingApadrinamientos(true);
+    try {
+      const data = await apadrinamientoApi.getMisApadrinamientos();
+      setMisApadrinamientos(data);
+    } catch (err) {
+      console.error('Error fetching apadrinamientos:', err);
+    } finally {
+      setLoadingApadrinamientos(false);
+    }
+  };
+
+  const handleCancelarApadrinamiento = async (id) => {
+    if (!confirm('¿Estás seguro de cancelar este apadrinamiento? Los cobros mensuales se detendrán.')) return;
+    
+    setCancelandoApadrinamiento(true);
+    try {
+      await apadrinamientoApi.cancelar(id);
+      alert('Apadrinamiento cancelado correctamente.');
+      await fetchApadrinamientos();
+    } catch (err) {
+      alert(err.message || 'Error al cancelar');
+    } finally {
+      setCancelandoApadrinamiento(false);
+    }
+  };
+
+  const handleEliminarSolicitudApadrinamiento = async (id) => {
+    if (!confirm('¿Estás seguro de eliminar esta solicitud?')) return;
+    
+    try {
+      await apadrinamientoApi.eliminar(id);
+      alert('Solicitud eliminada.');
+      await fetchApadrinamientos();
+    } catch (err) {
+      alert(err.message || 'Error al eliminar');
+    }
+  };
+
+  useEffect(() => {
+    if (user?.voluntario_activo !== undefined) {
+      setVoluntarioActivo(user.voluntario_activo);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (activeTab === 'datos') {
+      fetchVoluntario();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, user?.es_voluntario]);
+
+  const handleToggleVoluntario = async () => {
+    if (!user?.es_voluntario) {
+      navigate('/voluntario');
+      return;
+    }
+
+    const nuevoEstado = !voluntarioActivo;
+    if (!confirm(`¿${nuevoEstado ? 'Activar' : 'Desactivar'} tu estado como voluntario?`)) return;
+
+    setLoadingToggle(true);
+    try {
+      await voluntarioApi.toggleMiEstado(!voluntarioActivo);
+      setVoluntarioActivo(!voluntarioActivo);
+      await refreshUser();
+      alert(nuevoEstado ? 'Voluntario activado' : 'Voluntario desactivado');
+    } catch (err) {
+      alert(err.message || 'Error al actualizar');
+    } finally {
+      setLoadingToggle(false);
+    }
+  };
+
+  const handleEditarVoluntario = () => {
+    if (!misVoluntario) return;
+    setVoluntarioFormData({
+      telefono: misVoluntario.telefono || '',
+      dni: misVoluntario.dni || '',
+      disponibilidad_dias: misVoluntario.disponibilidad_dias || [],
+      disponibilidad_horario: misVoluntario.disponibilidad_horario || '',
+      tiene_vehiculo: misVoluntario.tiene_vehiculo || false,
+      motivacion: misVoluntario.motivacion || '',
+      experiencia: misVoluntario.experiencia || '',
+      comentarios: misVoluntario.comentarios || ''
+    });
+    setEditandoVoluntario(true);
+  };
+
+  const handleCancelarEdicionVoluntario = () => {
+    setEditandoVoluntario(false);
+  };
+
+  const handleVoluntarioChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    
+    let formattedValue = value;
+    if (name === 'telefono') {
+      formattedValue = value.replace(/\D/g, '').slice(0, 9);
+    } else if (name === 'dni') {
+      formattedValue = value.replace(/[^0-9A-Z]/g, '').toUpperCase().slice(0, 9);
+    }
+    
+    setVoluntarioFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : formattedValue
+    }));
+    if (name === 'telefono') {
+      setVoluntarioErrores(prev => ({ ...prev, telefono: '' }));
+    }
+    if (name === 'dni') {
+      setVoluntarioErrores(prev => ({ ...prev, dni: '' }));
+    }
+    if (name === 'disponibilidad_horario') {
+      setVoluntarioErrores(prev => ({ ...prev, disponibilidad_horario: '' }));
+    }
+  };
+
+  const handleVoluntarioCheckboxGroup = (field, value) => {
+    setVoluntarioFormData(prev => ({
+      ...prev,
+      [field]: prev[field].includes(value)
+        ? prev[field].filter(v => v !== value)
+        : [...prev[field], value]
+    }));
+    if (field === 'disponibilidad_dias') {
+      setVoluntarioErrores(prev => ({ ...prev, disponibilidad_dias: '' }));
+    }
+  };
+
+  const handleGuardarVoluntario = async (e) => {
+    e.preventDefault();
+    
+    const errores = { telefono: '', dni: '', disponibilidad_dias: '', disponibilidad_horario: '' };
+    let tieneErrores = false;
+
+    if (!validarTelefono(voluntarioFormData.telefono)) {
+      errores.telefono = 'El teléfono debe tener 9 dígitos';
+      tieneErrores = true;
+    }
+
+    if (!validarDNI(voluntarioFormData.dni)) {
+      errores.dni = 'El DNI/NIE no es válido';
+      tieneErrores = true;
+    }
+
+    if (voluntarioFormData.disponibilidad_dias.length === 0) {
+      errores.disponibilidad_dias = 'Selecciona al menos un día';
+      tieneErrores = true;
+    }
+
+    if (!voluntarioFormData.disponibilidad_horario) {
+      errores.disponibilidad_horario = 'Selecciona un horario';
+      tieneErrores = true;
+    }
+
+    if (tieneErrores) {
+      setVoluntarioErrores(errores);
+      return;
+    }
+
+    setGuardandoVoluntario(true);
+    try {
+      await voluntarioApi.actualizarVoluntario(voluntarioFormData);
+      await fetchVoluntario();
+      setEditandoVoluntario(false);
+      setVoluntarioErrores({ telefono: '', dni: '', disponibilidad_dias: '', disponibilidad_horario: '' });
+    } catch (err) {
+      alert(err.message || 'Error al actualizar');
+    } finally {
+      setGuardandoVoluntario(false);
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       navigate('/login');
@@ -98,12 +413,28 @@ function Perfil() {
     if (activeTab === 'inscripciones') {
       fetchMisInscripciones();
     }
+    if (activeTab === 'acogidas') {
+      fetchMisAcogidas();
+    }
     if (activeTab === 'animales') {
       fetchAnimales();
     }
     if (activeTab === 'admin-solicitudes') {
       fetchSolicitudesAdmin();
     }
+    if (activeTab === 'donaciones') {
+      fetchMisDonaciones();
+    }
+    if (activeTab === 'voluntariado') {
+      fetchVoluntario();
+    }
+    if (activeTab === 'socio') {
+      fetchSocio();
+    }
+    if (activeTab === 'apadrinamientos') {
+      fetchApadrinamientos();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   const fetchMisSolicitudes = async () => {
@@ -138,6 +469,63 @@ function Perfil() {
       console.error('Error:', err);
     } finally {
       setLoadingInscripciones(false);
+    }
+  };
+
+  const fetchMisAcogidas = async () => {
+    setLoadingAcogidas(true);
+    try {
+      const data = await contactoApi.getMisAcogidas();
+      setMisAcogidas(data);
+    } catch (err) {
+      console.error('Error fetching acogidas:', err);
+    } finally {
+      setLoadingAcogidas(false);
+    }
+  };
+
+  const handleEliminarSolicitudAcogida = async (id) => {
+    if (!confirm('¿Eliminar esta solicitud de acogida? Podrás volver a solicitarla.')) return;
+    try {
+      await contactoApi.eliminarSolicitudAcogida(id);
+      alert('Solicitud eliminada correctamente');
+      fetchMisAcogidas();
+    } catch (err) {
+      alert(err.message || 'Error al eliminar la solicitud');
+    }
+  };
+
+  const fetchMisDonaciones = async () => {
+    setLoadingDonaciones(true);
+    try {
+      const data = await stripeApi.getMisDonaciones();
+      setMisDonaciones(data.donaciones || []);
+    } catch (err) {
+      console.error('Error fetching donaciones:', err);
+    } finally {
+      setLoadingDonaciones(false);
+    }
+  };
+
+  const handleAceptarAnimalAsignado = async (acogidaId) => {
+    if (!confirm('¿Estás seguro de aceptar este animal? Se formalizará la acogida.')) return;
+    try {
+      await contactoApi.aceptarAnimalAsignado(acogidaId);
+      await fetchMisAcogidas();
+      alert('¡Acogida aceptada! Gracias por tu apoyo.');
+    } catch (err) {
+      alert(err.message || 'Error al aceptar el animal');
+    }
+  };
+
+  const handleRechazarAnimalAsignado = async (acogidaId) => {
+    if (!confirm('¿Estás seguro de rechazar este animal?')) return;
+    try {
+      await contactoApi.rechazarAnimalAsignado(acogidaId);
+      await fetchMisAcogidas();
+      alert('Has rechazado el animal. El admin te asignará otro.');
+    } catch (err) {
+      alert(err.message || 'Error al rechazar el animal');
     }
   };
 
@@ -186,18 +574,6 @@ function Perfil() {
       console.error('Error:', err);
     } finally {
       setLoadingSolicitudesAdmin(false);
-    }
-  };
-
-  const fetchInscripcionesAdmin = async () => {
-    setLoadingInscripcionesAdmin(true);
-    try {
-      const data = await inscripcionesApi.getAllInscripciones();
-      setInscripcionesAdmin(data);
-    } catch (err) {
-      console.error('Error:', err);
-    } finally {
-      setLoadingInscripcionesAdmin(false);
     }
   };
 
@@ -367,24 +743,66 @@ function Perfil() {
             <div className={styles.menuTitle}>
               <h2>{user.nombre || 'Usuario'}</h2>
               <p>{user.email}</p>
-              <span className={styles.menuRole}>{isAdmin ? 'Administrador' : 'Usuario'}</span>
+              <div className={styles.roleContainer}>
+                <span className={styles.menuRole}>{isAdmin ? 'Administrador' : 'Usuario'}</span>
+                {user.es_voluntario && (
+                  <span className={`${styles.menuRole} ${voluntarioActivo ? styles.voluntarioActivo : styles.voluntarioInactivo}`}>
+                    <span className="material-symbols-outlined">volunteer_activism</span>
+                    {voluntarioActivo ? 'Voluntario' : 'Voluntario inactivo'}
+                  </span>
+                )}
+                {user.es_socio && (
+                  <span className={`${styles.menuRole} ${styles.socioActivo}`}>
+                    <span className="material-symbols-outlined">card_membership</span>
+                    Socio
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
           <div className={styles.menuButtons}>
-            <button 
+            {user.es_socio && (
+              <button 
+                className={`${styles.menuBtn} ${activeTab === 'socio' ? styles.active : ''}`}
+                onClick={() => setActiveTab('socio')}
+              >
+                <span className="material-symbols-outlined">card_membership</span>
+                <span className={styles.btnText}>
+                  <span className={styles.btnTitle}>Mi Socio</span>
+                  <span className={styles.btnSubtitle}>Ver datos y gestionar baja</span>
+                </span>
+                <span className="material-symbols-outlined arrow">chevron_right</span>
+              </button>
+            )}
+
+            {user.es_voluntario && (
+              <button 
+                className={`${styles.menuBtn} ${activeTab === 'voluntariado' ? styles.active : ''}`}
+                onClick={() => setActiveTab('voluntariado')}
+              >
+                <span className="material-symbols-outlined">volunteer_activism</span>
+                <span className={styles.btnText}>
+                  <span className={styles.btnTitle}>Mi Voluntariado</span>
+                  <span className={styles.btnSubtitle}>Editar datos y gestionar estado</span>
+                </span>
+                <span className="material-symbols-outlined arrow">chevron_right</span>
+              </button>
+            )}
+
+            <button
               className={`${styles.menuBtn} ${activeTab === 'datos' ? styles.active : ''}`}
               onClick={() => setActiveTab('datos')}
             >
               <span className="material-symbols-outlined">person</span>
               <span className={styles.btnText}>
-                <span className={styles.btnTitle}>Editar Mis Datos</span>
+                <span className={styles.btnTitle}>Editar Mi Perfil</span>
                 <span className={styles.btnSubtitle}>Nombre y email</span>
               </span>
               <span className="material-symbols-outlined arrow">chevron_right</span>
             </button>
 
-            <button 
+            <button
               className={`${styles.menuBtn} ${activeTab === 'password' ? styles.active : ''}`}
               onClick={() => setActiveTab('password')}
             >
@@ -396,9 +814,9 @@ function Perfil() {
               <span className="material-symbols-outlined arrow">chevron_right</span>
             </button>
 
-            {!isAdmin && (
+            {user.rol !== 'admin' && (
               <>
-                <button 
+                <button
                   className={`${styles.menuBtn} ${activeTab === 'solicitudes' ? styles.active : ''}`}
                   onClick={() => setActiveTab('solicitudes')}
                 >
@@ -410,7 +828,7 @@ function Perfil() {
                   <span className="material-symbols-outlined arrow">chevron_right</span>
                 </button>
 
-                <button 
+                <button
                   className={`${styles.menuBtn} ${activeTab === 'inscripciones' ? styles.active : ''}`}
                   onClick={() => setActiveTab('inscripciones')}
                 >
@@ -418,6 +836,42 @@ function Perfil() {
                   <span className={styles.btnText}>
                     <span className={styles.btnTitle}>Mis Inscripciones</span>
                     <span className={styles.btnSubtitle}>Eventos a los que te has inscrito</span>
+                  </span>
+                  <span className="material-symbols-outlined arrow">chevron_right</span>
+                </button>
+
+                <button
+                  className={`${styles.menuBtn} ${activeTab === 'acogidas' ? styles.active : ''}`}
+                  onClick={() => setActiveTab('acogidas')}
+                >
+                  <span className="material-symbols-outlined">home</span>
+                  <span className={styles.btnText}>
+                    <span className={styles.btnTitle}>Mis Acogidas</span>
+                    <span className={styles.btnSubtitle}>Estado de tus solicitudes de acogida</span>
+                  </span>
+                  <span className="material-symbols-outlined arrow">chevron_right</span>
+                </button>
+
+                <button
+                  className={`${styles.menuBtn} ${activeTab === 'apadrinamientos' ? styles.active : ''}`}
+                  onClick={() => setActiveTab('apadrinamientos')}
+                >
+                  <span className="material-symbols-outlined">favorite</span>
+                  <span className={styles.btnText}>
+                    <span className={styles.btnTitle}>Mis Apadrinamientos</span>
+                    <span className={styles.btnSubtitle}>Ver y gestionar mis apadrinamientos</span>
+                  </span>
+                  <span className="material-symbols-outlined arrow">chevron_right</span>
+                </button>
+
+                <button
+                  className={`${styles.menuBtn} ${activeTab === 'donaciones' ? styles.active : ''}`}
+                  onClick={() => setActiveTab('donaciones')}
+                >
+                  <span className="material-symbols-outlined">volunteer_activism</span>
+                  <span className={styles.btnText}>
+                    <span className={styles.btnTitle}>Mis Donaciones</span>
+                    <span className={styles.btnSubtitle}>Historial de tus donaciones</span>
                   </span>
                   <span className="material-symbols-outlined arrow">chevron_right</span>
                 </button>
@@ -443,6 +897,15 @@ function Perfil() {
                   </span>
                   <span className="material-symbols-outlined arrow">chevron_right</span>
                 </Link>
+
+                <Link to="/admin/ayudas" className={styles.menuBtn}>
+                  <span className="material-symbols-outlined">volunteer_activism</span>
+                  <span className={styles.btnText}>
+                    <span className={styles.btnTitle}>Gestionar Ayudas</span>
+                    <span className={styles.btnSubtitle}>Ver donaciones y ayudas económicas</span>
+                  </span>
+                  <span className="material-symbols-outlined arrow">chevron_right</span>
+                </Link>
               </>
             )}
           </div>
@@ -452,19 +915,260 @@ function Perfil() {
             {success && <div className={styles.success}><span className="material-symbols-outlined">check_circle</span>{success}</div>}
 
             {activeTab === 'datos' && (
-              <form onSubmit={handleSubmit} className={styles.form}>
-                <div className={styles.field}>
-                  <label htmlFor="nombre"><span className="material-symbols-outlined">badge</span>Nombre completo</label>
-                  <input type="text" id="nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+              <>
+                <form onSubmit={handleSubmit} className={styles.form}>
+                  <div className={styles.field}>
+                    <label htmlFor="nombre"><span className="material-symbols-outlined">badge</span>Nombre completo</label>
+                    <input type="text" id="nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+                  </div>
+                  <div className={styles.field}>
+                    <label htmlFor="email"><span className="material-symbols-outlined">mail</span>Email</label>
+                    <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                  </div>
+                  <button type="submit" className={styles.button} disabled={loading}>
+                    {loading ? <><span className={styles.spinner}></span>Guardando...</> : <><span className="material-symbols-outlined">save</span>Guardar Cambios</>}
+                  </button>
+                </form>
+              </>
+            )}
+
+            {activeTab === 'voluntariado' && user.es_voluntario && misVoluntario && (
+              <div className={styles.voluntarioInfo}>
+                <div className={styles.voluntarioHeader}>
+                  <h3 className={styles.voluntarioTitle}>Mi Voluntariado</h3>
+                  <div className={styles.toggleContainer}>
+                    <span className={voluntarioActivo ? styles.toggleLabelActive : styles.toggleLabelInactive}>
+                      {voluntarioActivo ? 'Activo' : 'Inactivo'}
+                    </span>
+                    <label className={styles.switch}>
+                      <input
+                        type="checkbox"
+                        checked={voluntarioActivo}
+                        onChange={handleToggleVoluntario}
+                        disabled={loadingToggle}
+                      />
+                      <span className={styles.slider}></span>
+                    </label>
+                  </div>
                 </div>
-                <div className={styles.field}>
-                  <label htmlFor="email"><span className="material-symbols-outlined">mail</span>Email</label>
-                  <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+
+{editandoVoluntario ? (
+                  <form onSubmit={handleGuardarVoluntario} className={styles.voluntarioForm}>
+                    <div className={styles.voluntarioGrid}>
+                      <div className={styles.voluntarioItem}>
+                        <label>Teléfono *</label>
+                        <input
+                          type="tel"
+                          name="telefono"
+                          value={voluntarioFormData.telefono}
+                          onChange={handleVoluntarioChange}
+                          placeholder="600123456"
+                        />
+                        {voluntarioErrores.telefono && <span className={styles.errorText}>{voluntarioErrores.telefono}</span>}
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <label>DNI *</label>
+                        <input
+                          type="text"
+                          name="dni"
+                          value={voluntarioFormData.dni}
+                          onChange={handleVoluntarioChange}
+                          placeholder="12345678A / X1234567L"
+                        />
+                        {voluntarioErrores.dni && <span className={styles.errorText}>{voluntarioErrores.dni}</span>}
+                      </div>
+                    </div>
+                    <div className={styles.voluntarioItem}>
+                      <label>Días disponibles *</label>
+                      <div className={styles.daysGrid}>
+                        {DIAS_SEMANA.map(dia => (
+                          <label key={dia.id} className={`${styles.dayCheckbox} ${voluntarioFormData.disponibilidad_dias.includes(dia.id) ? styles.selected : ''}`}>
+                            <input
+                              type="checkbox"
+                              checked={voluntarioFormData.disponibilidad_dias.includes(dia.id)}
+                              onChange={() => handleVoluntarioCheckboxGroup('disponibilidad_dias', dia.id)}
+                            />
+                            <span>{dia.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                      {voluntarioErrores.disponibilidad_dias && <span className={styles.errorText}>{voluntarioErrores.disponibilidad_dias}</span>}
+                    </div>
+                    <div className={styles.voluntarioItem}>
+                      <label>Horario preferido *</label>
+                      <div className={styles.radioGroup}>
+                        {HORARIOS.map(horario => (
+                          <label key={horario.id} className={`${styles.radioOption} ${voluntarioFormData.disponibilidad_horario === horario.id ? styles.selected : ''}`}>
+                            <input
+                              type="radio"
+                              name="disponibilidad_horario"
+                              value={horario.id}
+                              checked={voluntarioFormData.disponibilidad_horario === horario.id}
+                              onChange={handleVoluntarioChange}
+                            />
+                            <span>{horario.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                      {voluntarioErrores.disponibilidad_horario && <span className={styles.errorText}>{voluntarioErrores.disponibilidad_horario}</span>}
+                    </div>
+                    <div className={styles.voluntarioItem}>
+                      <label className={styles.checkboxVehicle}>
+                        <input
+                          type="checkbox"
+                          name="tiene_vehiculo"
+                          checked={voluntarioFormData.tiene_vehiculo}
+                          onChange={handleVoluntarioChange}
+                        />
+                        <span>Disponibilidad para traslados</span>
+                      </label>
+                    </div>
+                    <div className={styles.formButtons}>
+                      <button type="submit" className={styles.button} disabled={guardandoVoluntario}>
+                        {guardandoVoluntario ? 'Guardando...' : 'Guardar Cambios'}
+                      </button>
+                      <button type="button" onClick={handleCancelarEdicionVoluntario} className={styles.cancelButton}>
+                        Cancelar
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className={styles.voluntarioView}>
+                    <div className={styles.voluntarioGrid}>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Teléfono</span>
+                        <span className={styles.voluntarioValue}>{misVoluntario.telefono}</span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>DNI</span>
+                        <span className={styles.voluntarioValue}>{misVoluntario.dni}</span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Días disponibles</span>
+                        <span className={styles.voluntarioValue}>
+                          {(() => {
+                            const dias = misVoluntario.disponibilidad_dias;
+                            if (!dias) return 'No especificados';
+                            const diasArray = formatearDias(dias);
+                            if (diasArray.length === 0) return 'No especificados';
+                            const diasLabels = { lunes: 'Lunes', martes: 'Martes', miercoles: 'Miércoles', jueves: 'Jueves', viernes: 'Viernes', sabado: 'Sábado', domingo: 'Domingo' };
+                            return diasArray.map(d => diasLabels[d] || d).join(', ');
+                          })()}
+                        </span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Horario</span>
+                        <span className={styles.voluntarioValue}>
+                          {misVoluntario.disponibilidad_horario === 'manana' ? 'Mañanas' :
+                           misVoluntario.disponibilidad_horario === 'tarde' ? 'Tardes' :
+                           misVoluntario.disponibilidad_horario === 'todo' ? 'Todo el día' : 'No especificado'}
+                        </span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Vehículo</span>
+                        <span className={styles.voluntarioValue}>{misVoluntario.tiene_vehiculo ? 'Sí' : 'No'}</span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Fecha de registro</span>
+                        <span className={styles.voluntarioValue}>
+                          {new Date(misVoluntario.created_at).toLocaleDateString('es-ES')}
+                        </span>
+                      </div>
+                    </div>
+                    {misVoluntario.motivacion && (
+                      <div className={styles.voluntarioItem} style={{marginTop: '15px'}}>
+                        <span className={styles.voluntarioLabel}>Motivación</span>
+                        <span className={styles.voluntarioValue}>{misVoluntario.motivacion}</span>
+                      </div>
+                    )}
+                    {misVoluntario.experiencia && (
+                      <div className={styles.voluntarioItem} style={{marginTop: '15px'}}>
+                        <span className={styles.voluntarioLabel}>Experiencia</span>
+                        <span className={styles.voluntarioValue}>{misVoluntario.experiencia}</span>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handleEditarVoluntario}
+                      className={styles.editButton}
+                    >
+                      <span className="material-symbols-outlined">edit</span>
+                      Editar Datos
+                    </button>
+                  </div>
+)}
+            </div>
+)}
+
+            {activeTab === 'socio' && user.es_socio && (
+              loadingSocio ? (
+                <div className={styles.loading}>Cargando datos de socio...</div>
+              ) : misSocios ? (
+                <div className={styles.voluntarioInfo}>
+                  <div className={styles.voluntarioHeader}>
+                    <h3 className={styles.voluntarioTitle}>Mi Socio</h3>
+                    <span className={styles.socioActivoBadge}>Activo</span>
+                  </div>
+                  <div className={styles.voluntarioView}>
+                    <div className={styles.voluntarioGrid}>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Nombre completo</span>
+                        <span className={styles.voluntarioValue}>{misSocios.nombre_apellidos}</span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>DNI/NIE</span>
+                        <span className={styles.voluntarioValue}>{misSocios.dni_nie}</span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Teléfono</span>
+                        <span className={styles.voluntarioValue}>{misSocios.telefono}</span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Email</span>
+                        <span className={styles.voluntarioValue}>{misSocios.email_usuario}</span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Dirección</span>
+                        <span className={styles.voluntarioValue}>{misSocios.direccion}</span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Código Postal</span>
+                        <span className={styles.voluntarioValue}>{misSocios.codigo_postal}</span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Ciudad/Provincia</span>
+                        <span className={styles.voluntarioValue}>{misSocios.ciudad_provincia}</span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Aportación mensual</span>
+                        <span className={styles.voluntarioValue}>{misSocios.aportacion}€/mes</span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Forma de pago</span>
+                        <span className={styles.voluntarioValue}>
+                          {misSocios.metodo_pago === 'sepa' ? 'Domiciliación' : 'Tarjeta'}
+                        </span>
+                      </div>
+                      <div className={styles.voluntarioItem}>
+                        <span className={styles.voluntarioLabel}>Fecha de alta</span>
+                        <span className={styles.voluntarioValue}>
+                          {misSocios.started_at ? new Date(misSocios.started_at).toLocaleDateString('es-ES') : '-'}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleCancelarSocio}
+                      className={styles.socioCancelButton}
+                      disabled={cancelandoSocio}
+                    >
+                      {cancelandoSocio ? 'Cancelando...' : 'Darme de baja'}
+                    </button>
+                  </div>
                 </div>
-                <button type="submit" className={styles.button} disabled={loading}>
-                  {loading ? <><span className={styles.spinner}></span>Guardando...</> : <><span className="material-symbols-outlined">save</span>Guardar Cambios</>}
-                </button>
-              </form>
+              ) : (
+                <div className={styles.empty}>No tienes datos de socio</div>
+              )
             )}
 
             {activeTab === 'password' && (
@@ -624,22 +1328,29 @@ function Perfil() {
               </div>
             )}
 
-            {activeTab === 'inscripciones' && (
-              <div className={styles.solicitudesSection}>
+{activeTab === 'inscripciones' && (
+              <div className={styles.tabContent}>
                 <h3 className={styles.sectionTitle}>Mis Inscripciones a Eventos</h3>
                 {loadingInscripciones ? (
                   <div className={styles.loading}>Cargando...</div>
                 ) : misInscripciones.length === 0 ? (
-                  <div className={styles.empty}>No te has inscrito a ningún evento</div>
+                  <div className={styles.empty}>
+                    <span className="material-symbols-outlined">event_busy</span>
+                    <p>No te has inscrito a ningún evento</p>
+                  </div>
                 ) : (
-                  <div className={styles.solicitudesList}>
-                    {misInscripciones.map(insc => (
-                      <div key={insc.id} className={styles.solicitudItem}>
+                  <div className={styles.solicitudesGrid}>
+                    {misInscripciones.map((insc) => (
+                      <div key={insc.id} className={styles.solicitudCard}>
                         <div className={styles.solicitudInfo}>
-                          <div className={styles.animalThumb}>
-                            {insc.evento_imagen ? <img src={insc.evento_imagen} alt={insc.evento_titulo} /> : <span className="material-symbols-outlined">event</span>}
+                          <div className={styles.solicitudImage}>
+                            {insc.evento_imagen ? (
+                              <img src={insc.evento_imagen} alt={insc.evento_titulo} />
+                            ) : (
+                              <span className="material-symbols-outlined">event</span>
+                            )}
                           </div>
-                          <div>
+                          <div className={styles.solicitudDetails}>
                             <h4>{insc.evento_titulo || 'Evento'}</h4>
                             <p className={styles.solicitudFecha}>
                               {insc.evento_fecha && new Date(insc.evento_fecha).toLocaleDateString('es-ES')}
@@ -671,6 +1382,302 @@ function Perfil() {
                               </>
                             );
                           })()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'acogidas' && (
+              loadingAcogidas ? (
+                <div className={styles.loading}>Cargando acogidas...</div>
+              ) : (
+                <>
+                  {misAcogidas.length > 0 && (
+                    <div className={styles.voluntarioInfo}>
+                      <h3 className={styles.voluntarioTitle}>Mis Acogidas</h3>
+                      {misAcogidas.map((acogida) => (
+                        <div key={acogida.id} className={styles.acogidaCard}>
+                          <div className={styles.voluntarioHeader}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              {acogida.animal_imagen ? (
+                                <img src={acogida.animal_imagen} alt={acogida.animal_nombre} style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
+                              ) : (
+                                <div style={{ width: '60px', height: '60px', borderRadius: '8px', background: '#e3f2fd', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  <span className="material-symbols-outlined" style={{ color: '#1976D2' }}>pets</span>
+                                </div>
+                              )}
+                              <div>
+                                <h4 style={{ margin: 0, color: '#333' }}>{acogida.animal_nombre ? `Animal: ${acogida.animal_nombre}` : 'Sin animal asignado'}</h4>
+                                <span className={`${styles.badge} ${acogida.estado === 'aceptado' ? styles.aprobada : acogida.estado === 'pending' ? styles.pendiente : styles.rechazada}`}>
+                                  {acogida.estado === 'pending' ? 'Pendiente' : acogida.estado === 'approved' ? 'Aprobada' : acogida.estado === 'asignado_pendiente' ? 'Asignado' : acogida.estado === 'aceptado' ? 'Confirmada' : 'Rechazada'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className={styles.voluntarioGrid}>
+                            {acogida.estado !== 'pending' && (
+                              <>
+                                <div className={styles.voluntarioItem}>
+                                  <span className={styles.voluntarioLabel}>Especie</span>
+                                  <span className={styles.voluntarioValue}>{acogida.animal_especie || '-'}</span>
+                                </div>
+                                <div className={styles.voluntarioItem}>
+                                  <span className={styles.voluntarioLabel}>Edad</span>
+                                  <span className={styles.voluntarioValue}>{acogida.animal_edad || '-'}</span>
+                                </div>
+                              </>
+                            )}
+                            <div className={styles.voluntarioItem}>
+                              <span className={styles.voluntarioLabel}>Fecha solicitud</span>
+                              <span className={styles.voluntarioValue}>{acogida.created_at ? new Date(acogida.created_at).toLocaleDateString('es-ES') : '-'}</span>
+                            </div>
+                          </div>
+                          {acogida.estado === 'pending' && (
+                            <button
+                              type="button"
+                              onClick={() => handleEliminarSolicitudAcogida(acogida.id)}
+                              className={styles.socioCancelButton}
+                              style={{ background: '#f57c00', marginTop: '10px' }}
+                            >
+                              Eliminar solicitud
+                            </button>
+                          )}
+                          {acogida.estado === 'asignado_pendiente' && (
+                            <div className={styles.aceptarRechazarBtns}>
+                              <button
+                                onClick={() => handleAceptarAnimalAsignado(acogida.id)}
+                                className={styles.btnAprobar}
+                              >
+                                <span className="material-symbols-outlined">check_circle</span> Aceptar
+                              </button>
+                              <button
+                                onClick={() => handleRechazarAnimalAsignado(acogida.id)}
+                                className={styles.btnRechazar}
+                              >
+                                <span className="material-symbols-outlined">cancel</span> Rechazar
+                              </button>
+                            </div>
+                          )}
+                          {acogida.estado === 'rejected' && acogida.motivo_rechazo && (
+                            <p style={{ fontSize: '0.85rem', color: '#c62828', marginTop: '10px' }}>
+                              <strong>Motivo del rechazo:</strong> {acogida.motivo_rechazo}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+
+                      <button
+                        onClick={() => {
+                          const tieneActiva = misAcogidas.some(a =>
+                            a.estado === 'pending' || a.estado === 'approved' ||
+                            a.estado === 'asignado_pendiente' || a.estado === 'aceptado'
+                          );
+                          if (tieneActiva) {
+                            setModalAcogida({ show: true });
+                          } else {
+                            navigate('/acogida');
+                          }
+                        }}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          marginTop: '20px',
+                          padding: '12px 24px',
+                          backgroundColor: '#1976D2',
+                          color: 'white',
+                          borderRadius: '8px',
+                          fontWeight: '600',
+                          textDecoration: 'none',
+                          fontSize: '15px',
+                          boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)',
+                          cursor: 'pointer',
+                          border: 'none',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>add_circle</span>
+                        Solicitar otra acogida
+                      </button>
+                    </div>
+                  )}
+
+                  {misAcogidas.length === 0 && (
+                    <div className={styles.empty}>
+                      <span className="material-symbols-outlined" style={{ fontSize: '48px', color: '#1976D2' }}>home</span>
+                      <p>No tienes solicitudes de acogida</p>
+                      <Link to="/acogida" style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '12px 24px',
+                        backgroundColor: '#1976D2',
+                        color: 'white',
+                        borderRadius: '8px',
+                        fontWeight: '600',
+                        textDecoration: 'none',
+                        fontSize: '15px',
+                        boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)',
+                        transition: 'all 0.2s ease'
+                      }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>pets</span>
+                        Solicitar Acogida
+                      </Link>
+                    </div>
+                  )}
+                </>
+              )
+            )}
+
+            {activeTab === 'apadrinamientos' && (
+              loadingApadrinamientos ? (
+                <div className={styles.loading}>Cargando apadrinamientos...</div>
+              ) : misApadrinamientos.length > 0 ? (
+                <div className={styles.voluntarioInfo}>
+                  <h3 className={styles.voluntarioTitle}>Mis Apadrinamientos</h3>
+                  {misApadrinamientos.map((apadr) => (
+                    <div key={apadr.id} className={styles.apadrinamientoCard}>
+                      <div className={styles.voluntarioHeader}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          {apadr.animal_imagen && (
+                            <img src={apadr.animal_imagen} alt={apadr.animal_nombre} style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
+                          )}
+                          <div>
+                            <h4 style={{ margin: 0, color: '#333' }}>{apadr.animal_nombre}</h4>
+                            <span className={`${styles.badge} ${apadr.estado === 'active' ? styles.aprobada : apadr.estado === 'pending' ? styles.pendiente : styles.rechazada}`}>
+                              {apadr.estado === 'active' ? 'Activo' : apadr.estado === 'pending' ? 'Pendiente' : apadr.estado === 'rejected' ? 'Rechazado' : 'Cancelado'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className={styles.voluntarioGrid}>
+                        <div className={styles.voluntarioItem}>
+                          <span className={styles.voluntarioLabel}>Importe mensual</span>
+                          <span className={styles.voluntarioValue}>{apadr.importe}€/mes</span>
+                        </div>
+                        <div className={styles.voluntarioItem}>
+                          <span className={styles.voluntarioLabel}>DNI/NIE</span>
+                          <span className={styles.voluntarioValue}>{apadr.dni_nie || '-'}</span>
+                        </div>
+                        <div className={styles.voluntarioItem}>
+                          <span className={styles.voluntarioLabel}>Teléfono</span>
+                          <span className={styles.voluntarioValue}>{apadr.telefono || '-'}</span>
+                        </div>
+                        <div className={styles.voluntarioItem}>
+                          <span className={styles.voluntarioLabel}>Visibilidad</span>
+                          <span className={styles.voluntarioValue}>{apadr.mostrar_publico ? 'Público' : 'Privado'}</span>
+                        </div>
+                        <div className={styles.voluntarioItem}>
+                          <span className={styles.voluntarioLabel}>Fecha solicitud</span>
+                          <span className={styles.voluntarioValue}>{apadr.created_at ? new Date(apadr.created_at).toLocaleDateString('es-ES') : '-'}</span>
+                        </div>
+                      </div>
+                      {apadr.estado === 'pending' && (
+                        <button
+                          type="button"
+                          onClick={() => handleEliminarSolicitudApadrinamiento(apadr.id)}
+                          className={styles.socioCancelButton}
+                          style={{ background: '#f57c00' }}
+                        >
+                          Eliminar solicitud
+                        </button>
+                      )}
+                      {apadr.estado === 'active' && (
+                        <button
+                          type="button"
+                          onClick={() => handleCancelarApadrinamiento(apadr.id)}
+                          className={styles.socioCancelButton}
+                          disabled={cancelandoApadrinamiento}
+                        >
+                          {cancelandoApadrinamiento ? 'Cancelando...' : 'Cancelar apadrinamiento'}
+                        </button>
+                      )}
+                    </div>
+                  ))}
+
+                  <Link to="/apadrinar" style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginTop: '20px',
+                    padding: '12px 24px',
+                    backgroundColor: '#1976D2',
+                    color: 'white',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    textDecoration: 'none',
+                    fontSize: '15px',
+                    boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)',
+                    transition: 'all 0.2s ease'
+                  }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>add_circle</span>
+                    Apadrinar otro animal
+                  </Link>
+                </div>
+              ) : (
+                <div className={styles.empty}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '48px', color: '#1976D2' }}>favorite</span>
+<p>No tienes apadrinamientos</p>
+                  <Link to="/apadrinar" style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 24px',
+                    backgroundColor: '#1976D2',
+                    color: 'white',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    textDecoration: 'none',
+                    fontSize: '15px',
+                    boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)',
+                    transition: 'all 0.2s ease'
+                  }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>pets</span>
+                    Apadrinar un animal
+                  </Link>
+                </div>
+)
+            )}
+
+            {activeTab === 'donaciones' && !isAdmin && (
+              <div className={styles.tabContent}>
+                <h3 className={styles.sectionTitle}>Mis Donaciones</h3>
+                {loadingDonaciones ? (
+                  <div className={styles.loading}>Cargando...</div>
+                ) : misDonaciones.length === 0 ? (
+                  <div className={styles.empty}>
+                    <span className="material-symbols-outlined">volunteer_activism</span>
+                    <p>No has realizado ninguna donación</p>
+                  </div>
+                ) : (
+                  <div className={styles.solicitudesList}>
+                    {misDonaciones.map((donacion) => (
+                      <div key={donacion.id} className={styles.solicitudItem}>
+                        <div className={styles.solicitudInfo}>
+                          <div className={styles.animalThumb}>
+                            <span className="material-symbols-outlined">volunteer_activism</span>
+                          </div>
+                          <div>
+                            <h4>{donacion.nombre || 'Anónimo'}</h4>
+                            <p className={styles.solicitudFecha}>
+                              {new Date(donacion.created_at).toLocaleDateString('es-ES')}
+                            </p>
+                          </div>
+                        </div>
+                        <div className={styles.solicitudActions}>
+                          <span className={`${styles.monto} ${styles.montoDonacion}`}>{donacion.monto}€</span>
+                          {donacion.estado === 'completada' && (
+                            <span className={`${styles.badge} ${styles.completada}`}>Completada</span>
+                          )}
+                          {donacion.estado === 'pending' && (
+                            <span className={`${styles.badge} ${styles.pending}`}>Pendiente</span>
+                          )}
+                          {donacion.estado === 'cancelada' && (
+                            <span className={`${styles.badge} ${styles.rejected}`}>Cancelada</span>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -879,6 +1886,24 @@ function Perfil() {
                 <button type="submit" className="btn btn-primary">{editingAnimal ? 'Actualizar' : 'Crear'}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {modalAcogida.show && (
+        <div className={styles.modalOverlay} onClick={() => setModalAcogida({ show: false })}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <span className="material-symbols-outlined" style={{ fontSize: '48px', color: '#1976D2' }}>home</span>
+            <h3>Ya tienes una solicitud de acogida</h3>
+            <p>Tienes una solicitud en curso. ¿Quieres enviar otra?</p>
+            <div className={styles.modalButtons}>
+              <button onClick={() => setModalAcogida({ show: false })} className={styles.btnCancel}>
+                Cancelar
+              </button>
+              <button onClick={() => { setModalAcogida({ show: false }); navigate('/acogida'); }} className={styles.btnConfirm}>
+                Sí, enviar otra
+              </button>
+            </div>
           </div>
         </div>
       )}

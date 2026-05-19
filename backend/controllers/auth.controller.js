@@ -63,6 +63,9 @@ const authController = {
           nombre: usuario.nombre,
           email: usuario.email,
           rol: usuario.rol,
+          es_voluntario: usuario.es_voluntario || false,
+          voluntario_activo: usuario.voluntario_activo || false,
+          es_socio: usuario.es_socio || false,
         },
       });
     } catch (err) {

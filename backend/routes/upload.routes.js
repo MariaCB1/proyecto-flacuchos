@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const storage = require('../config/storage');
 const authMiddleware = require('../middlewares/auth.middleware');
-const roleMiddleware = require('../middlewares/role.middleware');
+const { roleMiddleware } = require('../middlewares/role.middleware');
 
 const router = express.Router();
 

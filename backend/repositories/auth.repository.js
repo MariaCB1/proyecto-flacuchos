@@ -5,7 +5,7 @@ const { query } = require('../config/db');
 const authRepository = {
   async findByEmail(email) {
     const result = await query(
-      'SELECT id, nombre, email, contrasena, rol, created_at, updated_at FROM usuarios WHERE email = $1',
+      'SELECT id, nombre, email, contrasena, rol, es_voluntario, voluntario_activo, es_socio, created_at, updated_at FROM usuarios WHERE email = $1',
       [email]
     );
     return result.rows[0];
@@ -28,7 +28,7 @@ const authRepository = {
 
   async findById(id) {
     const result = await query(
-      'SELECT id, nombre, email, rol, created_at, updated_at FROM usuarios WHERE id = $1',
+      'SELECT id, nombre, email, contrasena, rol, es_voluntario, voluntario_activo, es_socio, created_at, updated_at FROM usuarios WHERE id = $1',
       [id]
     );
     return result.rows[0];

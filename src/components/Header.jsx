@@ -66,18 +66,7 @@ function Header() {
           <ul ref={menuRef} className={`${styles.navLinks} ${mobileMenuOpen ? styles.active : ''}`}>
             <li><Link to="/" onClick={() => setMobileMenuOpen(false)}>Quiénes Somos</Link></li>
             <li><Link to="/adopciones" onClick={() => setMobileMenuOpen(false)}>Adopciones</Link></li>
-            <li className={styles.dropdown}>
-              <button className={styles.dropdownToggle} onClick={() => toggleDropdown('ayudar')}>
-                Cómo Ayudar <span className="material-symbols-outlined">expand_more</span>
-              </button>
-              <ul className={`${styles.dropdownMenu} ${openDropdowns.ayudar ? styles.open : ''}`}>
-                <li><Link to="/como-ayudar#donar" onClick={() => setMobileMenuOpen(false)}>Haz un donativo</Link></li>
-                <li><Link to="/como-ayudar#socio" onClick={() => setMobileMenuOpen(false)}>Hazte socio</Link></li>
-                <li><Link to="/como-ayudar#voluntario" onClick={() => setMobileMenuOpen(false)}>Hazte voluntario</Link></li>
-                <li><Link to="/como-ayudar#acogida" onClick={() => setMobileMenuOpen(false)}>Casa de acogida</Link></li>
-                <li><Link to="/como-ayudar#apadrinar" onClick={() => setMobileMenuOpen(false)}>Apadrinamiento</Link></li>
-              </ul>
-            </li>
+            <li><Link to="/como-ayudar" onClick={() => setMobileMenuOpen(false)}>Cómo Ayudar</Link></li>
             <li><Link to="/transparencia" onClick={() => setMobileMenuOpen(false)}>Transparencia</Link></li>
             <li className={styles.dropdown}>
               <button className={styles.dropdownToggle} onClick={() => toggleDropdown('novedades')}>

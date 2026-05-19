@@ -22,7 +22,7 @@
 }
 
 .help {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    background: linear-gradient(135deg, #1976D2 0%, #0D47A1 100%);
 }
 
 .transparency {

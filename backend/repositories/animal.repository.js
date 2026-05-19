@@ -2,7 +2,20 @@ const { query } = require('../config/db');
 
 const animalRepository = {
   async getAll(filtros = {}) {
-    let sql = 'SELECT * FROM animales WHERE 1=1';
+    let sql = `SELECT a.*,
+      COALESCE(
+        (SELECT json_agg(
+          json_build_object(
+            'nombre', u.nombre,
+            'mostrar', ap.mostrar_publico
+          )
+        )
+        FROM usuarios u
+        JOIN apadrinamientos ap ON u.id = ap.usuario_id
+        WHERE ap.animal_id = a.id AND ap.estado = 'active'),
+        '[]'::json
+      ) as padrinos
+      FROM animales a WHERE 1=1`;
     const values = [];
     let paramIndex = 1;
 
@@ -334,7 +347,9 @@ const animalRepository = {
       imagen_url: 'imagen_url',
       peso: 'peso',
       urgente: 'urgente',
-      estado: 'estado'
+      estado: 'estado',
+      nombre_padrino: 'nombre_padrino',
+      en_acogida: 'en_acogida'
     };
 
     for (const [key, dbField] of Object.entries(fieldMapping)) {
