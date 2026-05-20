@@ -29,6 +29,9 @@ const FormularioSocio = lazy(() => import('./pages/FormularioSocio'));
 const FormularioApadrinamiento = lazy(() => import('./pages/FormularioApadrinamiento'));
 const FormularioVoluntario = lazy(() => import('./pages/FormularioVoluntario'));
 const AdminVoluntarios = lazy(() => import('./pages/AdminVoluntarios'));
+const AvisoLegal = lazy(() => import('./pages/AvisoLegal'));
+const PoliticaPrivacidad = lazy(() => import('./pages/PoliticaPrivacidad'));
+const PoliticaCookies = lazy(() => import('./pages/PoliticaCookies'));
 
 function Loading() {
     return <div style={{ padding: '100px', textAlign: 'center' }}>Cargando...</div>;
@@ -105,6 +108,9 @@ function AppContent() {
                 <AdminVoluntarios />
               </AdminRoute>
             } />
+            <Route path="/aviso-legal" element={<AvisoLegal />} />
+            <Route path="/politica-privacidad" element={<PoliticaPrivacidad />} />
+            <Route path="/politica-cookies" element={<PoliticaCookies />} />
           </Routes>
         </Suspense>
       </main>

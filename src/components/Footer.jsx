@@ -32,9 +32,9 @@ function Footer() {
                 <div className={styles.footerBottom}>
                     <p>© 2026 Protectora de Animales Flacuchos - CIF: G-56120157</p>
                     <div className={styles.legalLinks}>
-                        <a href="#">Aviso Legal</a>
-                        <a href="#">Política de Privacidad</a>
-                        <a href="#">Política de Cookies</a>
+                        <Link to="/aviso-legal">Aviso Legal</Link>
+                        <Link to="/politica-privacidad">Política de Privacidad</Link>
+                        <Link to="/politica-cookies">Política de Cookies</Link>
                     </div>
                 </div>
             </div>
