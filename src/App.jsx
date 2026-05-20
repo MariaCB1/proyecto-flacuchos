@@ -33,6 +33,11 @@ const AvisoLegal = lazy(() => import('./pages/AvisoLegal'));
 const PoliticaPrivacidad = lazy(() => import('./pages/PoliticaPrivacidad'));
 const PoliticaCookies = lazy(() => import('./pages/PoliticaCookies'));
 
+const NotFound = lazy(() => import('./pages/NotFound'));
+const Forbidden = lazy(() => import('./pages/Forbidden'));
+const ServerError = lazy(() => import('./pages/ServerError'));
+const ServiceUnavailable = lazy(() => import('./pages/ServiceUnavailable'));
+
 function Loading() {
     return <div style={{ padding: '100px', textAlign: 'center' }}>Cargando...</div>;
 }
@@ -111,6 +116,12 @@ function AppContent() {
             <Route path="/aviso-legal" element={<AvisoLegal />} />
             <Route path="/politica-privacidad" element={<PoliticaPrivacidad />} />
             <Route path="/politica-cookies" element={<PoliticaCookies />} />
+            
+            <Route path="/404" element={<NotFound />} />
+            <Route path="/403" element={<Forbidden />} />
+            <Route path="/500" element={<ServerError />} />
+            <Route path="/503" element={<ServiceUnavailable />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </main>
