@@ -252,6 +252,11 @@ function Transparencia() {
                                             ))}
                                             <option value="nuevo">+ Añadir nuevo año</option>
                                         </select>
+                                        {añoSeleccionado && (
+                                            <button className="btn btn-primary" onClick={() => setModalJustificante({ año: añoSeleccionado, concepto: '', importe: '' })}>
+                                                + Añadir justificante
+                                            </button>
+                                        )}
                                     </div>
                                 )}
 
