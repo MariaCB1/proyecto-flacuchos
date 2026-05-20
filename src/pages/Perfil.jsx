@@ -1329,62 +1329,71 @@ function Perfil() {
             )}
 
 {activeTab === 'inscripciones' && (
-              <div className={styles.tabContent}>
-                <h3 className={styles.sectionTitle}>Mis Inscripciones a Eventos</h3>
+              <div className={styles.inscripcionesSection}>
+                <h3 className={styles.sectionTitle}>
+                  Mis Inscripciones a Eventos
+                </h3>
                 {loadingInscripciones ? (
-                  <div className={styles.loading}>Cargando...</div>
+                  <div className={styles.loadingInscripciones}>Cargando...</div>
                 ) : misInscripciones.length === 0 ? (
-                  <div className={styles.empty}>
+                  <div className={styles.emptyInscripciones}>
                     <span className="material-symbols-outlined">event_busy</span>
                     <p>No te has inscrito a ningún evento</p>
                   </div>
                 ) : (
-                  <div className={styles.solicitudesGrid}>
-                    {misInscripciones.map((insc) => (
-                      <div key={insc.id} className={styles.solicitudCard}>
-                        <div className={styles.solicitudInfo}>
-                          <div className={styles.solicitudImage}>
+                  <div className={styles.inscripcionesGrid}>
+                    {misInscripciones.map((insc) => {
+                      const eventoDate = new Date(insc.evento_fecha);
+                      if (insc.evento_hora) {
+                        const horaInicio = insc.evento_hora.split(' - ')[0];
+                        const [horas, minutos] = horaInicio.split(':').map(Number);
+                        eventoDate.setHours(horas, minutos, 0, 0);
+                      }
+                      const eventoPasado = eventoDate < new Date();
+                      
+                      return (
+                        <div 
+                          key={insc.id} 
+                          className={styles.inscripcionCard}
+                          onClick={() => navigate(`/eventos?evento=${insc.evento_id}`)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <div className={styles.inscripcionCardHeader}>
                             {insc.evento_imagen ? (
-                              <img src={insc.evento_imagen} alt={insc.evento_titulo} />
+                              <img src={insc.evento_imagen} alt={insc.evento_titulo} className={styles.inscripcionCardImage} />
                             ) : (
-                              <span className="material-symbols-outlined">event</span>
+                              <div className={styles.inscripcionCardImagePlaceholder}>
+                                <span className="material-symbols-outlined">event</span>
+                              </div>
+                            )}
+                            <div className={styles.inscripcionCardInfo}>
+                              <h4>{insc.evento_titulo || 'Evento'}</h4>
+                              <p className={styles.inscripcionCardFecha}>
+                                <span className="material-symbols-outlined">calendar_today</span>
+                                {insc.evento_fecha && new Date(insc.evento_fecha).toLocaleDateString('es-ES')}
+                              </p>
+                            </div>
+                          </div>
+                          <div className={styles.inscripcionCardBody}>
+                            <span className={`${styles.badge} ${eventoPasado ? styles.badgeExpired : styles.badgeSuccess}`}>
+                              {eventoPasado ? 'Evento ya pasado' : 'Inscrito'}
+                            </span>
+                            {!eventoPasado && (
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleCancelarInscripcion(insc.id, insc.evento_id, insc.evento_fecha, insc.evento_hora);
+                                }}
+                                className={styles.btnEliminarSolicitud}
+                                title="Cancelar inscripción"
+                              >
+                                <span className="material-symbols-outlined">delete</span>
+                              </button>
                             )}
                           </div>
-                          <div className={styles.solicitudDetails}>
-                            <h4>{insc.evento_titulo || 'Evento'}</h4>
-                            <p className={styles.solicitudFecha}>
-                              {insc.evento_fecha && new Date(insc.evento_fecha).toLocaleDateString('es-ES')}
-                            </p>
-                          </div>
                         </div>
-                        <div className={styles.solicitudActions}>
-                          {(() => {
-                            const eventoDate = new Date(insc.evento_fecha);
-                            if (insc.evento_hora) {
-                              const horaInicio = insc.evento_hora.split(' - ')[0];
-                              const [horas, minutos] = horaInicio.split(':').map(Number);
-                              eventoDate.setHours(horas, minutos, 0, 0);
-                            }
-                            const eventoPasado = eventoDate < new Date();
-                            
-                            return (
-                              <>
-                                <span className={`${styles.badge} ${styles.badgeSuccess}`}>Inscrito</span>
-                                {!eventoPasado && (
-                                  <button 
-                                    onClick={() => handleCancelarInscripcion(insc.id, insc.evento_id, insc.evento_fecha, insc.evento_hora)}
-                                    className={styles.btnEliminarSolicitud}
-                                    title="Cancelar inscripción"
-                                  >
-                                    <span className="material-symbols-outlined">delete</span>
-                                  </button>
-                                )}
-                              </>
-                            );
-                          })()}
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
