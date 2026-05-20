@@ -15,6 +15,7 @@ const inscripcionesRoutes = require('./routes/inscripciones.routes');
 const stripeRoutes = require('./routes/stripe.routes');
 const socioRoutes = require('./routes/socio.routes');
 const voluntarioRoutes = require('./routes/voluntario.routes');
+const transparenciaRoutes = require('./routes/transparencia.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -34,15 +35,17 @@ app.get('/health', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/usuarios', userRoutes);
 app.use('/notificaciones', notificationRoutes);
-app.use('/', animalRoutes);
 app.use('/upload', uploadRoutes);
 app.use('/contacto', contactoRoutes);
-app.use('/', noticiaRoutes);
 app.use('/eventos', eventosRoutes);
 app.use('/inscripciones', inscripcionesRoutes);
 app.use('/stripe', stripeRoutes);
 app.use('/socios', socioRoutes);
 app.use('/voluntarios', voluntarioRoutes);
+app.use('/transparencia', transparenciaRoutes);
+app.use('/', animalRoutes);
+app.use('/', noticiaRoutes);
+
 const apadrinamientoRoutes = require('./routes/apadrinamiento.routes');
 const resumenRoutes = require('./routes/resumen.routes');
 app.use('/apadrinamientos', apadrinamientoRoutes);

@@ -576,4 +576,55 @@ export const resumenApi = {
   },
 };
 
+export const transparenciaApi = {
+  async getDocumentos() {
+    return api.get('/transparencia/documentos');
+  },
+
+  async updateDocumento(tipo, data) {
+    return api.put(`/transparencia/documentos/${tipo}`, data);
+  },
+
+async uploadFile(file) {
+    const formData = new FormData();
+    formData.append('imagen', file);
+
+    const response = await fetch(`${API_URL}/upload/transparencia`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Error al subir archivo');
+    }
+
+    return response.json();
+  },
+
+  async getJustificantes(año = null) {
+    const query = año ? `?año=${año}` : '';
+    return api.get(`/transparencia/justificantes${query}`);
+  },
+
+  async getAñosJustificantes() {
+    return api.get('/transparencia/justificantes/anios');
+  },
+
+  async createJustificante(data) {
+    return api.post('/transparencia/justificantes', data);
+  },
+
+  async updateJustificante(id, data) {
+    return api.put(`/transparencia/justificantes/${id}`, data);
+  },
+
+  async deleteJustificante(id) {
+    return api.delete(`/transparencia/justificantes/${id}`);
+  },
+};
+
 export default api;

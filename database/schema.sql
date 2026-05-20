@@ -570,5 +570,48 @@ ALTER TYPE tipo_notificacion ADD VALUE 'donacion_cancelada';
 ALTER TYPE tipo_notificacion ADD VALUE 'donacion_pending';
 
 -- ============================================
+-- TABLA: DOCUMENTOS TRANSPARENCIA
+-- ============================================
+DROP TABLE IF EXISTS documentos_transparencia CASCADE;
+
+CREATE TABLE documentos_transparencia (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tipo TEXT UNIQUE NOT NULL,
+    titulo TEXT NOT NULL,
+    contenido TEXT,
+    archivo_url TEXT,
+    botones_json JSONB DEFAULT '[]',
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_documentos_tipo ON documentos_transparencia(tipo);
+
+-- Seed inicial de los 5 documentos de transparencia
+INSERT INTO documentos_transparencia (tipo, titulo, contenido, botones_json) VALUES
+('cif', 'Identificación Legal', 'Protectora Flacuchos es una asociación sin ánimo de lucro registrada en España con CIF G-56120157. Nuestra sede se encuentra en Diseminado Diseminados, 822, 14850 Baena, Córdoba. Nuestra misión es rescatar, cuidar y encontrar hogares definitivos para animales abandonados en Baena y Albendín, promoviendo la adopción responsable y la tenencia consciente de mascotas.', '[]'),
+('estatutos', 'Estatutos de la Asociación', 'Los estatutos son el documento legal que rige el funcionamiento de nuestra protectora. En ellos se establecen nuestros objetivos, estructura organizativa, derechos de los socios y normas de actuación. Puedes consultarlos para conocer en detalle cómo trabajamos.', '[{"label": "Descargar Estatutos", "url": ""}]'),
+('memoria', 'Memorias de Actividades', 'Cada año publicamos una memoria de actividades donde resumimos nuestro trabajo: número de rescates, adopciones successfules, campañas de esterilización, eventos realizados y animales currently en nuestro cuidado. Gracias a socios, donantes y voluntarios podemos seguir salvando vidas.', '[{"label": "Memoria 2025", "url": ""}, {"label": "Memoria 2024", "url": ""}]'),
+('gastos', 'Transparencia Económica', 'En Protectora Flacuchos creemos que cada euro donado debe destinarse exclusivamente al bienestar animal. Gestionamos recursos de socios, donaciones y subvenciones con maxima transparencia. A continuación te mostramos cómo distribuimos nuestros gastos:', '[]'),
+('donacion', 'Certificado Fiscal para Donantes', 'Si has realizado una donación a Protectora Flacuchos y necesitas el certificado fiscal para desgravar en tu declaración de la renta, por favor envía un correo electrónico a flacuchosbaena@gmail.com con los siguientes datos: Nombre completo, DNI/NIE, Dirección completa, Email de contacto, Año de la donación, Cantidad donada (opcional). Nuestro equipo tramitara tu certificado y te lo enviara en un plazo de 7-10 dias hábiles.', '[{"label": "Solicitar Certificado", "url": "mailto:flacuchosbaena@gmail.com"}]');
+
+-- ============================================
+-- TABLA: JUSTIFICANTES GASTOS
+-- ============================================
+DROP TABLE IF EXISTS justificantes_gastos CASCADE;
+
+CREATE TABLE justificantes_gastos (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    año INTEGER NOT NULL,
+    concepto TEXT NOT NULL,
+    importe DECIMAL(12,2) NOT NULL,
+    archivo_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_justificantes_año ON justificantes_gastos(año);
+
+-- ============================================
 -- FIN DEL ESQUEMA
 -- ============================================

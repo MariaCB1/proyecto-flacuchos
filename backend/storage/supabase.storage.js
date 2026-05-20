@@ -1,11 +1,11 @@
 const supabase = require('../config/supabase');
 
-const BUCKET_NAME = 'animales';
+const DEFAULT_BUCKET = 'animales';
 
 module.exports = {
-  async upload(buffer, fileName, contentType = 'image/*') {
+  async upload(buffer, fileName, contentType = 'image/*', bucketName = DEFAULT_BUCKET) {
     const { data, error } = await supabase.storage
-      .from(BUCKET_NAME)
+      .from(bucketName)
       .upload(fileName, buffer, {
         contentType,
         upsert: false
@@ -16,15 +16,15 @@ module.exports = {
     }
 
     const { data: urlData } = supabase.storage
-      .from(BUCKET_NAME)
+      .from(bucketName)
       .getPublicUrl(fileName);
 
     return { url: urlData.publicUrl };
   },
 
-  async delete(fileName) {
+  async delete(fileName, bucketName = DEFAULT_BUCKET) {
     const { error } = await supabase.storage
-      .from(BUCKET_NAME)
+      .from(bucketName)
       .remove([fileName]);
 
     if (error) {
