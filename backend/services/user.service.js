@@ -1,4 +1,5 @@
 const userRepository = require('../repositories/user.repository');
+const authService = require('./auth.service');
 
 const userService = {
   async getPerfil(usuarioId) {
@@ -22,22 +23,38 @@ const userService = {
   async updatePerfil(usuarioId, datos) {
     const { nombre, email, contrasena } = datos;
 
-    if (email) {
+    const usuarioActual = await userRepository.findById(usuarioId);
+    let emailCambiado = false;
+
+    if (email && email !== usuarioActual.email) {
       const emailExistente = await userRepository.emailExists(email, usuarioId);
       if (emailExistente) {
         const error = new Error('El email ya está en uso');
         error.status = 400;
         throw error;
       }
+      emailCambiado = true;
     }
 
     const updates = {};
     if (nombre !== undefined) updates.nombre = nombre;
-    if (email !== undefined) updates.email = email;
+    if (email !== undefined) {
+      updates.email = email;
+      updates.email_verificado = false;
+    }
     if (contrasena !== undefined) updates.contrasena = contrasena;
 
     const usuario = await userRepository.update(usuarioId, updates);
-    return usuario;
+
+    if (emailCambiado) {
+      const { token } = await require('../repositories/auth.repository').generarTokenVerificacion(email);
+      await authService.enviarEmailVerificacion(email, usuario.nombre, token);
+    }
+
+    return {
+      ...usuario,
+      email_verificado: false
+    };
   },
 
   async validarEmail(email, excludeUserId) {

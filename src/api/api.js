@@ -111,6 +111,18 @@ export const authApi = {
   getCurrentUser() {
     return getUser();
   },
+
+  async verificarEmail(token) {
+    return api.post('/auth/verificar', { token });
+  },
+
+  async reenviarVerificacion() {
+    return api.post('/auth/reenviar-verificacion', { email: getUser()?.email });
+  },
+
+  async getEstadoVerificacion() {
+    return api.get('/auth/verificado');
+  },
 };
 
 export const userApi = {

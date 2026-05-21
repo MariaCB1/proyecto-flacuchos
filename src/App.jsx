@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
+import EmailVerificationRoute from './components/EmailVerificationRoute';
 import './index.css';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -17,6 +18,7 @@ const Contacto = lazy(() => import('./pages/Contacto'));
 const Login = lazy(() => import('./pages/LoginAuth'));
 const Registro = lazy(() => import('./pages/RegistroAuth'));
 const Recuperar = lazy(() => import('./pages/RecuperarContrasena'));
+const Verificar = lazy(() => import('./pages/Verificar'));
 const Perfil = lazy(() => import('./pages/Perfil'));
 const Notificaciones = lazy(() => import('./pages/Notificaciones'));
 const FormularioAdopcion = lazy(() => import('./pages/FormularioAdopcion'));
@@ -45,7 +47,7 @@ function Loading() {
 function AppContent() {
   const location = useLocation();
   const isAuthPage = useMemo(() => 
-    ['/login', '/registro', '/recuperar'].includes(location.pathname), 
+    ['/login', '/registro', '/recuperar', '/verificar'].includes(location.pathname), 
     [location.pathname]
   );
 
@@ -56,25 +58,40 @@ function AppContent() {
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/adopciones" element={<Adopciones />} />
+            <Route path="/adopciones" element={
+              <EmailVerificationRoute>
+                <Adopciones />
+              </EmailVerificationRoute>
+            } />
             <Route path="/adopcion/:animalId" element={
               <ProtectedRoute>
                 <FormularioAdopcion />
               </ProtectedRoute>
             } />
             <Route path="/como-ayudar" element={<ComoAyudar />} />
-            <Route path="/acogida" element={<FormularioAcogida />} />
+            <Route path="/acogida" element={
+              <ProtectedRoute>
+                <FormularioAcogida />
+              </ProtectedRoute>
+            } />
             <Route path="/transparencia" element={<Transparencia />} />
             <Route path="/noticias" element={<Noticias />} />
-            <Route path="/eventos" element={<Eventos />} />
+            <Route path="/eventos" element={
+              <EmailVerificationRoute>
+                <Eventos />
+              </EmailVerificationRoute>
+            } />
             <Route path="/contacto" element={<Contacto />} />
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />
             <Route path="/recuperar" element={<Recuperar />} />
+            <Route path="/verificar" element={<Verificar />} />
             <Route path="/perfil" element={
-              <ProtectedRoute>
-                <Perfil />
-              </ProtectedRoute>
+              <EmailVerificationRoute>
+                <ProtectedRoute>
+                  <Perfil />
+                </ProtectedRoute>
+              </EmailVerificationRoute>
             } />
             <Route path="/notificaciones" element={
               <ProtectedRoute>
@@ -98,16 +115,26 @@ function AppContent() {
               </AdminRoute>
             } />
             <Route path="/socio" element={
-              <ProtectedRoute>
-                <FormularioSocio />
-              </ProtectedRoute>
+              <EmailVerificationRoute>
+                <ProtectedRoute>
+                  <FormularioSocio />
+                </ProtectedRoute>
+              </EmailVerificationRoute>
             } />
             <Route path="/apadrinar" element={
-              <ProtectedRoute>
-                <FormularioApadrinamiento />
-              </ProtectedRoute>
+              <EmailVerificationRoute>
+                <ProtectedRoute>
+                  <FormularioApadrinamiento />
+                </ProtectedRoute>
+              </EmailVerificationRoute>
             } />
-            <Route path="/voluntario" element={<FormularioVoluntario />} />
+            <Route path="/voluntario" element={
+              <EmailVerificationRoute>
+                <ProtectedRoute>
+                  <FormularioVoluntario />
+                </ProtectedRoute>
+              </EmailVerificationRoute>
+            } />
             <Route path="/admin/voluntarios" element={
               <AdminRoute>
                 <AdminVoluntarios />

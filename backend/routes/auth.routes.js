@@ -9,5 +9,9 @@ router.post('/logout', authController.handleLogout);
 router.get('/verify', authMiddleware, authController.handleVerify);
 router.post('/recuperar-solicitud', authController.handleRecuperarSolicitud);
 router.post('/recuperar-restablecer', authController.handleRecuperarRestablecer);
+router.post('/verificar', authController.handleVerificarEmail);
+router.post('/reenviar-verificacion', authController.handleReenviarVerificacion);
+router.get('/verificado', authMiddleware, authController.handleGetEstadoVerificacion);
+router.post('/reenviar-publico', authController.handleReenviarPublico);
 
 module.exports = router;

@@ -24,9 +24,15 @@ export const AuthProvider = ({ children }) => {
         try {
           const result = await authApi.verify();
           setUser(result.user);
+          if (result.user.email_verificado) {
+            localStorage.removeItem('pendingVerificationEmail');
+          }
         } catch {
+          localStorage.removeItem('pendingVerificationEmail');
           authApi.logout();
         }
+      } else {
+        localStorage.removeItem('pendingVerificationEmail');
       }
       setLoading(false);
     };
@@ -38,6 +44,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await authApi.login(email, contrasena);
       setUser(data.user);
+      if (data.user.email_verificado === false) {
+        localStorage.setItem('pendingVerificationEmail', data.user.email);
+      } else {
+        localStorage.removeItem('pendingVerificationEmail');
+      }
       return data;
     } catch (err) {
       setError(err.message);
@@ -50,6 +61,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await authApi.registro(nombre, email, contrasena);
       setUser(data.user);
+      if (data.user.email_verificado === false) {
+        localStorage.setItem('pendingVerificationEmail', email);
+      }
       return data;
     } catch (err) {
       setError(err.message);
@@ -57,8 +71,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const clearPendingVerification = () => {
+    localStorage.removeItem('pendingVerificationEmail');
+  };
+
   const logout = () => {
     authApi.logout();
+    localStorage.removeItem('pendingVerificationEmail');
     setUser(null);
   };
 
@@ -92,7 +111,9 @@ export const AuthProvider = ({ children }) => {
     logout,
     updatePerfil,
     refreshUser,
+    clearPendingVerification,
     isAuthenticated: !!user,
+    isEmailVerificado: user?.email_verificado === true,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -5,7 +5,7 @@ const { query } = require('../config/db');
 const authRepository = {
   async findByEmail(email) {
     const result = await query(
-      'SELECT id, nombre, email, contrasena, rol, es_voluntario, voluntario_activo, es_socio, created_at, updated_at FROM usuarios WHERE email = $1',
+      'SELECT id, nombre, email, contrasena, rol, es_voluntario, voluntario_activo, es_socio, email_verificado, created_at, updated_at FROM usuarios WHERE email = $1',
       [email]
     );
     return result.rows[0];
@@ -28,7 +28,7 @@ const authRepository = {
 
   async findById(id) {
     const result = await query(
-      'SELECT id, nombre, email, contrasena, rol, es_voluntario, voluntario_activo, es_socio, created_at, updated_at FROM usuarios WHERE id = $1',
+      'SELECT id, nombre, email, contrasena, rol, es_voluntario, voluntario_activo, es_socio, email_verificado, created_at, updated_at FROM usuarios WHERE id = $1',
       [id]
     );
     return result.rows[0];
@@ -102,6 +102,55 @@ const authRepository = {
       `UPDATE usuarios SET token_recuperacion = NULL, token_expiracion = NULL WHERE email = $1`,
       [email]
     );
+  },
+
+  async create({ nombre, email, contrasena }) {
+    const hashedPassword = await bcrypt.hash(contrasena, 10);
+    const result = await query(
+      `INSERT INTO usuarios (nombre, email, contrasena, rol, email_verificado)
+       VALUES ($1, $2, $3, 'usuario', false)
+       RETURNING id, nombre, email, rol, email_verificado, created_at, updated_at`,
+      [nombre, email, hashedPassword]
+    );
+    return result.rows[0];
+  },
+
+  async generarTokenVerificacion(email) {
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiracion = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const result = await query(
+      `UPDATE usuarios SET token_verificacion = $1, token_verificacion_expiracion = $2 WHERE email = $3
+       RETURNING id, nombre, email`,
+      [token, expiracion, email]
+    );
+    return { token, usuario: result.rows[0] };
+  },
+
+  async findByTokenVerificacion(token) {
+    const result = await query(
+      `SELECT id, nombre, email FROM usuarios 
+       WHERE token_verificacion = $1 AND token_verificacion_expiracion > NOW()`,
+      [token]
+    );
+    return result.rows[0];
+  },
+
+  async verificarEmail(id) {
+    const result = await query(
+      `UPDATE usuarios SET email_verificado = true, token_verificacion = NULL, token_verificacion_expiracion = NULL 
+       WHERE id = $1
+       RETURNING id, nombre, email, email_verificado`,
+      [id]
+    );
+    return result.rows[0];
+  },
+
+  async getEmailVerificado(id) {
+    const result = await query(
+      'SELECT email_verificado FROM usuarios WHERE id = $1',
+      [id]
+    );
+    return result.rows[0]?.email_verificado || false;
   }
 };
 
