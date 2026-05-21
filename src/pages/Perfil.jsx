@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { animalApi, userApi, inscripcionesApi, contactoApi, stripeApi, voluntarioApi, socioApi, apadrinamientoApi } from '../api/api';
+import { animalApi, userApi, authApi, inscripcionesApi, contactoApi, stripeApi, voluntarioApi, socioApi, apadrinamientoApi } from '../api/api';
 import styles from './Perfil.module.css';
 
 const calculateStrength = (password) => {
@@ -112,6 +112,9 @@ function Perfil() {
 
   const [misDonaciones, setMisDonaciones] = useState([]);
   const [loadingDonaciones, setLoadingDonaciones] = useState(false);
+
+  const [emailVerificado, setEmailVerificado] = useState(true);
+  const [loadingVerificacion, setLoadingVerificacion] = useState(false);
 
   const [animales, setAnimales] = useState([]);
   const [loadingAnimales, setLoadingAnimales] = useState(false);
@@ -265,6 +268,9 @@ function Perfil() {
   useEffect(() => {
     if (user?.voluntario_activo !== undefined) {
       setVoluntarioActivo(user.voluntario_activo);
+    }
+    if (user?.email_verificado !== undefined) {
+      setEmailVerificado(user.email_verificado);
     }
   }, [user]);
 
@@ -595,7 +601,12 @@ function Perfil() {
       }
 
       await updatePerfil(datos);
-      setSuccess('Perfil actualizado correctamente');
+
+      if (email !== user.email) {
+        setSuccess('Perfil actualizado. Te hemos enviado un email de verificación a tu nuevo email. Por favor, verifícalo para seguir usando todas las funciones.');
+      } else {
+        setSuccess('Perfil actualizado correctamente');
+      }
     } catch (err) {
       setError(err.message || 'Error al actualizar');
     } finally {
@@ -636,6 +647,18 @@ function Perfil() {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const handleReenviarVerificacion = async () => {
+    if (!confirm('¿Reenviar email de verificación?')) return;
+    setLoadingVerificacion(true);
+    try {
+      await authApi.reenviarVerificacion();
+      alert('Se ha enviado un nuevo email de verificación');
+    } catch (err) {
+      alert(err.message || 'Error al reenviar verificación');
+    }
+    setLoadingVerificacion(false);
   };
 
   const handleAprobar = async (solicitudId) => {
@@ -790,17 +813,19 @@ function Perfil() {
               </button>
             )}
 
-            <button
-              className={`${styles.menuBtn} ${activeTab === 'datos' ? styles.active : ''}`}
-              onClick={() => setActiveTab('datos')}
-            >
-              <span className="material-symbols-outlined">person</span>
-              <span className={styles.btnText}>
-                <span className={styles.btnTitle}>Editar Mi Perfil</span>
-                <span className={styles.btnSubtitle}>Nombre y email</span>
-              </span>
-              <span className="material-symbols-outlined arrow">chevron_right</span>
-            </button>
+            {!isAdmin && (
+              <button
+                className={`${styles.menuBtn} ${activeTab === 'datos' ? styles.active : ''}`}
+                onClick={() => setActiveTab('datos')}
+              >
+                <span className="material-symbols-outlined">person</span>
+                <span className={styles.btnText}>
+                  <span className={styles.btnTitle}>Editar Mi Perfil</span>
+                  <span className={styles.btnSubtitle}>Nombre y email</span>
+                </span>
+                <span className="material-symbols-outlined arrow">chevron_right</span>
+              </button>
+            )}
 
             <button
               className={`${styles.menuBtn} ${activeTab === 'password' ? styles.active : ''}`}
@@ -916,6 +941,35 @@ function Perfil() {
 
             {activeTab === 'datos' && (
               <>
+                {!emailVerificado && (
+                  <div className={styles.verificacionBanner}>
+                    <span className="material-symbols-outlined">mark_email_unread</span>
+                    <div className={styles.bannerText}>
+                      <strong>Verifica tu email para acceder a todas las funciones</strong>
+                      <span>Se ha enviado un email de verificación a tu dirección. Revisa tu bandeja de entrada y spam.</span>
+                    </div>
+                  </div>
+                )}
+                <div className={styles.verificacionStatus}>
+                  <div className={`${styles.verificacionBadge} ${emailVerificado ? styles.verificado : styles.noVerificado}`}>
+                    <span className="material-symbols-outlined">
+                      {emailVerificado ? 'verified' : 'pending'}
+                    </span>
+                    <span>
+                      {emailVerificado ? 'Email verificado' : 'Email no verificado'}
+                    </span>
+                  </div>
+                  {!emailVerificado && (
+                    <button 
+                      type="button" 
+                      className={styles.reenviarBtn}
+                      onClick={handleReenviarVerificacion}
+                      disabled={loadingVerificacion}
+                    >
+                      {loadingVerificacion ? 'Enviando...' : 'Reenviar verificación'}
+                    </button>
+                  )}
+                </div>
                 <form onSubmit={handleSubmit} className={styles.form}>
                   <div className={styles.field}>
                     <label htmlFor="nombre"><span className="material-symbols-outlined">badge</span>Nombre completo</label>
@@ -925,6 +979,12 @@ function Perfil() {
                     <label htmlFor="email"><span className="material-symbols-outlined">mail</span>Email</label>
                     <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                   </div>
+                  {!emailVerificado && (
+                    <p className={styles.warningText}>
+                      <span className="material-symbols-outlined">info</span>
+                      Al cambiar tu email recibirás un nuevo email de verificación
+                    </p>
+                  )}
                   <button type="submit" className={styles.button} disabled={loading}>
                     {loading ? <><span className={styles.spinner}></span>Guardando...</> : <><span className="material-symbols-outlined">save</span>Guardar Cambios</>}
                   </button>

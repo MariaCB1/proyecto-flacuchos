@@ -24,6 +24,9 @@ const authService = {
 
     const usuario = await authRepository.create({ nombre, email, contrasena });
 
+    const { token: tokenVerificacion } = await authRepository.generarTokenVerificacion(email);
+    await this.enviarEmailVerificacion(email, nombre, tokenVerificacion);
+
     const token = this.generateToken(usuario);
 
     return {
@@ -36,6 +39,7 @@ const authService = {
         es_voluntario: usuario.es_voluntario || false,
         voluntario_activo: usuario.voluntario_activo || false,
         es_socio: usuario.es_socio || false,
+        email_verificado: false,
       },
     };
   },
@@ -67,6 +71,7 @@ const authService = {
         es_voluntario: usuario.es_voluntario || false,
         voluntario_activo: usuario.voluntario_activo || false,
         es_socio: usuario.es_socio || false,
+        email_verificado: usuario.email_verificado || false,
       },
     };
   },
@@ -92,7 +97,10 @@ async verificarToken(token) {
         error.status = 401;
         throw error;
       }
-      return usuario;
+      return {
+        ...usuario,
+        email_verificado: usuario.email_verificado || false
+      };
     } catch (error) {
       const err = new Error('Token inválido');
       err.status = 401;
@@ -255,6 +263,134 @@ async verificarToken(token) {
       <p style="color: #333333; font-size: 14px;">
         Por seguridad, te recomendamos cambiar tu contraseña regularmente y no usar la misma en otros sitios.
       </p>
+    </div>
+    <div class="email-footer">
+      <p>Flacuchos Baena - Protectora de animales</p>
+    </div>
+  </div>
+</body>
+</html>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+  },
+
+  async verificarEmail(token) {
+    const usuario = await authRepository.findByTokenVerificacion(token);
+    if (!usuario) {
+      const error = new Error('Token inválido o expirado');
+      error.status = 400;
+      throw error;
+    }
+
+    const usuarioVerificado = await authRepository.verificarEmail(usuario.id);
+    return { message: 'Email verificado correctamente', email: usuarioVerificado.email };
+  },
+
+  async reenviarVerificacion(email) {
+    const usuario = await authRepository.findByEmail(email);
+    if (!usuario) {
+      return { message: 'Si el email existe, recibirás un enlace de verificación' };
+    }
+
+    if (usuario.email_verificado) {
+      return { message: 'El email ya está verificado' };
+    }
+
+    const { token } = await authRepository.generarTokenVerificacion(email);
+    await this.enviarEmailVerificacion(email, usuario.nombre, token);
+
+    return { message: 'Se ha enviado un nuevo email de verificación' };
+  },
+
+  async getEstadoVerificacion(usuarioId) {
+    const verificado = await authRepository.getEmailVerificado(usuarioId);
+    return { verificado };
+  },
+
+  async reenviarVerificacionPublico(email) {
+    const usuario = await authRepository.findByEmail(email);
+    if (!usuario) {
+      const error = new Error('El email no está registrado');
+      error.status = 404;
+      throw error;
+    }
+
+    if (usuario.email_verificado) {
+      const error = new Error('El email ya está verificado');
+      error.status = 400;
+      throw error;
+    }
+
+    const { token } = await authRepository.generarTokenVerificacion(email);
+    await this.enviarEmailVerificacion(email, usuario.nombre, token);
+
+    return { message: 'Email de verificación enviado' };
+  },
+
+  async enviarEmailVerificacion(email, nombre, token) {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const linkVerificacion = `${frontendUrl}/verificar?token=${token}`;
+
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: email,
+      subject: 'Verifica tu email - Flacuchos Baena',
+      html: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+    .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+    .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+    .email-body { padding: 30px 40px; }
+    .section { margin-bottom: 25px; }
+    .btn { display: inline-block; background: #00897B; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 16px; margin: 20px 0; }
+    .info { background: #e3f2fd; border-radius: 12px; padding: 20px; border-left: 4px solid #1976d2; margin-top: 20px; }
+    .info-title { color: #1565c0; font-weight: 700; margin-bottom: 8px; }
+    .info-text { color: #333333; font-size: 14px; }
+    .email-footer { background: #00897B; padding: 20px 40px; text-align: center; }
+    .email-footer p { color: rgba(255,255,255,0.9); font-size: 12px; }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .email-container { border-radius: 0; }
+      .email-header, .email-body, .email-footer { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <h1>Flacuchos Baena</h1>
+      <p>Verificación de email</p>
+    </div>
+    <div class="email-body">
+      <div class="section">
+        <p style="color: #333333; font-size: 16px; margin-bottom: 20px;">
+          Hola <strong>${nombre}</strong>,
+        </p>
+        <p style="color: #333333; font-size: 16px; margin-bottom: 20px;">
+          ¡Gracias por registrarte en Flacuchos Baena! Para completar tu registro, por favor verifica tu email haciendo clic en el siguiente botón:
+        </p>
+        <div style="text-align: center;">
+          <a href="${linkVerificacion}" class="btn" style="color: white; text-decoration: none;">Verificar mi email</a>
+        </div>
+      </div>
+      <div class="info">
+        <div class="info-title">📧 Importante</div>
+        <div class="info-text">
+          Este enlace de verificación caduca en <strong>24 horas</strong>. Si no verificas tu email, no podrás acceder a todas las funciones de la web.
+        </div>
+      </div>
     </div>
     <div class="email-footer">
       <p>Flacuchos Baena - Protectora de animales</p>

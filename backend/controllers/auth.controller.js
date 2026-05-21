@@ -21,6 +21,14 @@ const recuperarRestablecerSchema = Joi.object({
   contrasena: Joi.string().min(6).max(50).required(),
 });
 
+const verificarEmailSchema = Joi.object({
+  token: Joi.string().required(),
+});
+
+const reenviarVerificacionSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
 const authController = {
   async handleRegistro(req, res) {
     try {
@@ -66,6 +74,7 @@ const authController = {
           es_voluntario: usuario.es_voluntario || false,
           voluntario_activo: usuario.voluntario_activo || false,
           es_socio: usuario.es_socio || false,
+          email_verificado: usuario.email_verificado || false,
         },
       });
     } catch (err) {
@@ -95,6 +104,57 @@ const authController = {
       }
 
       const result = await authService.restablecerContrasena(value.token, value.contrasena);
+      res.json(result);
+    } catch (err) {
+      res.status(err.status || 500).json({ error: err.message });
+    }
+  },
+
+  async handleVerificarEmail(req, res) {
+    try {
+      const { error, value } = verificarEmailSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
+
+      const result = await authService.verificarEmail(value.token);
+      res.json(result);
+    } catch (err) {
+      res.status(err.status || 500).json({ error: err.message });
+    }
+  },
+
+  async handleReenviarVerificacion(req, res) {
+    try {
+      const { error, value } = reenviarVerificacionSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
+
+      const result = await authService.reenviarVerificacion(value.email);
+      res.json(result);
+    } catch (err) {
+      res.status(err.status || 500).json({ error: err.message });
+    }
+  },
+
+  async handleGetEstadoVerificacion(req, res) {
+    try {
+      const result = await authService.getEstadoVerificacion(req.user.id);
+      res.json(result);
+    } catch (err) {
+      res.status(err.status || 500).json({ error: err.message });
+    }
+  },
+
+  async handleReenviarPublico(req, res) {
+    try {
+      const { error, value } = reenviarVerificacionSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+      }
+
+      const result = await authService.reenviarVerificacionPublico(value.email);
       res.json(result);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
