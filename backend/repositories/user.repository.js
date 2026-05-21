@@ -4,7 +4,7 @@ const { query } = require('../config/db');
 const userRepository = {
   async findById(id) {
     const result = await query(
-      'SELECT id, nombre, email, contrasena, rol, es_voluntario, voluntario_activo, es_socio, created_at, updated_at FROM usuarios WHERE id = $1',
+      'SELECT id, nombre, email, contrasena, rol, es_voluntario, voluntario_activo, es_socio, email_verificado, created_at, updated_at FROM usuarios WHERE id = $1',
       [id]
     );
     return result.rows[0];
@@ -12,13 +12,13 @@ const userRepository = {
 
   async findByEmail(email) {
     const result = await query(
-      'SELECT id, nombre, email, rol, es_voluntario, voluntario_activo, es_socio FROM usuarios WHERE email = $1',
+      'SELECT id, nombre, email, rol, es_voluntario, voluntario_activo, es_socio, email_verificado FROM usuarios WHERE email = $1',
       [email]
     );
     return result.rows[0];
   },
 
-  async update(id, { nombre, email, contrasena }) {
+  async update(id, { nombre, email, contrasena, email_verificado }) {
     const fields = [];
     const values = [];
     let paramIndex = 1;
@@ -30,6 +30,10 @@ const userRepository = {
     if (email !== undefined) {
       fields.push(`email = $${paramIndex++}`);
       values.push(email);
+    }
+    if (email_verificado !== undefined) {
+      fields.push(`email_verificado = $${paramIndex++}`);
+      values.push(email_verificado);
     }
     if (contrasena !== undefined) {
       const hashedPassword = await bcrypt.hash(contrasena, 10);
@@ -44,7 +48,7 @@ const userRepository = {
     values.push(id);
     const result = await query(
       `UPDATE usuarios SET ${fields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = $${paramIndex}
-       RETURNING id, nombre, email, rol, es_voluntario, voluntario_activo, created_at, updated_at`,
+       RETURNING id, nombre, email, rol, es_voluntario, voluntario_activo, email_verificado, created_at, updated_at`,
       values
     );
     return result.rows[0];

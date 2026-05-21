@@ -39,6 +39,7 @@ const RegistroAuth = () => {
   const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [registroExitoso, setRegistroExitoso] = useState(false);
   const { registro } = useAuth();
   const navigate = useNavigate();
 
@@ -62,7 +63,7 @@ const RegistroAuth = () => {
 
     try {
       await registro(nombre, email, contrasena);
-      navigate('/');
+      setRegistroExitoso(true);
     } catch (err) {
       setError(err.message || 'Error al registrar');
     } finally {
@@ -73,18 +74,38 @@ const RegistroAuth = () => {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <Link to="/" className={styles.backBtn}>
-          <span className="material-symbols-outlined">arrow_back</span>
-        </Link>
-        <div className={styles.header}>
-          <div className={styles.logoIcon}>
-            <img src="/img/logo.png" alt="Flacuchos" />
-          </div>
-          <h1 className={styles.title}>Crear Cuenta</h1>
-          <p className={styles.subtitle}>Únete a la familia Flacuchos</p>
-        </div>
+        {registroExitoso ? (
+          <>
+            <div className={styles.header}>
+              <div className={styles.logoIcon}>
+                <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'var(--primary)' }}>email</span>
+              </div>
+              <h1 className={styles.title}>¡Registro completado!</h1>
+              <p className={styles.subtitle}>Se ha enviado un email de verificación a tu correo. Por favor, verificalo antes de continuar.</p>
+            </div>
+            <div className={styles.footerSuccess}>
+              <button onClick={() => navigate('/')} className={styles.buttonSuccess}>
+                Ir a la página principal
+              </button>
+              <Link to="/login" className={styles.linkSuccess}>
+                ¿Ya verificado? Iniciar sesión
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <Link to="/" className={styles.backBtn}>
+              <span className="material-symbols-outlined">arrow_back</span>
+            </Link>
+            <div className={styles.header}>
+              <div className={styles.logoIcon}>
+                <img src="/img/logo.png" alt="Flacuchos" />
+              </div>
+              <h1 className={styles.title}>Crear Cuenta</h1>
+              <p className={styles.subtitle}>Únete a la familia Flacuchos</p>
+            </div>
 
-        {error && <div className={styles.error}>{error}</div>}
+            {error && <div className={styles.error}>{error}</div>}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
@@ -230,12 +251,14 @@ const RegistroAuth = () => {
         </form>
 
         <div className={styles.footer}>
-          <p>¿Ya tienes cuenta?</p>
-          <Link to="/login" className={styles.loginLink}>
-            <span className="material-symbols-outlined">login</span>
-            Iniciar Sesión
-          </Link>
-        </div>
+            <p>¿Ya tienes cuenta?</p>
+            <Link to="/login" className={styles.loginLink}>
+              <span className="material-symbols-outlined">login</span>
+              Iniciar Sesión
+            </Link>
+          </div>
+          </>
+        )}
       </div>
     </div>
   );
