@@ -256,17 +256,16 @@ const getFieldErrors = (paso) => {
   if (success) {
     return (
       <>
-        <PageHeader title={<><span className="material-symbols-outlined">check_circle</span> Solicitud Enviada</>} subtitle="Gracias por tu interés en adoptar" />
+        <PageHeader title="Solicitud Enviada" subtitle="Gracias por tu interés en adoptar" />
         <section className={styles.formSection}>
           <div className="container">
             <div className={styles.successMessage}>
-              <div className={styles.successIcon}>🎉</div>
               <h3>Tu solicitud ha sido enviada correctamente</h3>
               <p>Hemos recibido tu formulario de adopción. El equipo de Flacuchos revisará tu solicitud y te contactaremos pronto.</p>
               <p>Mientras tanto, puedes:</p>
               <div className={styles.successLinks}>
                 <Link to="/adopciones" className="btn btn-primary">Ver más animales</Link>
-                <Link to="/perfil" className="btn btn-secondary">Ver mis solicitudes</Link>
+                <Link to="/perfil?tab=solicitudes" className="btn btn-secondary">Ver mis solicitudes</Link>
               </div>
             </div>
           </div>

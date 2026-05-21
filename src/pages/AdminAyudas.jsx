@@ -190,7 +190,6 @@ function AdminAyudas() {
   };
 
   const handleRechazarApadrinamiento = (id) => {
-    setProcesandoApadrinamiento(id);
     setRechazoModal({ open: true, id: id, motivo: '' });
   };
 
@@ -207,8 +206,12 @@ function AdminAyudas() {
     }, {});
 
   const handleConfirmarRechazo = async () => {
-    setProcesandoApadrinamiento(rechazoModal.id);
+    if (!rechazoModal.motivo.trim()) {
+      alert('Por favor, escribe un motivo para el rechazo');
+      return;
+    }
     try {
+      setProcesandoApadrinamiento(rechazoModal.id);
       await apadrinamientoApi.rechazar(rechazoModal.id, rechazoModal.motivo);
       setRechazoModal({ open: false, id: null, motivo: '' });
       fetchApadrinamientos();
@@ -892,9 +895,9 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
                                   <button
                                     onClick={() => handleRechazarApadrinamiento(apadr.id)}
                                     className={styles.actionBtnRechazar}
-                                    disabled={procesandoApadrinamiento === apadr.id}
+                                    disabled={procesandoApadrinamiento !== null}
                                   >
-                                    Rechazar
+                                    {procesandoApadrinamiento !== null ? 'Procesando...' : 'Rechazar'}
                                   </button>
                                 </div>
                               )}
@@ -1371,8 +1374,8 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
               >
                 Cancelar
               </button>
-              <button onClick={handleConfirmarRechazo} className={styles.btnConfirm} disabled={procesandoApadrinamiento}>
-                {procesandoApadrinamiento ? 'Procesando...' : 'Rechazar'}
+              <button onClick={handleConfirmarRechazo} className={styles.btnConfirm} disabled={procesandoApadrinamiento !== null}>
+                {procesandoApadrinamiento !== null ? 'Procesando...' : 'Rechazar'}
               </button>
             </div>
           </div>

@@ -1,5 +1,7 @@
 const animalRepository = require('../repositories/animal.repository');
 const notificationService = require('../services/notification.service');
+const emailService = require('../services/email.service');
+const userRepository = require('../repositories/user.repository');
 
 const animalService = {
   async getAnimales(filtros) {
@@ -27,7 +29,19 @@ const animalService = {
       throw new Error('El animal no está disponible para adopción');
     }
 
-    return await animalRepository.createSolicitud(solicitudData);
+    const resultado = await animalRepository.createSolicitud(solicitudData);
+
+    // Enviar email al usuario
+    try {
+      const usuario = await userRepository.findById(usuarioId);
+      if (usuario) {
+        await emailService.enviarEmailSolicitudAdopcionCreada(usuario, animal);
+      }
+    } catch (emailErr) {
+      console.error('Error enviando email de solicitud:', emailErr.message);
+    }
+
+    return resultado;
   },
 
   async getMisSolicitudes(usuarioId) {
@@ -68,6 +82,33 @@ const animalService = {
       'Animal adoptado por otro usuario'
     );
 
+    // Cancelar apadrinamientos activos del animal
+    try {
+      const apadrinamientoService = require('./apadrinamiento.service');
+      await apadrinamientoService.cancelarPorAdopcion(solicitudObj.animal_id);
+    } catch (apadrErr) {
+      console.error('Error cancelando apadrinamientos por adopción:', apadrErr.message);
+    }
+
+    // Cancelar acogidas activas del animal
+    try {
+      const contactoService = require('./contacto.service');
+      await contactoService.cancelarAcogidaPorAdopcion(solicitudObj.animal_id);
+    } catch (acogidaErr) {
+      console.error('Error cancelando acogidas por adopción:', acogidaErr.message);
+    }
+
+    // Enviar email al usuario
+    try {
+      const usuario = await userRepository.findById(solicitudObj.usuario_id);
+      const animal = await animalRepository.getById(solicitudObj.animal_id);
+      if (usuario && animal) {
+        await emailService.enviarEmailSolicitudAprobada(usuario, animal);
+      }
+    } catch (emailErr) {
+      console.error('Error enviando email de aprobación:', emailErr.message);
+    }
+
     return { message: 'Solicitud aprobada y adopción creada' };
   },
 
@@ -84,6 +125,17 @@ const animalService = {
     }
 
     await animalRepository.updateSolicitudConMotivo(solicitudId, 'rejected', motivo);
+    
+    // Enviar email al usuario
+    try {
+      const usuario = await userRepository.findById(solicitudObj.usuario_id);
+      const animal = await animalRepository.getById(solicitudObj.animal_id);
+      if (usuario && animal) {
+        await emailService.enviarEmailSolicitudRechazada(usuario, animal, motivo);
+      }
+    } catch (emailErr) {
+      console.error('Error enviando email de rechazo:', emailErr.message);
+    }
     
     return { message: 'Solicitud rechazada' };
   },

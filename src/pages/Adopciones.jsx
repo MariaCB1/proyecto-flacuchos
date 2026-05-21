@@ -404,7 +404,13 @@ function Adopciones() {
 
             {isAdmin && (
               <div className={styles.addAnimalBar}>
-                <button onClick={() => setShowAnimalModal(true)} className={styles.addAnimalBtn}>
+                <button onClick={() => {
+                  setEditingAnimalId(null);
+                  setAnimalForm({ nombre: '', especie: 'perro', edad: '', tamano: 'mediano', caracter: '', salud: '', imagen_url: '', peso: '', urgente: false });
+                  setImagenFile(null);
+                  setImagenPreview(null);
+                  setShowAnimalModal(true);
+                }} className={styles.addAnimalBtn}>
                   <span className="material-symbols-outlined">add</span>
                   Agregar nuevo animal
                 </button>
