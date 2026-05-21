@@ -161,7 +161,7 @@ const NotificationBell = () => {
       await handleMarcarLeida(notif.id);
     }
     if (notif.tipo === 'solicitud_adopcion' || notif.tipo === 'solicitud_rechazada' || notif.tipo === 'solicitud_aprobada' || notif.tipo === 'cambio_estado') {
-      navigate(isAdmin ? '/admin/solicitudes' : '/perfil');
+      navigate(isAdmin ? '/admin/solicitudes' : '/perfil?tab=solicitudes');
     } else if (notif.tipo === 'solicitud_socio' || notif.tipo === 'solicitud_acogida' || notif.tipo === 'solicitud_acogida_recibida' || notif.tipo === 'solicitud_acogida_aprobada' || notif.tipo === 'solicitud_acogida_rechazada' || notif.tipo === 'solicitud_acogida_asignada' || notif.tipo === 'solicitud_acogida_aceptada') {
       navigate(isAdmin ? '/admin/ayudas?tab=acogidas' : '/perfil?tab=acogidas');
     } else if (notif.tipo === 'solicitud_eliminada') {

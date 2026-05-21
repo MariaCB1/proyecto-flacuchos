@@ -8,6 +8,7 @@
 CREATE OR REPLACE FUNCTION fn_notificar_nueva_solicitud_adopcion()
 RETURNS TRIGGER AS $$
 BEGIN
+    -- Notificar a todos los admins
     INSERT INTO notificaciones (usuario_id, tipo, mensaje, referencia_id)
     SELECT
         u.id,
@@ -18,6 +19,15 @@ BEGIN
     CROSS JOIN animales a
     WHERE u.rol = 'admin'
     AND a.id = NEW.animal_id;
+
+    -- Notificar al usuario solicitante
+    INSERT INTO notificaciones (usuario_id, tipo, mensaje, referencia_id)
+    VALUES (
+        NEW.usuario_id,
+        'solicitud_adopcion',
+        'Tu solicitud de adopción ha sido enviada correctamente',
+        NEW.id
+    );
 
     RETURN NEW;
 END;
@@ -39,8 +49,16 @@ BEGIN
         INSERT INTO notificaciones (usuario_id, tipo, mensaje, referencia_id)
         VALUES (
             NEW.usuario_id,
-            'cambio_estado',
-            'Tu solicitud de adopción ha sido: ' || NEW.estado,
+            CASE
+                WHEN NEW.estado = 'approved' THEN 'solicitud_aprobada'::tipo_notificacion
+                WHEN NEW.estado = 'rejected' THEN 'solicitud_rechazada'::tipo_notificacion
+                ELSE 'cambio_estado'::tipo_notificacion
+            END,
+            CASE
+                WHEN NEW.estado = 'approved' THEN '¡Tu solicitud de adopción ha sido aprobada!'
+                WHEN NEW.estado = 'rejected' THEN 'Tu solicitud de adopción ha sido rechazada'
+                ELSE 'Tu solicitud de adopción ha sido: ' || NEW.estado
+            END,
             NEW.id
         );
     END IF;

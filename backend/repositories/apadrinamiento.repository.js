@@ -181,6 +181,17 @@ const apadrinamientoRepository = {
     return result.rows[0];
   },
 
+  async getByAnimalIdMultiple(animalId) {
+    const result = await query(
+      `SELECT ap.*, u.nombre as usuario_nombre, u.email as usuario_email
+       FROM apadrinamientos ap
+       LEFT JOIN usuarios u ON ap.usuario_id = u.id
+       WHERE ap.animal_id = $1 AND ap.estado = 'active'`,
+      [animalId]
+    );
+    return result.rows;
+  },
+
   async delete(id, usuarioId) {
     const result = await query(
       `DELETE FROM apadrinamientos 

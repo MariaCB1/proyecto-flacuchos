@@ -191,6 +191,18 @@ const contactoRepository = {
       [animalId]
     );
     return result.rows[0];
+  },
+
+  async getAcogidasActivasPorAnimal(animalId) {
+    const result = await query(
+      `SELECT sca.*, u.nombre as usuario_nombre, u.email as usuario_email
+       FROM solicitud_casa_acogida sca
+       LEFT JOIN usuarios u ON sca.usuario_id = u.id
+       WHERE sca.animal_asignado_id = $1 
+       AND sca.estado IN ('asignado_pendiente', 'aceptado')`,
+      [animalId]
+    );
+    return result.rows;
   }
 };
 

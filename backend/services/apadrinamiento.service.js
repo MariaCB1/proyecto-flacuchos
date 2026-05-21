@@ -3,7 +3,7 @@ const cobroRepository = require('../repositories/cobro.repository');
 const notificationService = require('./notification.service');
 const emailService = require('./email.service');
 const userService = require('./user.service');
-const animalService = require('./animal.service');
+const animalRepository = require('../repositories/animal.repository');
 
 const apadrinamientoService = {
   async getAnimalesDisponibles(usuarioId) {
@@ -34,7 +34,7 @@ const apadrinamientoService = {
     const apadrinamiento = await apadrinamientoRepository.crear(datos);
     
     const usuario = await userService.getUsuarioById(datos.usuario_id);
-    const animal = await animalService.getAnimalById(datos.animal_id);
+    const animal = await animalRepository.getById(datos.animal_id);
     
     await notificationService.crearNotificacion({
       usuarioId: datos.usuario_id,
@@ -74,7 +74,7 @@ const apadrinamientoService = {
 
     await apadrinamientoRepository.actualizarEstado(id, 'active');
 
-    const animal = await animalService.getAnimalById(apadrinamiento.animal_id);
+    const animal = await animalRepository.getById(apadrinamiento.animal_id);
     const usuario = await userService.getUsuarioById(apadrinamiento.usuario_id);
 
     let primerCobroExitoso = true;
@@ -142,7 +142,7 @@ const apadrinamientoService = {
 
     await apadrinamientoRepository.actualizarEstado(id, 'rejected');
 
-    const animal = await animalService.getAnimalById(apadrinamiento.animal_id);
+    const animal = await animalRepository.getById(apadrinamiento.animal_id);
     const usuario = await userService.getUsuarioById(apadrinamiento.usuario_id);
 
     const mensaje = motivo 
@@ -182,9 +182,9 @@ const apadrinamientoService = {
 
     await apadrinamientoRepository.actualizarEstado(id, 'canceled');
 
-    const animal = await animalService.getAnimalById(apadrinamiento.animal_id);
+    const animal = await animalRepository.getById(apadrinamiento.animal_id);
     
-    await animalService.updateAnimal(apadrinamiento.animal_id, {
+    await animalRepository.updateAnimal(apadrinamiento.animal_id, {
       nombre_padrino: null
     });
 
@@ -199,6 +199,53 @@ const apadrinamientoService = {
     }
 
     return await apadrinamientoRepository.getById(id);
+  },
+
+  async cancelarPorAdopcion(animalId) {
+    const apadrinamientosActivos = await apadrinamientoRepository.getByAnimalIdMultiple(animalId);
+    
+    if (!apadrinamientosActivos || apadrinamientosActivos.length === 0) {
+      return { cancelados: 0 };
+    }
+
+    const animal = await animalRepository.getById(animalId);
+    const resultados = [];
+
+    for (const apadr of apadrinamientosActivos) {
+      await apadrinamientoRepository.actualizarEstado(apadr.id, 'canceled');
+
+      const usuario = await userService.getUsuarioById(apadr.usuario_id);
+
+      await notificationService.crearNotificacion({
+        usuarioId: apadr.usuario_id,
+        tipo: 'apadrinamiento_cancelado',
+        mensaje: `Tu apadrinamiento de ${animal.nombre} ha sido cancelado porque el animal ha sido adoptado. ¡Gracias por tu apoyo!`,
+        referenciaId: apadr.id
+      });
+
+      try {
+        await emailService.enviarEmailApadrinamientoCanceladoPorAdopcion({
+          email: usuario.email,
+          nombre: usuario.nombre,
+          animal: animal.nombre,
+          importe: apadr.importe
+        });
+      } catch (emailErr) {
+        console.error('Error enviando email de cancelación por adopción:', emailErr.message);
+      }
+
+      resultados.push({
+        apadrinamiento_id: apadr.id,
+        usuario_id: apadr.usuario_id,
+        cancelado: true
+      });
+    }
+
+    await animalRepository.updateAnimal(animalId, {
+      nombre_padrino: null
+    });
+
+    return { cancelados: resultados.length, resultados };
   },
 
   async eliminar(id, usuarioId) {

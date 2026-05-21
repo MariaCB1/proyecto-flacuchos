@@ -143,9 +143,14 @@ const contactoService = {
   },
 
   async enviarEmailAcogidaRecibida(data) {
+    const destinatario = data.correo || data.email;
+    if (!destinatario) {
+      console.error('No se pudo determinar destinatario del email de acogida recibida');
+      return;
+    }
     const mailOptions = {
       from: process.env.SMTP_USER,
-      to: data.email,
+      to: destinatario,
       subject: 'Tu solicitud de casa de acogida ha sido recibida - Flacuchos Baena',
       html: `
 <!DOCTYPE html>
@@ -195,7 +200,7 @@ const contactoService = {
         <span class="info-label">Nombre:</span> <span class="info-value">${data.nombre_completo}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">Email:</span> <span class="info-value">${data.correo}</span>
+        <span class="info-label">Email:</span> <span class="info-value">${data.correo || data.email}</span>
       </div>
       <div class="info-item">
         <span class="info-label">Teléfono:</span> <span class="info-value">${data.telefono}</span>
@@ -334,9 +339,14 @@ const contactoService = {
   },
 
   async enviarEmailAcogidaAprobada(solicitud) {
+    const destinatario = solicitud.correo || solicitud.email;
+    if (!destinatario) {
+      console.error('No se pudo determinar destinatario del email de acogida aprobada');
+      return;
+    }
     const mailOptions = {
       from: process.env.SMTP_USER,
-      to: solicitud.correo,
+      to: destinatario,
       subject: 'Tu solicitud de casa de acogida ha sido aprobada',
       html: `
 <!DOCTYPE html>
@@ -382,9 +392,14 @@ const contactoService = {
   },
 
   async enviarEmailAcogidaRechazada(solicitud, motivo) {
+    const destinatario = solicitud.correo || solicitud.email;
+    if (!destinatario) {
+      console.error('No se pudo determinar destinatario del email de acogida rechazada');
+      return;
+    }
     const mailOptions = {
       from: process.env.SMTP_USER,
-      to: solicitud.correo,
+      to: destinatario,
       subject: 'Tu solicitud de casa de acogida ha sido rechazada',
       html: `
 <!DOCTYPE html>
@@ -430,9 +445,14 @@ const contactoService = {
   },
 
   async enviarEmailAnimalAsignado(solicitud, animal) {
+    const destinatario = solicitud.correo || solicitud.email;
+    if (!destinatario) {
+      console.error('No se pudo determinar el destinatario del email de animal asignado');
+      return;
+    }
     const mailOptions = {
       from: process.env.SMTP_USER,
-      to: solicitud.correo,
+      to: destinatario,
       subject: `Se te ha asignado un animal: ${animal.nombre} - Flacuchos Baena`,
       html: `
 <!DOCTYPE html>
@@ -498,9 +518,14 @@ const contactoService = {
   },
 
   async enviarEmailAcogidaConfirmada(solicitud) {
+    const destinatario = solicitud.correo || solicitud.email;
+    if (!destinatario) {
+      console.error('No se pudo determinar destinatario del email de acogida confirmada');
+      return;
+    }
     const mailOptions = {
       from: process.env.SMTP_USER,
-      to: solicitud.correo,
+      to: destinatario,
       subject: 'Has confirmado la acogida - Flacuchos Baena',
       html: `
 <!DOCTYPE html>
@@ -594,7 +619,7 @@ const contactoService = {
           <div class="info-row"><span class="info-label">Nombre</span><span class="info-value">${data.nombre_completo}</span></div>
           <div class="info-row"><span class="info-label">DNI</span><span class="info-value">${data.dni}</span></div>
           <div class="info-row"><span class="info-label">Teléfono</span><span class="info-value">${data.telefono}</span></div>
-          <div class="info-row"><span class="info-label">Email</span><span class="info-value">${data.correo}</span></div>
+          <div class="info-row"><span class="info-label">Email</span><span class="info-value">${data.correo || data.email}</span></div>
         </div>
       </div>
       <div class="section">
@@ -626,6 +651,123 @@ const contactoService = {
       `
     };
 
+    await transporter.sendMail(mailOptions);
+  },
+
+  async cancelarAcogidaPorAdopcion(animalId) {
+    const acogidasActivas = await contactoRepository.getAcogidasActivasPorAnimal(animalId);
+    
+    if (!acogidasActivas || acogidasActivas.length === 0) {
+      return { canceladas: 0 };
+    }
+
+    const animal = await animalRepository.getById(animalId);
+    const resultados = [];
+
+    for (const acogida of acogidasActivas) {
+      await contactoRepository.updateEstadoAcogida(acogida.id, 'rejected', 'Animal adoptado');
+
+      if (acogida.usuario_id) {
+        await notificationService.crearNotificacion({
+          usuarioId: acogida.usuario_id,
+          tipo: 'solicitud_acogida_rechazada',
+          mensaje: `La acogida de ${animal.nombre} ha sido cancelada porque el animal ha sido adoptado. ¡Gracias por tu apoyo!`,
+          referenciaId: acogida.id
+        });
+
+        try {
+          await this.enviarEmailAcogidaCanceladaPorAdopcion(acogida, animal);
+        } catch (emailErr) {
+          console.error('Error enviando email de cancelación de acogida por adopción:', emailErr.message);
+        }
+      }
+
+      resultados.push({
+        acogida_id: acogida.id,
+        usuario_id: acogida.usuario_id,
+        cancelada: true
+      });
+    }
+
+    await animalRepository.updateAnimal(animalId, { en_acogida: false });
+
+    return { canceladas: resultados.length, resultados };
+  },
+
+  async enviarEmailAcogidaCanceladaPorAdopcion(acogida, animal) {
+    const destinatario = acogida.correo || acogida.email || acogida.usuario_email;
+    if (!destinatario) {
+      console.error('No se pudo determinar destinatario del email de acogida cancelada por adopcion');
+      return;
+    }
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: destinatario,
+      subject: `Acogida de ${animal.nombre} cancelada - Flacuchos Baena`,
+      html: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+    .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+    .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+    .email-body { padding: 30px 40px; }
+    .greeting { font-size: 16px; color: #333333; margin-bottom: 20px; }
+    .info-card { background: #FFF8E1; border-radius: 12px; padding: 25px; border-left: 4px solid #ffa000; margin-bottom: 20px; }
+    .info-title { color: #f57c00; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+    .good-news { background: #E8F5E9; border-radius: 12px; padding: 20px; margin-top: 20px; text-align: center; }
+    .good-news p { color: #00695C; font-size: 14px; }
+    .email-footer { background: #00897B; padding: 20px 40px; text-align: center; }
+    .email-footer p { color: rgba(255,255,255,0.9); font-size: 12px; }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .email-container { border-radius: 0; }
+      .email-header, .email-body, .email-footer { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <h1>Flacuchos Baena</h1>
+      <p>Acogida cancelada</p>
+    </div>
+    <div class="email-body">
+      <p class="greeting">Hola <strong>${acogida.nombre_completo}</strong>,</p>
+      <div class="info-card">
+        <div class="info-title">La acogida ha sido cancelada</div>
+        <p style="color: #555555; font-size: 14px; margin-bottom: 15px;">
+          El animal que tenías en acogida ha encontrado un hogar definitivo. ¡Esto es una gran noticia!
+        </p>
+        <div class="info-item" style="margin-bottom: 8px; font-size: 14px;">
+          <span style="font-weight: 600; color: #f57c00;">Animal:</span>
+          <span style="color: #333333;"> ${animal.nombre}</span>
+        </div>
+      </div>
+      <div class="good-news">
+        <p><strong>¡${animal.nombre} ya tiene familia!</strong></p>
+        <p style="margin-top: 8px;">Tu labor como casa de acogida ha sido fundamental para que este animal llegara hasta aquí. Gracias de corazón.</p>
+      </div>
+      <p style="color: #555555; font-size: 14px; margin-top: 20px;">
+        Si deseas seguir ayudando como casa de acogida, podemos asignarte otro animal que lo necesite.
+      </p>
+    </div>
+    <div class="email-footer">
+      <p>Flacuchos Baena - Protectora de animales</p>
+    </div>
+  </div>
+</body>
+</html>
+      `
+    };
     await transporter.sendMail(mailOptions);
   }
 };
