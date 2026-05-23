@@ -19,14 +19,16 @@
 
 .filterGroup {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .filterGroup label {
   font-weight: 600;
   color: var(--dark);
   font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .filterSelect {
@@ -86,6 +88,8 @@
   cursor: pointer;
   color: var(--gray);
   font-size: 0.85rem;
+  margin-top: 10px;
+  align-self: flex-end;
 }
 
 .clearBtn:hover {
@@ -909,6 +913,34 @@
 @media (max-width: 600px) {
   .filterRow {
     flex-direction: column;
+  }
+  
+  .filterGroup {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  
+  .filterGroup label {
+    margin-bottom: 2px;
+  }
+  
+  .filterSelect, .filterDate {
+    width: 100%;
+    min-width: unset;
+  }
+  
+  .searchRow {
+    flex-direction: column;
+  }
+  
+  .searchInput {
+    width: 100%;
+  }
+  
+  .clearBtn {
+    width: 100%;
+    text-align: center;
   }
   
   .eventDateBadge {

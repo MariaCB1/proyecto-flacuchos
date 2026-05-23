@@ -1722,7 +1722,7 @@ function Perfil() {
                     <p>No has realizado ninguna donación</p>
                   </div>
                 ) : (
-                  <div className={styles.solicitudesList}>
+                  <div className={styles.donacionesList}>
                     {misDonaciones.map((donacion) => (
                       <div key={donacion.id} className={styles.solicitudItem}>
                         <div className={styles.solicitudInfo}>

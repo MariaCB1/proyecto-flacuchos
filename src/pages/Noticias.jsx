@@ -380,12 +380,12 @@ function Noticias() {
                 onChange={(e) => handleFilterChange('busqueda', e.target.value)}
                 className={styles.searchInput}
               />
-              {(filtros.categoria || filtros.busqueda || filtros.fechaDesde || filtros.fechaHasta) && (
-                <button onClick={clearFilters} className={styles.clearBtn}>
-                  ✕ Limpiar filtros
-                </button>
-              )}
             </div>
+            {(filtros.categoria || filtros.busqueda || filtros.fechaDesde || filtros.fechaHasta) && (
+              <button onClick={clearFilters} className={styles.clearBtn}>
+                ✕ Limpiar filtros
+              </button>
+            )}
           </div>
 
           {loading ? (

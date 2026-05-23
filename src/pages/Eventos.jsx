@@ -555,12 +555,12 @@ const showProximos = filtros.tipo === 'proximos' || filtros.tipo === 'todos';
                 onChange={(e) => handleFilterChange('busqueda', e.target.value)}
                 className={styles.searchInput}
               />
-              {(filtros.categoria || filtros.busqueda || filtros.tipo !== 'proximos' || filtros.orden !== 'proximos' || filtros.fechaDesde || filtros.fechaHasta) && (
-                <button onClick={clearFilters} className={styles.clearBtn}>
-                  ✕ Limpiar filtros
-                </button>
-              )}
             </div>
+            {(filtros.categoria || filtros.busqueda || filtros.tipo !== 'proximos' || filtros.orden !== 'proximos' || filtros.fechaDesde || filtros.fechaHasta) && (
+              <button onClick={clearFilters} className={styles.clearBtn}>
+                ✕ Limpiar filtros
+              </button>
+            )}
           </div>
 
           {loading ? (

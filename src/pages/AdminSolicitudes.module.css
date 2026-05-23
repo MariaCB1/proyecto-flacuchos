@@ -226,6 +226,17 @@
         min-width: 100%;
     }
     
+    .filters {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 10px;
+    }
+    
+    .filterBtn {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    
     .cardHeader {
         flex-direction: column;
         gap: 15px;

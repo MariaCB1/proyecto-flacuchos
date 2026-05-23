@@ -20,6 +20,7 @@
 
 .filterGroup {
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 8px;
 }
@@ -28,6 +29,7 @@
     font-weight: 600;
     font-size: 0.9rem;
     color: var(--dark);
+    white-space: nowrap;
 }
 
 .filterSelect {
@@ -86,6 +88,8 @@
     cursor: pointer;
     font-size: 0.85rem;
     transition: all 0.2s;
+    margin-top: 10px;
+    align-self: flex-end;
 }
 
 .clearBtn:hover {
@@ -841,16 +845,29 @@
         flex-direction: column;
     }
     .filterGroup {
+        flex-direction: column;
+        align-items: stretch;
         width: 100%;
     }
+    .filterGroup label {
+        margin-bottom: 2px;
+    }
     .filterSelect {
-        flex: 1;
+        width: 100%;
+        min-width: unset;
+    }
+    .filterDate {
+        width: 100%;
     }
     .searchRow {
         flex-direction: column;
     }
     .searchInput {
         width: 100%;
+    }
+    .clearBtn {
+        width: 100%;
+        text-align: center;
     }
 }
 

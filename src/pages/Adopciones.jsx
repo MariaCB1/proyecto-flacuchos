@@ -303,12 +303,12 @@ function Adopciones() {
                 onChange={(e) => handleFilterChange('busqueda', e.target.value)}
                 className={styles.searchInput}
               />
-              {(filtros.tipo || filtros.tamano || filtros.urgente || filtros.busqueda) && (
-                <button onClick={clearFilters} className={styles.clearBtn}>
-                  ✕ Limpiar filtros
-                </button>
-              )}
             </div>
+            {(filtros.tipo || filtros.tamano || filtros.urgente || filtros.busqueda) && (
+              <button onClick={clearFilters} className={styles.clearBtn}>
+                ✕ Limpiar filtros
+              </button>
+            )}
           </div>
 
           {loading ? (
