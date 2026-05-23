@@ -533,8 +533,14 @@ input:checked + .slider:before {
   }
 
   .filterBar {
-    flex-direction: column;
-    gap: 8px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 10px;
+  }
+
+  .filterBtn {
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .formGrid {
@@ -1095,6 +1101,17 @@ input:checked + .slider:before {
   .resumenCardRow span,
   .resumenCardRow strong {
     font-size: 0.85rem;
+  }
+
+  .filterBar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 10px;
+  }
+
+  .filterBtn {
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 }
 

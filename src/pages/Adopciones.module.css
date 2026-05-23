@@ -20,14 +20,16 @@
 
 .filterGroup {
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
 }
 
 .filterGroup label {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--gray);
+    white-space: nowrap;
 }
 
 .filterSelect {
@@ -121,6 +123,8 @@
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
+    margin-top: 10px;
+    align-self: flex-end;
 }
 
 .clearBtn:hover {
@@ -472,12 +476,6 @@
     }
 }
 
-@media (max-width: 558px) {
-    .petsGrid {
-        grid-template-columns: 1fr;
-    }
-}
-
 .addAnimalBar {
     display: flex;
     justify-content: center;
@@ -620,4 +618,75 @@
     margin-top: 20px;
     padding-top: 15px;
     border-top: 1px solid #eee;
+}
+
+@media (max-width: 768px) {
+    .petsGrid {
+        grid-template-columns: 1fr;
+    }
+    .filterGroup {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+    .filterGroup label {
+        margin-bottom: 2px;
+    }
+    .filterSelect {
+        width: 100%;
+        min-width: unset;
+    }
+    .searchRow {
+        flex-direction: column;
+    }
+    .searchInput {
+        width: 100%;
+    }
+    .clearBtn {
+        width: 100%;
+        text-align: center;
+    }
+    .modalContent {
+        max-width: 300px;
+        margin: 0 8px;
+    }
+    .modalHeader {
+        padding: 12px;
+    }
+    .modalHeader h3 {
+        font-size: 0.9rem;
+    }
+    .modalForm {
+        padding: 12px;
+    }
+    .formRow {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    .field {
+        margin-bottom: 10px;
+    }
+    .field label {
+        font-size: 0.75rem;
+        margin-bottom: 3px;
+    }
+    .field input, .field select {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+    .checkboxLabel {
+        font-size: 0.75rem;
+        margin-top: 15px;
+    }
+    .modalActions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .modalActions .btn {
+        width: 100%;
+        justify-content: center;
+        font-size: 0.85rem;
+        padding: 10px;
+    }
 }

@@ -368,4 +368,15 @@
     .statItem {
         min-width: auto;
     }
+    
+    .filters {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 10px;
+    }
+    
+    .filterBtn {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
 }
