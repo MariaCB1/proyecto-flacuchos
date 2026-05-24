@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { eventosApi, inscripcionesApi } from '../api/api';
 import PageHeader from '../components/PageHeader';
+import { formatDate, formatDateForInput, getCountdown, getDay, getMonthShort } from '../utils/dateUtils';
 import styles from './Eventos.module.css';
 
 const getImageGradient = (imageUrl) => {
@@ -56,24 +57,7 @@ const getImageGradient = (imageUrl) => {
 
 const CATEGORIAS = ['Adopción', 'Solidario', 'Educativo', 'Deportivo', 'Cultural', 'Otro'];
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-};
-
-const getCountdown = (fecha) => {
-  const eventoDate = new Date(fecha);
-  const now = new Date();
-  const diff = eventoDate - now;
-  
-  if (diff <= 0) return null;
-  
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  
-  return { days, hours, minutes };
-};
+// formatDate, getCountdown, getDay, getMonthShort imported from utils/dateUtils
 
 function Eventos() {
   const { user } = useAuth();
@@ -164,7 +148,7 @@ function Eventos() {
     const updateCountdowns = () => {
       const counts = {};
       eventos.forEach(evento => {
-        const countdown = getCountdown(evento.fecha);
+        const countdown = getCountdown(evento.fecha, evento.hora);
         if (countdown) {
           counts[evento.id] = countdown;
         }
@@ -208,14 +192,7 @@ function Eventos() {
     setSearchParams({});
   };
 
-  const formatDateForInput = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
+  // formatDateForInput imported from utils/dateUtils
 
 const handleEditarEvento = (evento) => {
     setEditingId(evento.id);
@@ -602,10 +579,10 @@ const showProximos = filtros.tipo === 'proximos' || filtros.tipo === 'todos';
                         
                         <div className={styles.eventDateBadge}>
                           <span className={styles.eventDay}>
-                            {new Date(evento.fecha).getDate()}
+                            {getDay(evento.fecha)}
                           </span>
                           <span className={styles.eventMonth}>
-                            {new Date(evento.fecha).toLocaleDateString('es-ES', { month: 'short' })}
+                            {getMonthShort(evento.fecha)}
                           </span>
                         </div>
                         

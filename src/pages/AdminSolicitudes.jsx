@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { animalApi } from '../api/api';
 import PageHeader from '../components/PageHeader';
+import { formatDateShort } from '../utils/dateUtils';
 import styles from './AdminSolicitudes.module.css';
 
 function AdminSolicitudes() {
@@ -186,7 +187,7 @@ function AdminSolicitudes() {
                       <div>
                         <h4>{solicitud.animal_nombre || 'Animal'}</h4>
                         <span className={styles.fecha}>
-                          {new Date(solicitud.created_at).toLocaleDateString('es-ES')}
+                          {formatDateShort(solicitud.created_at)}
                         </span>
                       </div>
                     </div>
@@ -306,7 +307,7 @@ Rechazar
                   <div className={styles.detailGrid}>
                     <div className={styles.detailItem}><span>Nombre:</span> {detalleSolicitud.nombre_completo || '-'}</div>
                     <div className={styles.detailItem}><span>Teléfono:</span> {detalleSolicitud.telefono || '-'}</div>
-                    <div className={styles.detailItem}><span>Fecha nacimiento:</span> {detalleSolicitud.fecha_nacimiento ? new Date(detalleSolicitud.fecha_nacimiento).toLocaleDateString('es-ES') : '-'}</div>
+                    <div className={styles.detailItem}><span>Fecha nacimiento:</span> {detalleSolicitud.fecha_nacimiento ? formatDateShort(detalleSolicitud.fecha_nacimiento) : '-'}</div>
                     <div className={styles.detailItem}><span>Residencia:</span> {detalleSolicitud.residencia || '-'}</div>
                   </div>
                 </div>

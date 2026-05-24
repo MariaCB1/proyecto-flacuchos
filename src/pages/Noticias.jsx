@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { noticiaApi } from '../api/api';
 import PageHeader from '../components/PageHeader';
+import { formatDate } from '../utils/dateUtils';
 import styles from './Noticias.module.css';
 
 const getImageGradient = (imageUrl) => {
@@ -54,10 +55,7 @@ const getImageGradient = (imageUrl) => {
   });
 };
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-};
+// formatDate imported from utils/dateUtils
 
 const CATEGORIAS = ['Final Feliz', 'Rescate', 'Evento', 'Veterinario', 'Colaboración', 'Adopción', 'General'];
 

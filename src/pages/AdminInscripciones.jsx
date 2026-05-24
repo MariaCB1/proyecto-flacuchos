@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { eventosApi, inscripcionesApi } from '../api/api';
 import PageHeader from '../components/PageHeader';
+import { formatDate } from '../utils/dateUtils';
 import styles from './AdminInscripciones.module.css';
 
 function AdminInscripciones() {
@@ -62,14 +63,7 @@ function AdminInscripciones() {
     setExpandedEventos(prev => ({ ...prev, [eventoId]: !prev[eventoId] }));
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-  };
+  // formatDate imported from utils/dateUtils
 
   const getCount = (eventoId) => {
     return typeof inscripcionesCounts[eventoId] === 'number' ? inscripcionesCounts[eventoId] : 0;

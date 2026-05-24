@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { notificationApi } from '../api/api';
+import { formatRelative } from '../utils/dateUtils';
 import styles from './NotificationBell.module.css';
 
 const NotificationBell = () => {
@@ -61,20 +62,7 @@ const NotificationBell = () => {
     }
   };
 
-  const formatFecha = (fecha) => {
-    const d = new Date(fecha);
-    const now = new Date();
-    const diff = now - d;
-    const minutos = Math.floor(diff / 60000);
-    const horas = Math.floor(diff / 3600000);
-    const dias = Math.floor(diff / 86400000);
-
-    if (minutos < 1) return 'Ahora';
-    if (minutos < 60) return `Hace ${minutos}m`;
-    if (horas < 24) return `Hace ${horas}h`;
-    if (dias < 7) return `Hace ${dias}d`;
-    return d.toLocaleDateString();
-  };
+  // formatRelative imported from utils/dateUtils
 
   const getTipoLabel = (tipo) => {
     const labels = {
@@ -242,7 +230,7 @@ const NotificationBell = () => {
                       <span className={styles.tipo}>{getTipoLabel(notif.tipo)}</span>
                     </div>
                     <span className={styles.fecha}>
-                      {formatFecha(notif.created_at)}
+                      {formatRelative(notif.created_at)}
                     </span>
                   </div>
                   <p className={styles.mensaje}>{notif.mensaje}</p>
