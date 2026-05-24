@@ -11,7 +11,6 @@ async function seed() {
     console.log('🌱 Iniciando seed de la base de datos...');
 
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
-    const userPassword = process.env.DEMO_USER_PASSWORD || 'password123';
 
     await client.query('BEGIN');
 
@@ -22,18 +21,6 @@ async function seed() {
       ['Administrador', 'admin@flacuchos.org', adminPassword, 'admin']
     );
     console.log(`✅ Admin creado: admin@flacuchos.org`);
-
-    await client.query(
-      `INSERT INTO usuarios (nombre, email, contrasena, rol) VALUES
-       ($1, $2, crypt($3, gen_salt('bf')), $4),
-       ($5, $6, crypt($7, gen_salt('bf')), $8),
-       ($9, $10, crypt($11, gen_salt('bf')), $12)
-       ON CONFLICT (email) DO NOTHING`,
-      ['Juan Pérez', 'juan@example.com', userPassword, 'usuario',
-       'María García', 'maria@example.com', userPassword, 'usuario',
-       'Carlos López', 'carlos@example.com', userPassword, 'usuario']
-    );
-    console.log(`✅ Usuarios demo creados (contraseña: ${userPassword})`);
 
     await client.query('COMMIT');
     console.log('🌱 Seed completado correctamente.');

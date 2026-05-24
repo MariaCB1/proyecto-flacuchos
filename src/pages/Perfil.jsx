@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { animalApi, userApi, authApi, inscripcionesApi, contactoApi, stripeApi, voluntarioApi, socioApi, apadrinamientoApi } from '../api/api';
+import { formatDateShort } from '../utils/dateUtils';
 import styles from './Perfil.module.css';
 
 const calculateStrength = (password) => {
@@ -1131,7 +1132,7 @@ function Perfil() {
                       <div className={styles.voluntarioItem}>
                         <span className={styles.voluntarioLabel}>Fecha de registro</span>
                         <span className={styles.voluntarioValue}>
-                          {new Date(misVoluntario.created_at).toLocaleDateString('es-ES')}
+                          {formatDateShort(misVoluntario.created_at)}
                         </span>
                       </div>
                     </div>
@@ -1212,7 +1213,7 @@ function Perfil() {
                       <div className={styles.voluntarioItem}>
                         <span className={styles.voluntarioLabel}>Fecha de alta</span>
                         <span className={styles.voluntarioValue}>
-                          {misSocios.started_at ? new Date(misSocios.started_at).toLocaleDateString('es-ES') : '-'}
+                          {misSocios.started_at ? formatDateShort(misSocios.started_at) : '-'}
                         </span>
                       </div>
                     </div>
@@ -1358,7 +1359,7 @@ function Perfil() {
                           <div>
                             <h4>{sol.animal_nombre || 'Animal'}</h4>
                             <p className={styles.solicitudFecha}>
-                              {new Date(sol.created_at).toLocaleDateString('es-ES')}
+{formatDateShort(sol.created_at)}
                             </p>
                           </div>
                         </div>
@@ -1430,7 +1431,7 @@ function Perfil() {
                               <h4>{insc.evento_titulo || 'Evento'}</h4>
                               <p className={styles.inscripcionCardFecha}>
                                 <span className="material-symbols-outlined">calendar_today</span>
-                                {insc.evento_fecha && new Date(insc.evento_fecha).toLocaleDateString('es-ES')}
+                                {insc.evento_fecha && formatDateShort(insc.evento_fecha)}
                               </p>
                             </div>
                           </div>
@@ -1501,7 +1502,7 @@ function Perfil() {
                             )}
                             <div className={styles.voluntarioItem}>
                               <span className={styles.voluntarioLabel}>Fecha solicitud</span>
-                              <span className={styles.voluntarioValue}>{acogida.created_at ? new Date(acogida.created_at).toLocaleDateString('es-ES') : '-'}</span>
+                              <span className={styles.voluntarioValue}>{acogida.created_at ? formatDateShort(acogida.created_at) : '-'}</span>
                             </div>
                           </div>
                           {acogida.estado === 'pending' && (
@@ -1641,7 +1642,7 @@ function Perfil() {
                         </div>
                         <div className={styles.voluntarioItem}>
                           <span className={styles.voluntarioLabel}>Fecha solicitud</span>
-                          <span className={styles.voluntarioValue}>{apadr.created_at ? new Date(apadr.created_at).toLocaleDateString('es-ES') : '-'}</span>
+                          <span className={styles.voluntarioValue}>{apadr.created_at ? formatDateShort(apadr.created_at) : '-'}</span>
                         </div>
                       </div>
                       {apadr.estado === 'pending' && (
@@ -1732,7 +1733,7 @@ function Perfil() {
                           <div>
                             <h4>{donacion.nombre || 'Anónimo'}</h4>
                             <p className={styles.solicitudFecha}>
-                              {new Date(donacion.created_at).toLocaleDateString('es-ES')}
+                              {formatDateShort(donacion.created_at)}
                             </p>
                           </div>
                         </div>
@@ -1788,7 +1789,7 @@ function Perfil() {
                           </span>
                         </div>
                         <div className={styles.detalleItem}>
-                          <span>Fecha:</span> {new Date(detalleSolicitud.created_at).toLocaleDateString('es-ES')}
+                          <span>Fecha:</span> {formatDateShort(detalleSolicitud.created_at)}
                         </div>
                         {detalleSolicitud.motivo_rechazo && (
                           <div className={styles.detalleItem}>
@@ -1862,7 +1863,7 @@ function Perfil() {
                           <div>
                             <h4>{sol.animal_nombre || 'Animal'}</h4>
                             <p className={styles.solicitudFecha}>
-                              {sol.usuario_nombre} • {new Date(sol.created_at).toLocaleDateString('es-ES')}
+                              {sol.usuario_nombre} • {formatDateShort(sol.created_at)}
                             </p>
                           </div>
                         </div>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { notificationApi } from '../api/api';
 import PageHeader from '../components/PageHeader';
+import { formatRelative } from '../utils/dateUtils';
 import styles from './Notificaciones.module.css';
 
 function Notificaciones() {
@@ -58,20 +59,7 @@ function Notificaciones() {
     }
   };
 
-  const formatFecha = (fecha) => {
-    const d = new Date(fecha);
-    const now = new Date();
-    const diff = now - d;
-    const minutos = Math.floor(diff / 60000);
-    const horas = Math.floor(diff / 3600000);
-    const dias = Math.floor(diff / 86400000);
-
-    if (minutos < 1) return 'Ahora';
-    if (minutos < 60) return `Hace ${minutos}m`;
-    if (horas < 24) return `Hace ${horas}h`;
-    if (dias < 7) return `Hace ${dias}d`;
-    return d.toLocaleDateString();
-  };
+  // formatRelative imported from utils/dateUtils
 
   const getTipoLabel = (tipo) => {
     const labels = {
@@ -232,7 +220,7 @@ function Notificaciones() {
                   <div className={styles.itemContent}>
                     <div className={styles.itemHeader}>
                       <span className={styles.tipo}>{getTipoLabel(notif.tipo)}</span>
-                      <span className={styles.fecha}>{formatFecha(notif.created_at)}</span>
+                      <span className={styles.fecha}>{formatRelative(notif.created_at)}</span>
                     </div>
                     <p className={styles.mensaje}>{notif.mensaje}</p>
                     {!notif.leido && <span className={styles.noLeidaBadge}>Nueva</span>}

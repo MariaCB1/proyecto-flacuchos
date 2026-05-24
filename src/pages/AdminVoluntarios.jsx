@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { voluntarioApi } from '../api/api';
 import PageHeader from '../components/PageHeader';
+import { formatDateShort } from '../utils/dateUtils';
 import styles from './AdminVoluntarios.module.css';
 
 function AdminVoluntarios() {
@@ -197,7 +198,7 @@ function AdminVoluntarios() {
                     <div className={styles.cardTitle}>
                       <h3>{solicitud.nombre}</h3>
                       <span className={styles.date}>
-                        {new Date(solicitud.created_at).toLocaleDateString()}
+                        {formatDateShort(solicitud.created_at)}
                       </span>
                     </div>
                     {getEstadoBadge(solicitud.estado)}

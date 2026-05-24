@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { stripeApi, voluntarioApi, socioApi, apadrinamientoApi, contactoApi, resumenApi } from '../api/api';
 import PageHeader from '../components/PageHeader';
+import { formatDateTime as formatDate } from '../utils/dateUtils';
 import styles from './AdminAyudas.module.css';
 
 function formatearDiasSimple(dias) {
@@ -316,16 +317,7 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
     }));
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+  // formatDate (formatDateTime) imported from utils/dateUtils
 
   const getEstadoBadge = (estado) => {
     const estados = {
@@ -1004,7 +996,7 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
                           <div className={styles.cardTitle}>
                             <h3>{solicitud.nombre_completo}</h3>
                             <span className={styles.date}>
-                              {new Date(solicitud.created_at).toLocaleDateString()}
+                              {formatDate(solicitud.created_at)}
                             </span>
                           </div>
                           <span className={`${styles.badge} ${getAcogidaBadge(solicitud.estado).class}`}>
