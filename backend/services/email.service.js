@@ -39,7 +39,7 @@ const emailService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -146,7 +146,7 @@ const emailService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -249,7 +249,7 @@ const emailService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -376,7 +376,7 @@ const emailService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -466,7 +466,7 @@ const emailService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -551,7 +551,7 @@ const emailService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #607D8B 0%, #455A64 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -618,20 +618,28 @@ const emailService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header h1 { color: white; font-size: 24px; margin-bottom: 5px; }
-    .email-header p { color: #B2DFDB; font-size: 14px; }
-    .email-body { padding: 40px; }
-    .greeting { font-size: 16px; color: #333; margin-bottom: 20px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
+    .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+    .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+    .email-body { padding: 30px 40px; }
+    .greeting { font-size: 16px; color: #333333; margin-bottom: 20px; }
     .info-card { background: #E8F5E9; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #00897B; }
     .info-card p { margin: 8px 0; color: #333; }
     .info-card strong { color: #00897B; }
     .message { font-size: 14px; color: #666; line-height: 1.6; }
-    .email-footer { background: #f5f5f5; padding: 20px; text-align: center; color: #999; font-size: 12px; }
+    .email-footer { background: #00897B; padding: 20px 40px; text-align: center; }
+    .email-footer p { color: rgba(255,255,255,0.9); font-size: 12px; }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .email-container { border-radius: 0; }
+      .email-header, .email-body, .email-footer { padding: 20px; }
+    }
   </style>
 </head>
 <body>
   <div class="email-container">
     <div class="email-header">
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Solicitud de Apadrinamiento</p>
     </div>
@@ -674,21 +682,33 @@ const emailService = {
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-    .email-header { background: linear-gradient(135deg, #FF6F00 0%, #E65100 100%); padding: 30px 40px; text-align: center; }
-    .email-header h1 { color: white; font-size: 24px; }
-    .email-body { padding: 40px; }
+    .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
+    .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+    .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+    .email-body { padding: 30px 40px; }
+    .greeting { font-size: 16px; color: #333333; margin-bottom: 20px; }
     .info-card { background: #FFF3E0; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #FF6F00; }
     .info-card p { margin: 8px 0; color: #333; }
     .info-card strong { color: #E65100; }
-    .email-footer { background: #f5f5f5; padding: 20px; text-align: center; color: #999; font-size: 12px; }
+    .email-footer { background: #00897B; padding: 20px 40px; text-align: center; }
+    .email-footer p { color: rgba(255,255,255,0.9); font-size: 12px; }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .email-container { border-radius: 0; }
+      .email-header, .email-body, .email-footer { padding: 20px; }
+    }
   </style>
 </head>
 <body>
   <div class="email-container">
     <div class="email-header">
-      <h1>Nueva Solicitud de Apadrinamiento</h1>
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
+      <h1>Flacuchos Baena</h1>
+      <p>Nueva Solicitud de Apadrinamiento</p>
     </div>
     <div class="email-body">
+      <p class="greeting">Hola Admin,</p>
       <div class="info-card">
         <p><strong>Usuario:</strong> ${datos.nombre}</p>
         <p><strong>Email:</strong> ${datos.emailUsuario}</p>
@@ -727,23 +747,33 @@ const emailService = {
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-    .email-header { background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%); padding: 30px 40px; text-align: center; }
-    .email-header h1 { color: white; font-size: 24px; }
-    .email-body { padding: 40px; }
-    .greeting { font-size: 16px; color: #333; margin-bottom: 20px; }
-    .success-card { background: #E8F5E9; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #2E7D32; text-align: center; }
-    .success-card h2 { color: #2E7D32; margin-bottom: 10px; }
-    .info-card { background: #F1F8E9; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #2E7D32; }
-    .info-card p { margin: 8px 0; color: #333; }
-    .info-card strong { color: #2E7D32; }
+    .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
+    .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+    .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+    .email-body { padding: 30px 40px; }
+    .greeting { font-size: 16px; color: #333333; margin-bottom: 20px; }
+    .success-card { background: #E8F5E9; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #00897B; text-align: center; }
+    .success-card h2 { color: #00897B; margin-bottom: 10px; }
+    .info-card { background: #F1F8E9; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #00897B; }
+    .info-card p { margin: 8px 0; color: #333333; }
+    .info-card strong { color: #00897B; }
     .message { font-size: 14px; color: #666; line-height: 1.6; }
-    .email-footer { background: #f5f5f5; padding: 20px; text-align: center; color: #999; font-size: 12px; }
+    .email-footer { background: #00897B; padding: 20px 40px; text-align: center; }
+    .email-footer p { color: rgba(255,255,255,0.9); font-size: 12px; }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .email-container { border-radius: 0; }
+      .email-header, .email-body, .email-footer { padding: 20px; }
+    }
   </style>
 </head>
 <body>
   <div class="email-container">
     <div class="email-header">
-      <h1>Apadrinamiento Aprobado</h1>
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
+      <h1>Flacuchos Baena</h1>
+      <p>Apadrinamiento Aprobado</p>
     </div>
     <div class="email-body">
       <p class="greeting">Hola <strong>${datos.nombre}</strong>,</p>
@@ -796,21 +826,31 @@ const emailService = {
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-    .email-header { background: linear-gradient(135deg, #C62828 0%, #B71C1C 100%); padding: 30px 40px; text-align: center; }
-    .email-header h1 { color: white; font-size: 24px; }
-    .email-body { padding: 40px; }
-    .greeting { font-size: 16px; color: #333; margin-bottom: 20px; }
+    .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
+    .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+    .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+    .email-body { padding: 30px 40px; }
+    .greeting { font-size: 16px; color: #333333; margin-bottom: 20px; }
     .reject-card { background: #FFEBEE; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #C62828; }
     .reject-card h2 { color: #C62828; margin-bottom: 10px; }
     .motivo { margin-top: 15px; color: #666; }
     .message { font-size: 14px; color: #666; line-height: 1.6; }
-    .email-footer { background: #f5f5f5; padding: 20px; text-align: center; color: #999; font-size: 12px; }
+    .email-footer { background: #00897B; padding: 20px 40px; text-align: center; }
+    .email-footer p { color: rgba(255,255,255,0.9); font-size: 12px; }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .email-container { border-radius: 0; }
+      .email-header, .email-body, .email-footer { padding: 20px; }
+    }
   </style>
 </head>
 <body>
   <div class="email-container">
     <div class="email-header">
-      <h1>Solicitud de Apadrinamiento</h1>
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
+      <h1>Flacuchos Baena</h1>
+      <p>Solicitud de Apadrinamiento</p>
     </div>
     <div class="email-body">
       <p class="greeting">Hola <strong>${datos.nombre}</strong>,</p>
@@ -851,22 +891,32 @@ const emailService = {
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-    .email-header { background: linear-gradient(135deg, #7B1FA2 0%, #4A148C 100%); padding: 30px 40px; text-align: center; }
-    .email-header h1 { color: white; font-size: 24px; }
-    .email-body { padding: 40px; }
-    .greeting { font-size: 16px; color: #333; margin-bottom: 20px; }
-    .info-card { background: #F3E5F5; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #7B1FA2; }
-    .info-card p { margin: 8px 0; color: #333; }
-    .info-card strong { color: #7B1FA2; }
-    .monto { font-size: 28px; color: #7B1FA2; font-weight: bold; text-align: center; margin: 20px 0; }
+    .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
+    .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+    .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+    .email-body { padding: 30px 40px; }
+    .greeting { font-size: 16px; color: #333333; margin-bottom: 20px; }
+    .info-card { background: #E8F5E9; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #00897B; }
+    .info-card p { margin: 8px 0; color: #333333; }
+    .info-card strong { color: #00897B; }
+    .monto { font-size: 28px; color: #00897B; font-weight: bold; text-align: center; margin: 20px 0; }
     .message { font-size: 14px; color: #666; line-height: 1.6; }
-    .email-footer { background: #f5f5f5; padding: 20px; text-align: center; color: #999; font-size: 12px; }
+    .email-footer { background: #00897B; padding: 20px 40px; text-align: center; }
+    .email-footer p { color: rgba(255,255,255,0.9); font-size: 12px; }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .email-container { border-radius: 0; }
+      .email-header, .email-body, .email-footer { padding: 20px; }
+    }
   </style>
 </head>
 <body>
   <div class="email-container">
     <div class="email-header">
-      <h1>Cobro Mensual de Apadrinamiento</h1>
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
+      <h1>Flacuchos Baena</h1>
+      <p>Cobro Mensual de Apadrinamiento</p>
     </div>
     <div class="email-body">
       <p class="greeting">Hola <strong>${datos.nombre}</strong>,</p>
@@ -913,7 +963,7 @@ const emailService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -1008,7 +1058,7 @@ const emailService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -1104,7 +1154,7 @@ const emailService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -1194,7 +1244,7 @@ const emailService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
