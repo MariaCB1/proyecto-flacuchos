@@ -1,15 +1,7 @@
-const nodemailer = require('nodemailer');
 const userRepository = require('../repositories/user.repository');
+const transporter = require('../config/email');
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT || 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
+const LOGO_URL = process.env.APP_LOGO_URL || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBR9WJDfNaTU7KK-y0C3nBEr5_Q79g&s';
 
 const emailService = {
   async enviarEmailNuevoEvento(evento, usuarios) {
@@ -71,7 +63,7 @@ const emailService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Nuevo evento programado</p>
     </div>
@@ -179,7 +171,7 @@ const emailService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Evento cancelado</p>
     </div>
@@ -279,7 +271,7 @@ const emailService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Evento modificado</p>
     </div>
@@ -406,7 +398,7 @@ const emailService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Confirmación de voluntariado</p>
     </div>
@@ -496,7 +488,7 @@ const emailService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Confirmación de Socio</p>
     </div>
@@ -579,7 +571,7 @@ const emailService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Confirmacion de baja</p>
     </div>
@@ -945,7 +937,7 @@ const emailService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Solicitud de adopción enviada</p>
     </div>
@@ -1040,7 +1032,7 @@ const emailService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>¡Adopción aprobada!</p>
     </div>
@@ -1137,7 +1129,7 @@ const emailService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Solicitud de adopción</p>
     </div>
@@ -1226,7 +1218,7 @@ const emailService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Apadrinamiento cancelado</p>
     </div>

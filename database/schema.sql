@@ -494,6 +494,7 @@ CREATE TRIGGER trg_nuevo_mensaje_contacto
 -- ============================================
 
 -- Usuario administrador
+-- Contraseña por defecto SOLO para desarrollo. Usar database/seed.js para producción.
 INSERT INTO usuarios (nombre, email, contrasena, rol)
 VALUES ('Admin', 'admin@flacuchos.org', crypt('admin123', gen_salt('bf')), 'admin')
 ON CONFLICT (email) DO NOTHING;

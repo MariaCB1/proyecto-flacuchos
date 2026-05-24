@@ -1,6 +1,8 @@
 const stripe = require('../config/stripe');
 const pool = require('../config/db');
-const nodemailer = require('nodemailer');
+const emailTransporter = require('../config/email');
+
+const LOGO_URL = process.env.APP_LOGO_URL || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s';
 
 const STRIPE_PRICE_5 = process.env.STRIPE_MONTHLY_PRICE_ID_5;
 const STRIPE_PRICE_10 = process.env.STRIPE_MONTHLY_PRICE_ID_10;
@@ -33,16 +35,6 @@ async function getOrCreateCustomer(email, nombre, datosPersonales = null, usuari
     return customer;
 }
 
-const emailTransporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT || 587,
-    secure: false,
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-    }
-});
-
 async function createPaymentIntent(amount, email, nombre, metodoPago = 'card', usuarioId = null, metadata = null, setup_future_usage = null) {
     const customer = await stripe.customers.create({
         email: email && email.includes('@') ? email : undefined,
@@ -52,7 +44,7 @@ async function createPaymentIntent(amount, email, nombre, metodoPago = 'card', u
     const isApadrinamiento = metadata?.tipo === 'apadrinamiento';
     
     const paymentIntentParams = {
-        amount: amount,
+        amount: Math.round(amount * 100),
         currency: 'eur',
         payment_method_types: ['card'],
         customer: customer.id,
@@ -82,7 +74,7 @@ async function createPaymentIntent(amount, email, nombre, metodoPago = 'card', u
 async function ejecutarCobroDirecto(customerId, paymentMethodId, amount, description = 'Cobro Flacuchos') {
     try {
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: amount,
+            amount: Math.round(amount * 100),
             currency: 'eur',
             payment_method: paymentMethodId,
             customer: customerId,
@@ -986,7 +978,7 @@ async function enviarEmailDonacionEstado(nombre, email, monto, estado) {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>${tituloEstado}</p>
     </div>

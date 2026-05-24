@@ -1,17 +1,9 @@
-const nodemailer = require('nodemailer');
 const contactoRepository = require('../repositories/contacto.repository');
 const notificationService = require('./notification.service');
 const animalRepository = require('../repositories/animal.repository');
+const transporter = require('../config/email');
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT || 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
+const LOGO_URL = process.env.APP_LOGO_URL || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s';
 
 const contactoService = {
   async crearMensaje({ nombre, email, telefono, mensaje, tipoConsulta }) {
@@ -70,7 +62,7 @@ const contactoService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Nueva solicitud de contacto</p>
     </div>
@@ -185,7 +177,7 @@ const contactoService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Tu solicitud de casa de acogida ha sido recibida</p>
     </div>
@@ -488,7 +480,7 @@ const contactoService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Nuevo animal asignado</p>
     </div>
@@ -555,7 +547,7 @@ const contactoService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Acogida Confirmada</p>
     </div>
@@ -736,7 +728,7 @@ const contactoService = {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Acogida cancelada</p>
     </div>

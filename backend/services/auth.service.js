@@ -1,17 +1,9 @@
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
 const authRepository = require('../repositories/auth.repository');
 const notificationService = require('./notification.service');
+const transporter = require('../config/email');
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT || 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
+const LOGO_URL = process.env.APP_LOGO_URL || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s';
 
 const authService = {
   async registro({ nombre, email, contrasena }) {
@@ -160,7 +152,7 @@ async verificarToken(token) {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
     </div>
     <div class="email-body">
@@ -247,7 +239,7 @@ async verificarToken(token) {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
     </div>
     <div class="email-body">
@@ -369,7 +361,7 @@ async verificarToken(token) {
 <body>
   <div class="email-container">
     <div class="email-header">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj4k24WBr9WJDfNaTU7KK-y0C3nBEr5_Q79g&s" alt="Flacuchos Baena" />
+      <img src="${LOGO_URL}" alt="Flacuchos Baena" />
       <h1>Flacuchos Baena</h1>
       <p>Verificación de email</p>
     </div>

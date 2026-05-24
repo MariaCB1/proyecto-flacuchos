@@ -484,7 +484,7 @@ async function createPaymentIntentSEPA(req, res) {
         }
 
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: amount,
+            amount: Math.round(amount * 100),
             currency: 'eur',
             payment_method: setupIntent.payment_method,
             customer: customerId,

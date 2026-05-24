@@ -3,9 +3,11 @@ const { query } = require('../config/db');
 const apadrinamientoRepository = {
   async getAnimalesDisponibles(usuarioId = null) {
     let excludeCondition = "1=1";
+    const params = [];
     if (usuarioId) {
-      excludeCondition += ` AND a.id NOT IN (SELECT animal_id FROM apadrinamientos WHERE usuario_id = '${usuarioId}' AND estado = 'active')`;
-      excludeCondition += ` AND a.id NOT IN (SELECT animal_id FROM apadrinamientos WHERE usuario_id = '${usuarioId}' AND estado = 'pending')`;
+      params.push(usuarioId, usuarioId);
+      excludeCondition = `a.id NOT IN (SELECT animal_id FROM apadrinamientos WHERE usuario_id = $1 AND estado = 'active')
+        AND a.id NOT IN (SELECT animal_id FROM apadrinamientos WHERE usuario_id = $2 AND estado = 'pending')`;
     }
     const result = await query(
       `SELECT a.*,
@@ -19,7 +21,8 @@ const apadrinamientoRepository = {
        FROM animales a
        WHERE a.estado != 'adoptado'
        AND ${excludeCondition}
-       ORDER BY a.nombre ASC`
+       ORDER BY a.nombre ASC`,
+      params.length > 0 ? params : undefined
     );
     return result.rows;
   },

@@ -207,6 +207,20 @@
   object-fit: cover;
 }
 
+.animalImagePlaceholder {
+  width: 100%;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+}
+
+.animalImageIcon {
+  color: #1976D2;
+  opacity: 0.7;
+}
+
 .animalInfo {
   padding: 16px;
 }
@@ -335,11 +349,25 @@
   margin-bottom: 30px;
 }
 
-.selectedAnimalSummary img {
+.selectedAnimalSummary img,
+.selectedAnimalSummary .summaryImagePlaceholder {
   width: 80px;
   height: 80px;
   border-radius: 8px;
   object-fit: cover;
+}
+
+.selectedAnimalSummary .summaryImagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+  object-fit: none;
+}
+
+.summaryImageIcon {
+  color: #1976D2;
+  opacity: 0.7;
 }
 
 .btnPrimary {

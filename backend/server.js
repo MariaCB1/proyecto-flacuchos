@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const cron = require('node-cron');
 
 const authRoutes = require('./routes/auth.routes');
@@ -20,8 +21,12 @@ const transparenciaRoutes = require('./routes/transparencia.routes');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   console.log(`📝 ${req.method} ${req.path}`);
