@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { apadrinamientoApi, stripeApi } from '../api/api';
+import api, { apadrinamientoApi, stripeApi } from '../api/api';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements, IbanElement } from '@stripe/react-stripe-js';
 import PageHeader from '../components/PageHeader';
@@ -63,19 +63,11 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
       const email = user?.email;
       const nombre = user?.nombre || 'Usuario';
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/stripe/create-setup-intent-card`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email,
-            nombre,
-            metadata: { tipo: 'apadrinamiento' }
-          })
-        }
-      );
-      const data = await response.json();
+      const data = await api.post('/stripe/create-setup-intent-card', {
+        email,
+        nombre,
+        metadata: { tipo: 'apadrinamiento' }
+      });
 
       if (data.error) {
         onError(data.error);
@@ -131,18 +123,10 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
 
     try {
       if (sepaStep === 1) {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/stripe/create-setup-intent`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: user?.email,
-              metadata: { tipo: 'apadrinamiento' }
-            })
-          }
-        );
-        const result = await response.json();
+        const result = await api.post('/stripe/create-setup-intent', {
+          email: user?.email,
+          metadata: { tipo: 'apadrinamiento' }
+        });
 
         if (result.error) {
           onError(result.error);
@@ -522,7 +506,13 @@ function FormularioApadrinamiento() {
                         setFieldErrors(prev => ({ ...prev, selectedAnimal: '' }));
                       }}
                     >
-                      <img src={animal.imagen_url || '/img/default-animal.png'} alt={animal.nombre} className={styles.animalImage} />
+                      {animal.imagen_url ? (
+                        <img src={animal.imagen_url} alt={animal.nombre} className={styles.animalImage} />
+                      ) : (
+                        <div className={styles.animalImagePlaceholder}>
+                          <span className={`material-symbols-outlined ${styles.animalImageIcon}`}>pets</span>
+                        </div>
+                      )}
                       <div className={styles.animalInfo}>
                         <h3>{animal.nombre}</h3>
                         <p>{animal.especie} • {animal.edad} • {animal.tamano}</p>
@@ -616,7 +606,13 @@ function FormularioApadrinamiento() {
               <p className={styles.importeHint}>Importe mínimo: 1€</p>
               {selectedAnimal && (
                 <div className={styles.selectedAnimalSummary}>
-                  <img src={selectedAnimal.imagen_url || '/img/default-animal.png'} alt={selectedAnimal.nombre} />
+                  {selectedAnimal.imagen_url ? (
+                    <img src={selectedAnimal.imagen_url} alt={selectedAnimal.nombre} />
+                  ) : (
+                    <div className={styles.summaryImagePlaceholder}>
+                      <span className={`material-symbols-outlined ${styles.summaryImageIcon}`}>pets</span>
+                    </div>
+                  )}
                   <div>
                     <strong>Apadrinarás a:</strong> {selectedAnimal.nombre}
                   </div>

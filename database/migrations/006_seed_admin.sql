@@ -5,6 +5,9 @@
 -- ============================================
 -- USUARIO ADMINISTRADOR
 -- ============================================
+-- La contraseña del admin se establece mediante el script database/seed.js
+-- que lee la variable de entorno ADMIN_PASSWORD.
+-- Por defecto se usa 'admin123' SOLO para desarrollo local.
 INSERT INTO usuarios (nombre, email, contrasena, rol)
 VALUES (
     'Administrador',

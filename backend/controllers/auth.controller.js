@@ -38,6 +38,12 @@ const authController = {
       }
 
       const result = await authService.registro(value);
+      res.cookie('token', result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000
+      });
       res.status(201).json(result);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
@@ -52,6 +58,12 @@ const authController = {
       }
 
       const result = await authService.login(value);
+      res.cookie('token', result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000
+      });
       res.json(result);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
@@ -59,6 +71,11 @@ const authController = {
   },
 
   async handleLogout(req, res) {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    });
     res.json({ message: 'Logout exitoso' });
   },
 

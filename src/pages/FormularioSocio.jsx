@@ -41,6 +41,7 @@ function FormularioSocio() {
   
   const [step, setStep] = useState(1);
   const [stripePromise, setStripePromise] = useState(null);
+  const [config, setConfig] = useState(null);
   const [error] = useState(null);
   const [aportacion, setAportacion] = useState(10);
   const [errores, setErrores] = useState({});
@@ -58,9 +59,10 @@ function FormularioSocio() {
   useEffect(() => {
     (async () => {
       try {
-        const config = await stripeApi.getConfig();
-        if (config.publishableKey) {
-          setStripePromise(loadStripe(config.publishableKey));
+        const cfg = await stripeApi.getConfig();
+        setConfig(cfg);
+        if (cfg.publishableKey) {
+          setStripePromise(loadStripe(cfg.publishableKey));
         }
       } catch (err) {
         console.error('Error loading Stripe:', err);
@@ -432,6 +434,7 @@ function FormularioSocio() {
                   }}
                   onSuccess={handlePagoExitoso}
                   onBack={() => setStep(1)}
+                  priceId={config?.monthlyPrices?.[`price_${aportacion}`]}
                 />
               </Elements>
             )}

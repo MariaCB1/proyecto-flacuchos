@@ -4,6 +4,8 @@
 -- ============================================
 -- USUARIOS DE EJEMPLO
 -- ============================================
+-- Contraseñas hardcodeadas SOLO para desarrollo local.
+-- En producción, usar database/seed.js con variables de entorno.
 INSERT INTO usuarios (nombre, email, contrasena, rol) VALUES
 ('Juan Pérez', 'juan@example.com', crypt('password123', gen_salt('bf')), 'usuario'),
 ('María García', 'maria@example.com', crypt('password123', gen_salt('bf')), 'usuario'),

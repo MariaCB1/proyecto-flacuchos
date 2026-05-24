@@ -86,7 +86,7 @@ const apadrinamientoService = {
         const paymentIntent = await stripeService.ejecutarCobroDirecto(
           apadrinamiento.stripe_customer_id,
           apadrinamiento.stripe_payment_method_id,
-          apadrinamiento.importe * 100,
+          apadrinamiento.importe,
           `Primer cobro apadrinamiento ${animal.nombre}`
         );
 

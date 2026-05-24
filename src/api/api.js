@@ -1,6 +1,4 @@
-const API_URL = 'http://localhost:3001';
-
-const getToken = () => localStorage.getItem('token');
+import { API_URL } from '../config';
 
 const setToken = (token) => {
   if (token) {
@@ -25,19 +23,15 @@ const setUser = (user) => {
 
 const api = {
   async request(endpoint, options = {}) {
-    const token = getToken();
     const headers = {
       'Content-Type': 'application/json',
       ...options.headers,
     };
 
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
     const response = await fetch(`${API_URL}${endpoint}`, {
       ...options,
       headers,
+      credentials: 'include',
     });
 
     const data = await response.json();
@@ -99,13 +93,14 @@ export const authApi = {
     return data;
   },
 
-  logout() {
+  async logout() {
+    api.post('/auth/logout').catch(() => {});
     setToken(null);
     setUser(null);
   },
 
   isAuthenticated() {
-    return !!getToken();
+    return !!getUser();
   },
 
   getCurrentUser() {
@@ -239,9 +234,7 @@ export const animalApi = {
     
     const response = await fetch(`${API_URL}/upload/imagen`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getToken()}`
-      },
+      credentials: 'include',
       body: formData
     });
     
@@ -340,9 +333,7 @@ export const noticiaApi = {
     
     const response = await fetch(`${API_URL}/upload/imagen`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getToken()}`
-      },
+      credentials: 'include',
       body: formData
     });
     
@@ -392,9 +383,7 @@ export const eventosApi = {
     
     const response = await fetch(`${API_URL}/upload/imagen`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getToken()}`
-      },
+      credentials: 'include',
       body: formData
     });
     
@@ -603,9 +592,7 @@ async uploadFile(file) {
 
     const response = await fetch(`${API_URL}/upload/transparencia`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getToken()}`
-      },
+      credentials: 'include',
       body: formData
     });
 

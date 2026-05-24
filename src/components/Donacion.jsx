@@ -17,19 +17,12 @@ const METODOS_SOCIO = [
 
 const ibanOptions = { style: { base: { fontSize: '16px', color: '#424770' } }, supportedCountries: ['SEPA'] };
 
-const STRIPE_PRICES = {
-    price_5: 'price_1TTmVnFbcNKRoxlNXkxis3e5',
-    price_10: 'price_1TTmXMFbcNKRoxlNCHPT8AFd'
-};
-
-function CheckoutCard({ amount, email, nombre, onSuccess }) {
+function CheckoutCard({ amount, email, nombre, onSuccess, priceId }) {
     const stripe = useStripe();
     const elements = useElements();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [pendingMessage, setPendingMessage] = useState('');
-    
-    const priceId = amount === 5 ? STRIPE_PRICES.price_5 : STRIPE_PRICES.price_10;
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -109,7 +102,9 @@ function CheckoutCardPuntual({ amount, email, nombre, onSuccess }) {
         setPendingMessage('');
         
         try {
-            const { clientSecret, paymentId } = await stripeApi.createPaymentIntent(amount, email, nombre, 'card', authApi.getCurrentUser()?.id);
+            const data = await stripeApi.createPaymentIntent(amount, email, nombre, 'card', authApi.getCurrentUser()?.id);
+            const clientSecret = data.clientSecret;
+            const paymentId = data.paymentIntentId;
             
             if (!clientSecret || !paymentId) {
                 setError('Error al iniciar el pago. Por favor, inténtalo de nuevo.');
@@ -190,7 +185,7 @@ function CheckoutCardPuntual({ amount, email, nombre, onSuccess }) {
     );
 }
 
-function SEPAForm({ amount, email, nombre, onSuccess }) {
+function SEPAForm({ amount, email, nombre, onSuccess, priceId }) {
     const stripe = useStripe();
     const elements = useElements();
     const [loading, setLoading] = useState(false);
@@ -198,8 +193,6 @@ function SEPAForm({ amount, email, nombre, onSuccess }) {
     const [pendingMessage, setPendingMessage] = useState('');
     const [step, setStep] = useState(1);
     const [setupData, setSetupData] = useState(null);
-    
-    const priceId = amount === 5 ? STRIPE_PRICES.price_5 : STRIPE_PRICES.price_10;
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -463,7 +456,7 @@ function DonacionSocioLoggedOut() {
     );
 }
 
-function DonacionSocioLoggedIn({ stripePromise }) {
+function DonacionSocioLoggedIn({ stripePromise, config }) {
     const [step, setStep] = useState(1);
     const [selectedMonthly, setSelectedMonthly] = useState('price_5');
     const [metodoPago, setMetodoPago] = useState('card');
@@ -472,6 +465,7 @@ function DonacionSocioLoggedIn({ stripePromise }) {
     const [nombre, setNombre] = useState(currentUser?.nombre || '');
     const [success, setSuccess] = useState(false);
     const amount = selectedMonthly === 'price_5' ? 5 : 10;
+    const priceId = config?.monthlyPrices?.[selectedMonthly];
 
     if (success) return (
         <div className={styles.container}>
@@ -528,8 +522,8 @@ function DonacionSocioLoggedIn({ stripePromise }) {
                         </div>
 
                         <Elements stripe={stripePromise}>
-                            {metodoPago === 'card' && <CheckoutCard amount={amount} email={email} nombre={nombre} onSuccess={() => setSuccess(true)} />}
-                            {metodoPago === 'sepa' && <SEPAForm amount={amount} email={email} nombre={nombre} onSuccess={() => setSuccess(true)} />}
+                            {metodoPago === 'card' && <CheckoutCard amount={amount} email={email} nombre={nombre} onSuccess={() => setSuccess(true)} priceId={priceId} />}
+                            {metodoPago === 'sepa' && <SEPAForm amount={amount} email={email} nombre={nombre} onSuccess={() => setSuccess(true)} priceId={priceId} />}
                             {metodoPago === 'transfer' && <TransferForm amount={amount} onSuccess={() => setSuccess(true)} />}
                         </Elements>
 

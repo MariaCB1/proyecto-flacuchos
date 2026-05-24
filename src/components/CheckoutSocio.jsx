@@ -3,21 +3,14 @@ import { CardElement, useStripe, useElements, IbanElement } from '@stripe/react-
 import { stripeApi, authApi } from '../api/api';
 import styles from './Donacion.module.css';
 
-const STRIPE_PRICES = {
-  price_5: 'price_1TTmVnFbcNKRoxlNXkxis3e5',
-  price_10: 'price_1TTmXMFbcNKRoxlNCHPT8AFd'
-};
-
 const ibanOptions = { style: { base: { fontSize: '16px', color: '#424770' } }, supportedCountries: ['SEPA'] };
 
-function CheckoutCard({ amount, email, nombre, datosPersonales, onSuccess }) {
+function CheckoutCard({ amount, email, nombre, datosPersonales, onSuccess, priceId }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [pendingMessage, setPendingMessage] = useState('');
-
-  const priceId = amount === 5 ? STRIPE_PRICES.price_5 : STRIPE_PRICES.price_10;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,7 +85,7 @@ function CheckoutCard({ amount, email, nombre, datosPersonales, onSuccess }) {
   );
 }
 
-function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess }) {
+function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess, priceId }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -100,8 +93,6 @@ function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess }) {
   const [pendingMessage, setPendingMessage] = useState('');
   const [step, setStep] = useState(1);
   const [setupData, setSetupData] = useState(null);
-
-  const priceId = amount === 5 ? STRIPE_PRICES.price_5 : STRIPE_PRICES.price_10;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -162,10 +153,8 @@ function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess }) {
 
               console.log('🔍 [DEBUG] Respuesta backend confirmSepaSetup:', JSON.stringify(setupResult, null, 2));
 
-              // Evaluar respuesta del backend - SI HAY ERROR, NO ejecutar onSuccess
               if (setupResult.error) {
                 setError(setupResult.error + ' Por favor, prueba con otro IBAN o método de pago.');
-                // Llamar a marcarSocioFallido para limpiar registros huérfanos
                 try {
                   await stripeApi.marcarSocioFallido(
                     setupData.setupIntentId,
@@ -176,11 +165,9 @@ function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess }) {
                   console.error('Error notificando fallo al backend:', notifyErr);
                 }
               } else if (setupResult.success) {
-                // Solo ejecutar onSuccess si el backend confirma éxito
                 setPendingMessage('¡Socio activado correctamente! Te redirigimos a tu perfil...');
                 setTimeout(onSuccess, 2000);
               } else {
-                // Respuesta inesperada del backend - tratar como error
                 setError('Error al procesar el pago. Por favor, prueba con otro IBAN o método de pago.');
                 try {
                   await stripeApi.marcarSocioFallido(
@@ -195,7 +182,6 @@ function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess }) {
             } catch (backendErr) {
               const errMsg = backendErr.response?.data?.error || backendErr.message || 'Error al procesar el pago SEPA.';
               setError(errMsg + ' Por favor, prueba con otro IBAN o método de pago.');
-              // También notificar al backend sobre el fallo
               try {
                 await stripeApi.marcarSocioFallido(
                   setupData.setupIntentId,
@@ -249,7 +235,7 @@ function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess }) {
   );
 }
 
-export default function CheckoutSocio({ amount, email, nombre, datosPersonales, onSuccess, onBack }) {
+export default function CheckoutSocio({ amount, email, nombre, datosPersonales, onSuccess, onBack, priceId }) {
   const [method, setMethod] = useState('card');
 
   return (
@@ -291,8 +277,8 @@ export default function CheckoutSocio({ amount, email, nombre, datosPersonales, 
           <input type="text" value={nombre || ''} disabled className={styles.textInput} />
         </div>
 
-        {method === 'card' && <CheckoutCard amount={amount} email={email} nombre={nombre} datosPersonales={datosPersonales} onSuccess={onSuccess} />}
-        {method === 'sepa' && <CheckoutSEPA amount={amount} email={email} nombre={nombre} datosPersonales={datosPersonales} onSuccess={onSuccess} />}
+        {method === 'card' && <CheckoutCard amount={amount} email={email} nombre={nombre} datosPersonales={datosPersonales} onSuccess={onSuccess} priceId={priceId} />}
+        {method === 'sepa' && <CheckoutSEPA amount={amount} email={email} nombre={nombre} datosPersonales={datosPersonales} onSuccess={onSuccess} priceId={priceId} />}
 
         <button type="button" onClick={onBack} className={styles.backBtn}>Volver</button>
       </div>

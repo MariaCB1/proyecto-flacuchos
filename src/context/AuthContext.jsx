@@ -19,19 +19,13 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const result = await authApi.verify();
-          setUser(result.user);
-          if (result.user.email_verificado) {
-            localStorage.removeItem('pendingVerificationEmail');
-          }
-        } catch {
+      try {
+        const result = await authApi.verify();
+        setUser(result.user);
+        if (result.user.email_verificado) {
           localStorage.removeItem('pendingVerificationEmail');
-          authApi.logout();
         }
-      } else {
+      } catch {
         localStorage.removeItem('pendingVerificationEmail');
       }
       setLoading(false);
