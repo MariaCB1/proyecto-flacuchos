@@ -82,7 +82,10 @@ const LoginAuth = () => {
         </Link>
         <div className={styles.header}>
           <div className={styles.logoIcon}>
-            <img src="/img/logo.png" alt="Flacuchos" />
+            <picture>
+              <source srcSet="/img/logo.webp" type="image/webp" />
+              <img src="/img/logo.png" alt="Flacuchos" />
+            </picture>
           </div>
           {mostrarRecuperar ? (
             <>

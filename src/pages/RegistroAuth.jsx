@@ -99,7 +99,10 @@ const RegistroAuth = () => {
             </Link>
             <div className={styles.header}>
               <div className={styles.logoIcon}>
-                <img src="/img/logo.png" alt="Flacuchos" />
+                <picture>
+                  <source srcSet="/img/logo.webp" type="image/webp" />
+                  <img src="/img/logo.png" alt="Flacuchos" />
+                </picture>
               </div>
               <h1 className={styles.title}>Crear Cuenta</h1>
               <p className={styles.subtitle}>Únete a la familia Flacuchos</p>

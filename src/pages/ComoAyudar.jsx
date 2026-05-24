@@ -369,13 +369,22 @@ function ComoAyudar() {
                                 {section.socialLinks && (
                                     <div className={styles.socialIcons}>
                                         <a href="https://www.instagram.com/ayudaunflacucho/" target="_blank" rel="noopener noreferrer" className={styles.socialIcon}>
-                                            <img src="/img/logo-instagram.png" alt="Instagram" />
+                                            <picture>
+                                              <source srcSet="/img/logo-instagram.webp" type="image/webp" />
+                                              <img src="/img/logo-instagram.png" alt="Instagram" />
+                                            </picture>
                                         </a>
                                         <a href="https://www.facebook.com/ayudaunflacucho" target="_blank" rel="noopener noreferrer" className={styles.socialIcon}>
-                                            <img src="/img/logo-facebook.png" alt="Facebook" />
+                                            <picture>
+                                              <source srcSet="/img/logo-facebook.webp" type="image/webp" />
+                                              <img src="/img/logo-facebook.png" alt="Facebook" />
+                                            </picture>
                                         </a>
                                         <a href="https://www.teaming.net/group/list?q=flacuchos" target="_blank" rel="noopener noreferrer" className={styles.socialIcon}>
-                                            <img src="/img/logo-teaming.png" alt="Teaming" />
+                                            <picture>
+                                              <source srcSet="/img/logo-teaming.webp" type="image/webp" />
+                                              <img src="/img/logo-teaming.png" alt="Teaming" />
+                                            </picture>
                                         </a>
                                     </div>
                                 )}
