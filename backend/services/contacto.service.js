@@ -36,7 +36,7 @@ const contactoService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -155,7 +155,7 @@ const contactoService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -457,7 +457,7 @@ const contactoService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -530,7 +530,7 @@ const contactoService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
@@ -707,7 +707,7 @@ const contactoService = {
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
     .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .email-header { background: linear-gradient(135deg, #00897B 0%, #00695C 100%); padding: 30px 40px; text-align: center; }
-    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .email-header img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: #ffffff; }
     .email-header h1 { color: #ffffff; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
     .email-header p { color: rgba(255,255,255,0.9); font-size: 14px; }
     .email-body { padding: 30px 40px; }
