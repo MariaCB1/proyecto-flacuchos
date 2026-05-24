@@ -15,7 +15,7 @@ const inscripcionesController = {
       
       const inscripcion = await inscripcionesService.crearInscripcion(usuarioId, evento_id);
       
-      const usuario = await userService.getById(usuarioId);
+      const usuario = await userService.getUsuarioById(usuarioId);
       const evento = await eventosService.getById(evento_id);
       
       const nombreUsuario = usuario?.nombre || 'Un usuario';
@@ -81,7 +81,7 @@ const inscripcionesController = {
       }
       
       const evento = await eventosService.getById(eventoId);
-      const usuario = await userService.getById(usuarioId);
+      const usuario = await userService.getUsuarioById(usuarioId);
       
       const nombreUsuario = usuario?.nombre || 'Un usuario';
       const tituloEvento = evento?.titulo || 'un evento';

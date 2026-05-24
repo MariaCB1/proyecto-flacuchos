@@ -39,11 +39,7 @@ router.post(
       const fileExt = req.file.originalname.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-      console.log(`Subiendo archivo usando proveedor: ${storage.getProviderName()}`);
-
       const result = await storage.upload(req.file.buffer, fileName, req.file.mimetype);
-
-      console.log('Upload successful. URL:', result.url);
 
       res.json({
         success: true,
@@ -72,11 +68,7 @@ router.post(
       const fileExt = req.file.originalname.split('.').pop();
       const fileName = `transparencia/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-      console.log(`Subiendo archivo a transparencia usando proveedor: ${storage.getProviderName()}`);
-
       const result = await storage.upload(req.file.buffer, fileName, req.file.mimetype, 'transparencia');
-
-      console.log('Upload successful. URL:', result.url);
 
       res.json({
         success: true,

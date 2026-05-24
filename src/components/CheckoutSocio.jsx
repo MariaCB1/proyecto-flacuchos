@@ -29,8 +29,6 @@ function CheckoutCard({ amount, email, nombre, datosPersonales, onSuccess, price
         datosPersonales
       );
 
-      console.log('DEBUG: createSubscription response:', result);
-
       const { clientSecret } = result;
 
       if (!clientSecret) {
@@ -104,8 +102,6 @@ function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess, price
       if (step === 1) {
         const result = await stripeApi.createSubscription(priceId, email, nombre, authApi.getCurrentUser()?.id, 'sepa', datosPersonales);
 
-        console.log('DEBUG SEPA step 1:', result);
-
         if (result.isSetupIntent && result.clientSecret) {
           setSetupData(result);
           setStep(2);
@@ -123,10 +119,6 @@ function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess, price
             billing_details: { name: nombre || 'Cliente', email: email || 'cliente@ejemplo.com' }
           }
         });
-
-        console.log('🔍 [DEBUG] SetupIntent completo:', JSON.stringify(setupIntent, null, 2));
-        console.log('🔍 [DEBUG] setupIntent.status:', setupIntent?.status);
-        console.log('🔍 [DEBUG] setupIntent.last_setup_error:', setupIntent?.last_setup_error);
 
         if (setupError) {
           const errorMsg = setupError.message || 'El banco ha rechazado el pago';
@@ -147,11 +139,7 @@ function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess, price
         } else if (setupIntent?.status === 'succeeded' || setupIntent?.status === 'pending' || setupIntent?.status === 'processing') {
           if (setupData.setupIntentId) {
             try {
-              console.log('🔍 [DEBUG] Enviando al backend - setupIntentId:', setupData.setupIntentId);
-
               const setupResult = await stripeApi.confirmSepaSetup(setupData.setupIntentId, priceId, authApi.getCurrentUser()?.id, datosPersonales);
-
-              console.log('🔍 [DEBUG] Respuesta backend confirmSepaSetup:', JSON.stringify(setupResult, null, 2));
 
               if (setupResult.error) {
                 setError(setupResult.error + ' Por favor, prueba con otro IBAN o método de pago.');

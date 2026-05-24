@@ -12,10 +12,6 @@ const userService = {
     return usuario;
   },
 
-  async getById(usuarioId) {
-    return userRepository.findById(usuarioId);
-  },
-
   async getAdmins() {
     return await userRepository.getByRol('admin');
   },

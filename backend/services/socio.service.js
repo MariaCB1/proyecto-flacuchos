@@ -23,13 +23,10 @@ const socioService = {
       throw new Error('No eres socio actualmente');
     }
 
-    console.log('DEBUG cancelarMiSocio: Socio actual:', socioActual);
-
     // Cancelar la suscripción en Stripe si existe
     if (socioActual.stripe_subscription_id && !socioActual.stripe_subscription_id.startsWith('pending')) {
       try {
         await stripeService.cancelarSuscripcionStripe(socioActual.stripe_subscription_id);
-        console.log('Suscripción de Stripe cancelada:', socioActual.stripe_subscription_id);
       } catch (stripeErr) {
         console.error('Error cancelando en Stripe:', stripeErr.message);
       }
@@ -42,7 +39,6 @@ const socioService = {
     await userService.setEsSocio(usuarioId, false);
 
     const usuario = await userService.getUsuarioById(usuarioId);
-    console.log('DEBUG cancelarMiSocio: Usuario:', usuario);
     
     if (usuario) {
       // Crear notificación para el usuario
@@ -53,7 +49,6 @@ const socioService = {
           mensaje: 'Has causado baja como socio de Flacucos. Gracias por todo el tiempo que has estado con nosotros.',
           referenciaId: socioActual.id
         });
-        console.log('DEBUG cancelarMiSocio: Notificación creada');
       } catch (notifErr) {
         console.error('Error creando notificación:', notifErr.message);
       }
@@ -64,7 +59,6 @@ const socioService = {
           nombre: socioActual.nombre_apellidos,
           email: usuario.email
         });
-        console.log('DEBUG cancelarMiSocio: Email enviado');
       } catch (emailErr) {
         console.error('Error enviando email de cancelación:', emailErr.message);
       }
@@ -72,7 +66,6 @@ const socioService = {
 
     // Notificar a admins
     const admins = await userService.getAdmins();
-    console.log('DEBUG cancelarMiSocio: Admins:', admins.length);
     for (const admin of admins) {
       try {
         await notificationService.crearNotificacion({

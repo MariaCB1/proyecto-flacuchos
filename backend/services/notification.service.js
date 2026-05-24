@@ -6,10 +6,6 @@ const notificationService = {
     return notificationRepository.findByUserId(usuarioId);
   },
 
-  async getNoLeidas(usuarioId) {
-    return notificationRepository.findUnreadByUserId(usuarioId);
-  },
-
   async getCountNoLeidas(usuarioId) {
     return notificationRepository.countUnread(usuarioId);
   },

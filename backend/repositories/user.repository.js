@@ -10,14 +10,6 @@ const userRepository = {
     return result.rows[0];
   },
 
-  async findByEmail(email) {
-    const result = await query(
-      'SELECT id, nombre, email, rol, es_voluntario, voluntario_activo, es_socio, email_verificado FROM usuarios WHERE email = $1',
-      [email]
-    );
-    return result.rows[0];
-  },
-
   async update(id, { nombre, email, contrasena, email_verificado }) {
     const fields = [];
     const values = [];
@@ -85,14 +77,6 @@ const userRepository = {
     return result.rows;
   },
 
-  async getById(id) {
-    const result = await query(
-      'SELECT id, nombre, email, rol, es_voluntario, voluntario_activo, es_socio FROM usuarios WHERE id = $1',
-      [id]
-    );
-    return result.rows[0];
-  },
-
   async getAllAdmins() {
     const result = await query(
       'SELECT id, nombre, email, rol FROM usuarios WHERE rol = $1',
@@ -130,19 +114,6 @@ const userRepository = {
       [usuarioId]
     );
     return result.rows[0];
-  },
-
-  async getAllVoluntarios() {
-    const result = await query(
-      `SELECT u.id as usuario_id, u.nombre, u.email, u.es_voluntario, u.voluntario_activo,
-              v.telefono, v.dni, v.disponibilidad_dias, v.disponibilidad_horario,
-              v.tiene_vehiculo, v.motivacion, v.experiencia, v.comentarios, v.created_at
-       FROM usuarios u
-       LEFT JOIN voluntarios v ON v.usuario_id = u.id
-       WHERE u.es_voluntario = TRUE
-       ORDER BY v.created_at DESC`
-    );
-    return result.rows;
   },
 
   async setEsSocio(id, esSocio) {

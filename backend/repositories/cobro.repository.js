@@ -17,16 +17,6 @@ const cobroRepository = {
     return result.rows[0];
   },
 
-  async getByApadrinamiento(apadrinamientoId) {
-    const result = await query(
-      `SELECT * FROM cobros_apadrinamiento 
-       WHERE apadrinamiento_id = $1 
-       ORDER BY fecha_cobro DESC`,
-      [apadrinamientoId]
-    );
-    return result.rows;
-  },
-
   async getAll() {
     const result = await query(
       `SELECT c.*, 

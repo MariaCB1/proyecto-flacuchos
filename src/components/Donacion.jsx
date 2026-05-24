@@ -240,8 +240,6 @@ function SEPAForm({ amount, email, nombre, onSuccess, priceId }) {
                 
                 if (setupError) {
                     const errorMsg = setupError.message || 'El banco ha rechazado el pago';
-                    console.log('DEBUG SEPA Donacion: Setup error -', errorMsg);
-
                     // Notificar al backend que el socio ha fallado
                     if (setupData.setupIntentId) {
                         try {

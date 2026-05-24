@@ -276,16 +276,6 @@ const animalRepository = {
     }
   },
 
-  async getAnimalBySolicitud(solicitudId) {
-    const result = await query(
-      `SELECT a.* FROM animales a
-       JOIN solicitudes_adopcion sa ON sa.animal_id = a.id
-       WHERE sa.id = $1`,
-      [solicitudId]
-    );
-    return result.rows[0];
-  },
-
   async getAllAnimalesAdmin() {
     const result = await query(
       'SELECT * FROM animales ORDER BY created_at DESC'

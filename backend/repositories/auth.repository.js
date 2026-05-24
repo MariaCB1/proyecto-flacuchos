@@ -11,17 +11,6 @@ const authRepository = {
     return result.rows[0];
   },
 
-  async create({ nombre, email, contrasena }) {
-    const hashedPassword = await bcrypt.hash(contrasena, 10);
-    const result = await query(
-      `INSERT INTO usuarios (nombre, email, contrasena, rol)
-       VALUES ($1, $2, $3, 'usuario')
-       RETURNING id, nombre, email, rol, created_at, updated_at`,
-      [nombre, email, hashedPassword]
-    );
-    return result.rows[0];
-  },
-
   async comparePassword(plainPassword, hashedPassword) {
     return bcrypt.compare(plainPassword, hashedPassword);
   },
@@ -34,7 +23,7 @@ const authRepository = {
     return result.rows[0];
   },
 
-  async update(id, { nombre, email, contrasena }) {
+  async generarTokenRecuperacion(email) {
     let updates = [];
     let values = [];
     let paramIndex = 1;
@@ -95,13 +84,6 @@ const authRepository = {
       [hashedPassword, id]
     );
     return result.rows[0];
-  },
-
-  async clearToken(email) {
-    await query(
-      `UPDATE usuarios SET token_recuperacion = NULL, token_expiracion = NULL WHERE email = $1`,
-      [email]
-    );
   },
 
   async create({ nombre, email, contrasena }) {
