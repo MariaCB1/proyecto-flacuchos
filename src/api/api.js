@@ -443,10 +443,6 @@ export const stripeApi = {
     return api.post('/stripe/confirm-sepa-setup', { setupIntentId, priceId, usuarioId, datosPersonales });
   },
 
-  async createSepaMandate(email, nombre) {
-    return api.post('/stripe/create-sepa-mandate', { email, nombre });
-  },
-
   async checkDonacion(paymentId) {
     return api.get(`/stripe/check-donacion?paymentId=${paymentId}`);
   },
@@ -489,9 +485,6 @@ export const socioApi = {
     return api.get('/socios/check-fue-socio');
   },
 
-  async getTotalHistorico() {
-    return api.get('/socios/total-historico');
-  },
 };
 
 export const voluntarioApi = {
@@ -526,10 +519,6 @@ export const apadrinamientoApi = {
     return api.get(`/apadrinamientos/disponibles${params}`);
   },
 
-  async getAnimalesConPadrino() {
-    return api.get('/apadrinamientos/con-padrino');
-  },
-
   async getMisApadrinamientos() {
     return api.get('/apadrinamientos/mis-apadrinamientos');
   },
@@ -562,13 +551,6 @@ export const apadrinamientoApi = {
     return api.delete(`/apadrinamientos/${id}`);
   },
 
-  async getCobros() {
-    return api.get('/apadrinamientos/cobros');
-  },
-
-  async ejecutarCobros() {
-    return api.post('/apadrinamientos/cobros-ejecutar');
-  },
 };
 
 export const resumenApi = {

@@ -8,8 +8,6 @@ const pool = new Pool({
 async function seed() {
   const client = await pool.connect();
   try {
-    console.log('🌱 Iniciando seed de la base de datos...');
-
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
 
     await client.query('BEGIN');
@@ -20,10 +18,7 @@ async function seed() {
        ON CONFLICT (email) DO NOTHING`,
       ['Administrador', 'admin@flacuchos.org', adminPassword, 'admin']
     );
-    console.log(`✅ Admin creado: admin@flacuchos.org`);
-
     await client.query('COMMIT');
-    console.log('🌱 Seed completado correctamente.');
   } catch (err) {
     await client.query('ROLLBACK');
     console.error('❌ Error durante el seed:', err.message);

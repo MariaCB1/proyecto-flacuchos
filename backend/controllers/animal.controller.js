@@ -149,7 +149,6 @@ const animalController = {
         if (fileName) {
           try {
             await storage.delete(fileName);
-            console.log(`Imagen anterior eliminada del storage: ${fileName}`);
           } catch (storageError) {
             console.warn('No se pudo eliminar la imagen anterior del storage:', storageError.message);
           }
@@ -172,7 +171,6 @@ const animalController = {
         if (fileName) {
           try {
             await storage.delete(fileName);
-            console.log(`Imagen eliminada del storage: ${fileName}`);
           } catch (storageError) {
             console.warn('No se pudo eliminar la imagen del storage:', storageError.message);
           }

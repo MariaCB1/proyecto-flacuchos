@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+
 import { animalApi } from '../api/api';
 import PageHeader from '../components/PageHeader';
 import { formatDateShort } from '../utils/dateUtils';

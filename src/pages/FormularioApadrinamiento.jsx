@@ -142,8 +142,8 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
 
       const { error: setupError, setupIntent } = await stripe.confirmSepaDebitSetup(
         setupData.clientSecret,
-        { payment_method: { sepa_debit: elements.getElement(IbanElement). Bran }
-      });
+        { payment_method: { sepa_debit: elements.getElement(IbanElement) } }
+      );
 
       if (setupError) {
         if (setupError.code === 'canceled' || setupError.code === 'invalid_debit') {

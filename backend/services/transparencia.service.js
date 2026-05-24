@@ -5,14 +5,6 @@ const transparenciaService = {
     return await transparenciaRepository.getAll();
   },
 
-  async getDocumentoByTipo(tipo) {
-    const documento = await transparenciaRepository.getByTipo(tipo);
-    if (!documento) {
-      throw new Error('Documento no encontrado');
-    }
-    return documento;
-  },
-
   async updateDocumento(tipo, data) {
     const documento = await transparenciaRepository.getByTipo(tipo);
     if (!documento) {

@@ -154,7 +154,7 @@ async function createSubscription(priceId, email, nombre, usuarioId = null, meto
         };
     }
 
-    // Crear PaymentIntent para la primera cuota (NO guardar en BD, se guarda después del pago exitoso)
+    // Crear PaymentIntent para la primera cuota
     const price = priceId === STRIPE_PRICE_5 ? 500 : 1000;
     const paymentIntent = await stripe.paymentIntents.create({
         amount: price,
@@ -171,6 +171,23 @@ async function createSubscription(priceId, email, nombre, usuarioId = null, meto
             email: email || ''
         }
     });
+
+    const aportacion = priceId === STRIPE_PRICE_5 ? 5 : 10;
+
+    // GUARDAR EN BD CON ESTADO 'pending' - se actualizará a 'active' tras el pago exitoso
+    if (usuarioId) {
+        await pool.query(
+            `INSERT INTO socios (usuario_id, stripe_subscription_id, stripe_customer_id, stripe_price_id,
+                dni_nie, telefono, direccion, codigo_postal, ciudad_provincia,
+                aportacion, metodo_pago, estado)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending')`,
+            [usuarioId, 'pending_' + paymentIntent.id, customer.id, priceId,
+                datosPersonales?.dni_nie || null, datosPersonales?.telefono || null,
+                datosPersonales?.direccion || null, datosPersonales?.codigo_postal || null,
+                datosPersonales?.ciudad_provincia || null,
+                aportacion, 'card']
+        );
+    }
 
     return {
         subscriptionId: null,
@@ -279,11 +296,6 @@ async function createSubscriptionFromSetup(setupIntentId, priceId, usuarioId = n
     const setupIntent = await stripe.setupIntents.retrieve(setupIntentId);
     const aportacion = priceId === STRIPE_PRICE_5 ? 5 : 10;
 
-    console.log('🔍 [DEBUG BACKEND] SetupIntent desde Stripe:', JSON.stringify(setupIntent, null, 2));
-    console.log('🔍 [DEBUG BACKEND] setupIntent.status:', setupIntent.status);
-    console.log('🔍 [DEBUG BACKEND] setupIntent.last_setup_error:', setupIntent.last_setup_error);
-    console.log('🔍 [DEBUG BACKEND] setupIntent.latest_attempt:', setupIntent.latest_attempt);
-
     // EVALUAR EL LATEST ATTEMPT PARA DETECTAR FALLOS EN LA VALIDACIÓN DEL IBAN
     if (setupIntent.latest_attempt) {
         try {
@@ -301,14 +313,10 @@ async function createSubscriptionFromSetup(setupIntentId, priceId, usuarioId = n
             );
             
             const attempts = response.data;
-            console.log('🔍 [DEBUG BACKEND] Attempts list:', JSON.stringify(attempts, null, 2));
             
             // El último attempt es el más reciente
             const attempt = attempts.data[0];
             if (attempt) {
-                console.log('🔍 [DEBUG BACKEND] Attempt status:', attempt.status);
-                console.log('🔍 [DEBUG BACKEND] Attempt setup_error:', attempt.setup_error);
-
                 // Si el attempt falló, rechazar el registro
                 if (attempt.status === 'failed' || attempt.setup_error) {
                     const errorMessage = attempt.setup_error?.message || 'El banco ha rechazado el IBAN. Por favor, prueba con otro.';
@@ -388,9 +396,6 @@ async function createSubscriptionFromSetup(setupIntentId, priceId, usuarioId = n
         default_payment_method: paymentMethodId,
         expand: ['latest_invoice.payment_intent']
     });
-
-    console.log('🔍 [DEBUG BACKEND] Subscription creada:', JSON.stringify(subscription, null, 2));
-    console.log('🔍 [DEBUG BACKEND] subscription.status:', subscription.status);
 
     const invalidSubscriptionStatuses = ['incomplete', 'past_due', 'unpaid', 'canceled'];
     
@@ -719,12 +724,12 @@ async function handleMandateUpdated(mandate) {
                     estado = 'payment_failed',
                     canceled_at = CURRENT_TIMESTAMP
                  WHERE stripe_customer_id = $1 AND estado IN ('pending', 'active')
-                 RETURNING usuario_id, stripe_subscription_id, nombre_apellidos`,
+                 RETURNING usuario_id, stripe_subscription_id`,
                 [customerId]
             );
 
             if (socioResult.rows.length > 0) {
-                const { usuario_id, stripe_subscription_id, nombre_apellidos } = socioResult.rows[0];
+                const { usuario_id, stripe_subscription_id } = socioResult.rows[0];
 
                 if (stripe_subscription_id && !stripe_subscription_id.startsWith('pending')) {
                     try {
@@ -756,7 +761,7 @@ async function handleMandateUpdated(mandate) {
                         const emailService = require('./email.service');
                         await emailService.enviarEmailSocioCancelado({
                             email: email,
-                            nombre: nombre_apellidos || 'Socio'
+                            nombre: 'Socio'
                         });
                     } catch (emailErr) {
                         console.error('Error enviando email de rechazo:', emailErr.message);
@@ -1059,14 +1064,6 @@ async function saveDonacion(paymentIntent, estadoInicial = 'pending', usuarioId 
     }
 }
 
-async function getUltimaDonacion(amount) {
-    const result = await pool.query(
-        `SELECT * FROM donaciones WHERE monto = $1 ORDER BY created_at DESC LIMIT 1`,
-        [amount]
-    );
-    return result.rows;
-}
-
 async function getDonacionByPaymentId(paymentIntentId) {
     const result = await pool.query(
         `SELECT * FROM donaciones WHERE stripe_payment_id = $1`,
@@ -1186,28 +1183,25 @@ async function saveSocio(usuarioId, subscriptionId, customerId, priceId, metodoP
 async function updateSocioCompleto(usuarioId, oldSubscriptionId, newSubscriptionId, customerId, priceId, metodoPago, datosPersonales) {
     try {
         const aportacion = priceId === STRIPE_PRICE_5 ? 5 : (priceId === STRIPE_PRICE_10 ? 10 : 10);
-        const nombreSocio = datosPersonales?.nombre_apellidos || datosPersonales?.nombre || 'Socio';
         
         await pool.query(
             `UPDATE socios SET 
                 stripe_subscription_id = $1,
                 stripe_customer_id = $2,
                 stripe_price_id = $3,
-                nombre_apellidos = COALESCE($4, nombre_apellidos),
-                dni_nie = COALESCE($5, dni_nie),
-                telefono = COALESCE($6, telefono),
-                direccion = COALESCE($7, direccion),
-                codigo_postal = COALESCE($8, codigo_postal),
-                ciudad_provincia = COALESCE($9, ciudad_provincia),
-                aportacion = $10,
-                metodo_pago = $11,
+                dni_nie = COALESCE($4, dni_nie),
+                telefono = COALESCE($5, telefono),
+                direccion = COALESCE($6, direccion),
+                codigo_postal = COALESCE($7, codigo_postal),
+                ciudad_provincia = COALESCE($8, ciudad_provincia),
+                aportacion = $9,
+                metodo_pago = $10,
                 estado = 'pending'
-             WHERE usuario_id = $12 AND stripe_subscription_id = $13`,
+             WHERE usuario_id = $11 AND stripe_subscription_id = $12`,
             [
                 newSubscriptionId,
                 customerId,
                 priceId,
-                datosPersonales?.nombre_apellidos || null,
                 datosPersonales?.dni_nie || null,
                 datosPersonales?.telefono || null,
                 datosPersonales?.direccion || null,
@@ -1219,9 +1213,7 @@ async function updateSocioCompleto(usuarioId, oldSubscriptionId, newSubscription
                 oldSubscriptionId
             ]
         );
-        
 
-        
     } catch (error) {
         console.error('Error actualizando socio completo:', error.message);
     }
@@ -1236,14 +1228,13 @@ async function saveSocioTemporal(usuarioId, subscriptionId, customerId, priceId,
         await pool.query(
             `INSERT INTO socios (
                 usuario_id, stripe_subscription_id, stripe_customer_id, stripe_price_id,
-                email, aportacion, metodo_pago, estado
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, 'iniciando')`,
+                aportacion, metodo_pago, estado
+            ) VALUES ($1, $2, $3, $4, $5, $6, 'iniciando')`,
             [
                 usuarioId,
                 subscriptionId,
                 customerId,
                 priceId,
-                email || null,
                 aportacion,
                 metodoPago || 'card'
             ]
@@ -1256,21 +1247,18 @@ async function saveSocioTemporal(usuarioId, subscriptionId, customerId, priceId,
 async function saveSocioCompleto(usuarioId, subscriptionId, customerId, priceId, metodoPago, datosPersonales) {
     try {
         const aportacion = priceId === STRIPE_PRICE_5 ? 5 : 10;
-        const nombreSocio = datosPersonales?.nombre_apellidos || 'Socio';
         
         await pool.query(
             `INSERT INTO socios (
                 usuario_id, stripe_subscription_id, stripe_customer_id, stripe_price_id,
-                nombre_apellidos, dni_nie, telefono,
-                direccion, codigo_postal, ciudad_provincia, aportacion,
+                dni_nie, telefono, direccion, codigo_postal, ciudad_provincia, aportacion,
                 metodo_pago, estado
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 'pending')`,
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending')`,
             [
                 usuarioId,
                 subscriptionId,
                 customerId,
                 priceId,
-                datosPersonales?.nombre_apellidos || null,
                 datosPersonales?.dni_nie || null,
                 datosPersonales?.telefono || null,
                 datosPersonales?.direccion || null,
@@ -1280,9 +1268,7 @@ async function saveSocioCompleto(usuarioId, subscriptionId, customerId, priceId,
                 metodoPago || 'card'
             ]
         );
-        
 
-        
     } catch (error) {
         console.error('Error guardando socio completo:', error.message);
     }
@@ -1381,7 +1367,6 @@ module.exports = {
     createSubscriptionFromSetup,
     handleWebhook,
     saveDonacion,
-    getUltimaDonacion,
     getDonacionByPaymentId,
     updateDonacionEstado,
     saveSocio,
@@ -1394,7 +1379,6 @@ module.exports = {
     enviarEmailDonacionEstado,
     STRIPE_PRICE_5,
     STRIPE_PRICE_10,
-    limpiarSuscripcionesIncompletas,
     limpiarSuscripcionesCanceladas,
     crearSuscripcionReal,
     marcarSocioFallido,
@@ -1413,35 +1397,6 @@ async function cancelarSuscripcionStripe(subscriptionId) {
     } catch (error) {
         console.error('Error cancelando suscripción en Stripe:', error.message);
         throw error;
-    }
-}
-
-async function limpiarSuscripcionesIncompletas(usuarioId) {
-    try {
-        // Obtener socios con subscription_ids que empiezan por sub_ (suscripciones de Stripe)
-        const sociosIncompletos = await pool.query(
-            `SELECT id, stripe_subscription_id, stripe_customer_id 
-             FROM socios 
-             WHERE usuario_id = $1 AND estado = 'active' AND stripe_subscription_id LIKE 'sub_%'`,
-            [usuarioId]
-        );
-
-        for (const socio of sociosIncompletos.rows) {
-            try {
-                const subscription = await stripe.subscriptions.retrieve(socio.stripe_subscription_id);
-                
-                // Si la suscripción está incomplete, cancelarla
-                if (subscription.status === 'incomplete' || subscription.status === 'incomplete_expired') {
-                    await stripe.subscriptions.cancel(socio.stripe_subscription_id);
-
-                }
-            } catch (err) {
-                // La suscripción puede no existir en Stripe, ignoramos el error
-
-            }
-        }
-    } catch (error) {
-        console.error('Error limpiando suscripciones:', error.message);
     }
 }
 

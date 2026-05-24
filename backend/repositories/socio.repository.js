@@ -60,21 +60,6 @@ const socioRepository = {
     return result.rows[0];
   },
 
-  async getSocioByUsuarioIdAnyStatus(usuarioId) {
-    const result = await query(
-      `SELECT * FROM socios WHERE usuario_id = $1 ORDER BY started_at DESC LIMIT 1`,
-      [usuarioId]
-    );
-    return result.rows[0];
-  },
-
-  async deleteSociosCancelados(usuarioId) {
-    await query(
-      `DELETE FROM socios WHERE usuario_id = $1 AND estado = 'canceled'`,
-      [usuarioId]
-    );
-  },
-
   async fueSocioEsteMes(usuarioId) {
     const result = await query(
       `SELECT id, aportacion, started_at, estado
