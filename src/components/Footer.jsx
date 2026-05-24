@@ -10,7 +10,10 @@ function Footer() {
                     <div className={styles.footerLogo}>
                         <Link to="/" className={styles.logo}>
                             <div className={styles.logoIcon}>
-                                <img src="/img/logo.png" alt="Logo Flacuchos" />
+                                <picture>
+                                    <source srcSet="/img/logo.webp" type="image/webp" />
+                                    <img src="/img/logo.png" alt="Logo Flacuchos" />
+                                  </picture>
                             </div>
                             <span>Flacuchos</span>
                         </Link>

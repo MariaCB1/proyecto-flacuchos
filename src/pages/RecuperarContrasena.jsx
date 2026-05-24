@@ -81,7 +81,10 @@ const RecuperarContrasena = () => {
         <div className={styles.card}>
           <div className={styles.header}>
             <div className={styles.logoIcon}>
-              <img src="/img/logo.png" alt="Flacuchos" />
+              <picture>
+                <source srcSet="/img/logo.webp" type="image/webp" />
+                <img src="/img/logo.png" alt="Flacuchos" />
+              </picture>
             </div>
             <h1 className={styles.title}>Enlace inválido</h1>
             <p className={styles.subtitle}>El enlace de recuperación no es válido o ha expirado</p>
@@ -125,7 +128,10 @@ const RecuperarContrasena = () => {
         </Link>
         <div className={styles.header}>
           <div className={styles.logoIcon}>
-            <img src="/img/logo.png" alt="Flacuchos" />
+            <picture>
+              <source srcSet="/img/logo.webp" type="image/webp" />
+              <img src="/img/logo.png" alt="Flacuchos" />
+            </picture>
           </div>
           <h1 className={styles.title}>Nueva contraseña</h1>
           <p className={styles.subtitle}>Ingresa tu nueva contraseña</p>

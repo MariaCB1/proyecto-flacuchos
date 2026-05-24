@@ -49,7 +49,10 @@ function Home() {
                             <h2>Quiénes Somos</h2>
                             <div className={styles.aboutCentered}>
                                 <div className={styles.aboutImage}>
-                                    <img src="/img/portada-historia.jpeg" alt="Perro con logo de Flacuchos en el fondo" />
+                                    <picture>
+                                      <source srcSet="/img/portada-historia.webp" type="image/webp" />
+                                      <img src="/img/portada-historia.jpeg" alt="Perro con logo de Flacuchos en el fondo" loading="lazy" />
+                                    </picture>
                                 </div>
                                 <div className={styles.aboutContent}>
                                     <h3>Nuestra Historia</h3>

@@ -59,7 +59,10 @@ function Header() {
         <nav className={styles.nav}>
           <Link to="/" className={styles.logo}>
             <div className={styles.logoIcon}>
-              <img src="/img/logo.png" alt="Logo Flacuchos" />
+              <picture>
+                        <source srcSet="/img/logo.webp" type="image/webp" />
+                        <img src="/img/logo.png" alt="Logo Flacuchos" fetchpriority="high" />
+                      </picture>
             </div>
             Flacuchos
           </Link>
