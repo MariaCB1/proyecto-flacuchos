@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { contactoApi } from '../api/api';
 import PageHeader from '../components/PageHeader';
@@ -44,7 +44,6 @@ const initialFormData = {
 
 function FormularioAcogida() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [pasoActual, setPasoActual] = useState(0);
   const [formData, setFormData] = useState(initialFormData);
   const [error, setError] = useState('');
@@ -209,9 +208,9 @@ function FormularioAcogida() {
               <h2>¡Gracias por tu interés!</h2>
               <p>Tu solicitud de casa de acogida ha sido enviada correctamente.</p>
               <p>Nos pondremos en contacto contigo pronto.</p>
-              <button onClick={() => navigate('/')} className={styles.submitBtn}>
+              <a href="/" className={styles.submitBtn}>
                 Volver al inicio
-              </button>
+              </a>
             </div>
           </div>
         </section>

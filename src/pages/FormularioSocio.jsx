@@ -230,8 +230,8 @@ function FormularioSocio() {
               <p>Tu aportación de {aportacion}€/mes es muy importante para nosotros.</p>
               <p>Gracias a personas como tú, podemos seguir rescatar y cuidar a los animales.</p>
               <div className={styles.successLinks}>
-                <Link to="/como-ayudar" className={styles.btnPrimary}>Volver a Cómo Ayudar</Link>
-                <Link to="/perfil" className={styles.btnSecondary}>Ver mi perfil</Link>
+                <a href="/como-ayudar" className={styles.btnPrimary}>Volver a Cómo Ayudar</a>
+                <a href="/perfil" className={styles.btnSecondary}>Ver mi perfil</a>
               </div>
             </div>
           </div>
