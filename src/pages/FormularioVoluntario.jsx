@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { voluntarioApi } from '../api/api';
 import PageHeader from '../components/PageHeader';
@@ -60,7 +60,6 @@ const formatearDNI = (valor) => {
 
 function FormularioVoluntario() {
   const { isAuthenticated, user, refreshUser } = useAuth();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -236,9 +235,9 @@ function FormularioVoluntario() {
               <h2>¡Gracias por unirte como voluntario!</h2>
               <p>Tu registro se ha completado correctamente. Te hemos enviado un correo de confirmación.</p>
               <p>Nos pondremos en contacto contigo pronto.</p>
-              <button onClick={() => navigate('/')} className={styles.submitBtn}>
+              <a href="/" className={styles.submitBtn}>
                 Volver al inicio
-              </button>
+              </a>
             </div>
           </div>
         </section>

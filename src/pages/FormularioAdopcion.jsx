@@ -264,8 +264,8 @@ const getFieldErrors = (paso) => {
               <p>Hemos recibido tu formulario de adopción. El equipo de Flacuchos revisará tu solicitud y te contactaremos pronto.</p>
               <p>Mientras tanto, puedes:</p>
               <div className={styles.successLinks}>
-                <Link to="/adopciones" className="btn btn-primary">Ver más animales</Link>
-                <Link to="/perfil?tab=solicitudes" className="btn btn-secondary">Ver mis solicitudes</Link>
+                <a href="/adopciones" className="btn btn-primary">Ver más animales</a>
+                <a href="/perfil?tab=solicitudes" className="btn btn-secondary">Ver mis solicitudes</a>
               </div>
             </div>
           </div>

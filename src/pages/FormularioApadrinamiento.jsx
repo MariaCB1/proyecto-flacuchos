@@ -422,12 +422,12 @@ function FormularioApadrinamiento() {
               <p>El administrador revisará tu solicitud y te notificaremos pronto.</p>
               <p>Mientras tanto, puedes ver el estado de tu solicitud en tu perfil.</p>
               <div className={styles.successLinks}>
-                <Link to="/como-ayudar" className={styles.successBtnPrimary}>
+                <a href="/como-ayudar" className={styles.successBtnPrimary}>
                   Volver a Cómo Ayudar
-                </Link>
-                <Link to="/perfil" className={styles.successBtnSecondary}>
+                </a>
+                <a href="/perfil" className={styles.successBtnSecondary}>
                   Ver mi perfil
-                </Link>
+                </a>
               </div>
             </div>
           </div>
