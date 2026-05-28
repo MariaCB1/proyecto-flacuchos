@@ -329,12 +329,15 @@
 
 .voluntarioInfo {
   flex: 1;
+  min-width: 0;
+  padding-right: 15px;
 }
 
 .voluntarioInfo h4 {
   margin: 0 0 4px 0;
   color: #0D47A1;
   font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .voluntarioInfo p {
@@ -402,6 +405,32 @@
   background: #BBDEFB;
 }
 
+.voluntarioDetailText {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 2px 0;
+}
+
+.voluntarioDetailText::-webkit-scrollbar {
+  height: 6px;
+}
+
+.voluntarioDetailText::-webkit-scrollbar-track {
+  background: #C5E3FB;
+  border-radius: 6px;
+}
+
+.voluntarioDetailText::-webkit-scrollbar-thumb {
+  background: #1976D2;
+  border-radius: 6px;
+}
+
+.voluntarioDetailText::-webkit-scrollbar-thumb:hover {
+  background: #1565C0;
+}
+
 .voluntarioText {
   display: block;
   color: #555;
@@ -444,6 +473,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  padding-left: 15px;
+  border-left: 2px solid rgba(25, 118, 210, 0.2);
+  flex-shrink: 0;
 }
 
 .toggleLabelActive {
@@ -804,6 +836,32 @@ input:checked + .slider:before {
 .infoRow .material-symbols-outlined {
   font-size: 1.1rem;
   color: #1976D2;
+}
+
+.infoRowText {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 2px 0;
+}
+
+.infoRowText::-webkit-scrollbar {
+  height: 6px;
+}
+
+.infoRowText::-webkit-scrollbar-track {
+  background: #C5E3FB;
+  border-radius: 6px;
+}
+
+.infoRowText::-webkit-scrollbar-thumb {
+  background: #1976D2;
+  border-radius: 6px;
+}
+
+.infoRowText::-webkit-scrollbar-thumb:hover {
+  background: #1565C0;
 }
 
 .motivoRechazo {

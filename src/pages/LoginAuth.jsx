@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/api';
@@ -14,18 +14,8 @@ const LoginAuth = () => {
   const [emailRecuperar, setEmailRecuperar] = useState('');
   const [loadingRecuperar, setLoadingRecuperar] = useState(false);
   const [successRecuperar, setSuccessRecuperar] = useState(false);
-  const [loadingResend, setLoadingResend] = useState(false);
-  const [successResend, setSuccessResend] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-
-  const pendingEmail = localStorage.getItem('pendingVerificationEmail');
-
-  useEffect(() => {
-    if (pendingEmail && !email) {
-      setEmail(pendingEmail);
-    }
-  }, [pendingEmail, email]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,29 +24,12 @@ const LoginAuth = () => {
 
     try {
       await login(email, contrasena);
-      const userEmail = localStorage.getItem('pendingVerificationEmail');
-      if (userEmail) {
-        navigate('/perfil');
-      } else {
-        navigate('/');
-      }
+      navigate('/');
     } catch (err) {
       setError(err.message || 'Error al iniciar sesión');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleReenviarVerificacion = async () => {
-    if (!pendingEmail) return;
-    setLoadingResend(true);
-    try {
-      await api.post('/auth/reenviar-publico', { email: pendingEmail });
-      setSuccessResend(true);
-    } catch (err) {
-      setError(err.response?.data?.error || 'Error al reenviar');
-    }
-    setLoadingResend(false);
   };
 
   const handleRecuperar = async (e) => {
@@ -99,30 +72,6 @@ const LoginAuth = () => {
             </>
           )}
         </div>
-
-        {pendingEmail && !successResend && (
-          <div className={styles.verificationBanner}>
-            <span className="material-symbols-outlined">mark_email_unread</span>
-            <div className={styles.bannerContent}>
-              <strong>Email no verificado</strong>
-              <span>{pendingEmail}</span>
-            </div>
-            <button 
-              className={styles.resendBtn} 
-              onClick={handleReenviarVerificacion}
-              disabled={loadingResend}
-            >
-              {loadingResend ? 'Enviando...' : 'Reenviar'}
-            </button>
-          </div>
-        )}
-
-        {successResend && (
-          <div className={styles.success}>
-            <span className="material-symbols-outlined">check_circle</span>
-            <p>Email de verificación reenviado. Revisa tu bandeja de entrada.</p>
-          </div>
-        )}
 
         {error && <div className={styles.error}>{error}</div>}
 

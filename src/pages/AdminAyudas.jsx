@@ -519,8 +519,8 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
                         <div key={voluntario.id} className={styles.voluntarioCard}>
                           <div className={styles.voluntarioHeader}>
                             <div className={styles.voluntarioInfo}>
-                              <h4>{voluntario.nombre}</h4>
-                              <p>{voluntario.email}</p>
+                              <h4 className={styles.voluntarioDetailText}>{voluntario.nombre}</h4>
+                              <p className={styles.voluntarioDetailText}>{voluntario.email}</p>
                             </div>
                             <div className={styles.toggleContainer}>
                               <span className={esActivo ? styles.toggleLabelActive : styles.toggleLabelInactive}>
@@ -539,20 +539,20 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
                           <div className={styles.voluntarioDetails}>
                             <div className={styles.voluntarioDetail}>
                               <span className="material-symbols-outlined">phone</span>
-                              <span>{voluntario.telefono}</span>
+                              <span className={styles.voluntarioDetailText}>{voluntario.telefono}</span>
                             </div>
                             <div className={styles.voluntarioDetail}>
                               <span className="material-symbols-outlined">badge</span>
-                              <span>{voluntario.dni}</span>
+                              <span className={styles.voluntarioDetailText}>{voluntario.dni}</span>
                             </div>
                             <div className={styles.voluntarioDetail}>
                               <span className="material-symbols-outlined">event</span>
-                              <span>Desde {formatDate(voluntario.created_at)}</span>
+                              <span className={styles.voluntarioDetailText}>Desde {formatDate(voluntario.created_at)}</span>
                             </div>
                             {voluntario.disponibilidad_dias && (
                               <div className={styles.voluntarioDetail}>
                                 <span className="material-symbols-outlined">calendar_today</span>
-                                <span>
+                                <span className={styles.voluntarioDetailText}>
                                   {(() => {
                                     const dias = Array.isArray(voluntario.disponibilidad_dias) 
                                       ? voluntario.disponibilidad_dias 
@@ -566,7 +566,7 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
                             {voluntario.disponibilidad_horario && (
                               <div className={styles.voluntarioDetail}>
                                 <span className="material-symbols-outlined">schedule</span>
-                                <span>
+                                <span className={styles.voluntarioDetailText}>
                                   {voluntario.disponibilidad_horario === 'manana' ? 'Mañanas' : 
                                    voluntario.disponibilidad_horario === 'tarde' ? 'Tardes' : 
                                    voluntario.disponibilidad_horario === 'todo' ? 'Todo el día' : 
@@ -577,7 +577,7 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
                             {voluntario.tiene_vehiculo && (
                               <div className={styles.voluntarioDetail}>
                                 <span className="material-symbols-outlined">directions_car</span>
-                                <span>Con vehículo</span>
+                                <span className={styles.voluntarioDetailText}>Con vehículo</span>
                               </div>
                             )}
                             {voluntario.motivacion && (
@@ -1007,23 +1007,23 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
                         <div className={styles.cardBody}>
                           <div className={styles.infoRow}>
                             <span className="material-symbols-outlined">phone</span>
-                            <span>{solicitud.telefono}</span>
+                            <span className={styles.infoRowText}>{solicitud.telefono}</span>
                           </div>
                           <div className={styles.infoRow}>
                             <span className="material-symbols-outlined">mail</span>
-                            <span>{solicitud.email}</span>
+                            <span className={styles.infoRowText}>{solicitud.email}</span>
                           </div>
                           <div className={styles.infoRow}>
                             <span className="material-symbols-outlined">home</span>
-                            <span>{solicitud.tipo_vivienda} ({solicitud.vivienda_propia})</span>
+                            <span className={styles.infoRowText}>{solicitud.tipo_vivienda} ({solicitud.vivienda_propia})</span>
                           </div>
                           <div className={styles.infoRow}>
                             <span className="material-symbols-outlined">schedule</span>
-                            <span>Tiempo: {solicitud.tiempo_acogida}</span>
+                            <span className={styles.infoRowText}>Tiempo: {solicitud.tiempo_acogida}</span>
                           </div>
                           <div className={styles.infoRow}>
                             <span className="material-symbols-outlined">pets</span>
-                            <span>Tipo: {solicitud.tipo_animal}</span>
+                            <span className={styles.infoRowText}>Tipo: {solicitud.tipo_animal}</span>
                           </div>
 
                           {solicitud.motivo_rechazo && (
