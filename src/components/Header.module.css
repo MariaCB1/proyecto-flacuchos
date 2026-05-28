@@ -181,6 +181,20 @@
     color: var(--primary);
     font-size: 14px;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (min-width: 768px) and (max-width: 1349px) {
+    .userName {
+        max-width: 120px;
+    }
+}
+
+@media (min-width: 1350px) {
+    .userName {
+        max-width: none;
+    }
 }
 
 .logoutBtn {

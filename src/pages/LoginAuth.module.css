@@ -384,16 +384,6 @@
   }
 }
 
-.verificationBanner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-  border-radius: 12px;
-  margin-bottom: 16px;
-  border-left: 4px solid #e65100;
-}
 
 .verificationBanner .material-symbols-outlined {
   font-size: 24px;

@@ -89,7 +89,7 @@ function Header() {
                       <span className={styles.userAvatar}>
                         <span className="material-symbols-outlined">person</span>
                       </span>
-                      <span className={styles.userName}>{user?.nombre || 'Mi Perfil'}</span>
+                      <span className={styles.userName} title={user?.nombre || 'Mi Perfil'}>{user?.nombre || 'Mi Perfil'}</span>
                     </Link>
                     <Link to="/notificaciones" className={styles.mobileAuthLinkIcon} onClick={() => setMobileMenuOpen(false)}>
                       <NotificationBell />
@@ -120,7 +120,7 @@ function Header() {
                   <span className={styles.userAvatar}>
                     <span className="material-symbols-outlined">person</span>
                   </span>
-                  <span className={styles.userName}>{user?.nombre || 'Mi Perfil'}</span>
+                  <span className={styles.userName} title={user?.nombre || 'Mi Perfil'}>{user?.nombre || 'Mi Perfil'}</span>
                 </Link>
                 <NotificationBell />
                 <button onClick={handleLogout} className={styles.logoutBtn}>
