@@ -228,37 +228,35 @@ function Transparencia() {
                                     <p>{docActual?.contenido}</p>
                                 </div>
 
-                                {isAdmin && (
-                                    <div className={styles.gastosActions}>
-                                        <select
-                                            className={styles.yearSelect}
-                                            value={typeof añoSeleccionado === 'number' ? añoSeleccionado : ''}
-                                            onChange={(e) => {
-                                                const val = e.target.value;
-                                                if (val === 'nuevo') {
-                                                    const añosParaCrear = Array.from({ length: currentYear - 2019 + 1 }, (_, i) => 2019 + i).filter(año => !añosDisponibles.includes(año));
-                                                    if (añosParaCrear.length > 0) {
-                                                        setAñoParaModalNuevo(añosParaCrear[0]);
-                                                    }
-                                                    setModalNuevoAño(true);
-                                                } else {
-                                                    setAñoSeleccionado(parseInt(val));
+                                <div className={styles.gastosActions}>
+                                    <select
+                                        className={styles.yearSelect}
+                                        value={typeof añoSeleccionado === 'number' ? añoSeleccionado : ''}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (val === 'nuevo') {
+                                                const añosParaCrear = Array.from({ length: currentYear - 2019 + 1 }, (_, i) => 2019 + i).filter(año => !añosDisponibles.includes(año));
+                                                if (añosParaCrear.length > 0) {
+                                                    setAñoParaModalNuevo(añosParaCrear[0]);
                                                 }
-                                            }}
-                                        >
-                                            <option value="" disabled>Seleccionar año</option>
-                                            {añosDisponibles.map(año => (
-                                                <option key={año} value={año}>{año}</option>
-                                            ))}
-                                            <option value="nuevo">+ Añadir nuevo año</option>
-                                        </select>
-                                        {añoSeleccionado && (
-                                            <button className="btn btn-primary" onClick={() => setModalJustificante({ año: añoSeleccionado, concepto: '', importe: '' })}>
-                                                + Añadir justificante
-                                            </button>
-                                        )}
-                                    </div>
-                                )}
+                                                setModalNuevoAño(true);
+                                            } else {
+                                                setAñoSeleccionado(parseInt(val));
+                                            }
+                                        }}
+                                    >
+                                        <option value="" disabled>Seleccionar año</option>
+                                        {añosDisponibles.map(año => (
+                                            <option key={año} value={año}>{año}</option>
+                                        ))}
+                                        {isAdmin && <option value="nuevo">+ Añadir nuevo año</option>}
+                                    </select>
+                                    {isAdmin && añoSeleccionado && (
+                                        <button className="btn btn-primary" onClick={() => setModalJustificante({ año: añoSeleccionado, concepto: '', importe: '' })}>
+                                            + Añadir justificante
+                                        </button>
+                                    )}
+                                </div>
 
                                 {loadingJustificantes ? (
                                     <div className={styles.loading}>Cargando...</div>
@@ -271,6 +269,9 @@ function Transparencia() {
                                             </div>
                                         ) : (
                                             <>
+                                                {añoSeleccionado && (
+                                                    <h3 className={styles.yearHeading}>Justificantes de {añoSeleccionado}</h3>
+                                                )}
                                                 {añoSeleccionado && (
                                                     <div className={styles.justificantesTable}>
                                                         <table>
@@ -430,7 +431,7 @@ function Transparencia() {
                             <div className={styles.field}>
                                 <label>Año</label>
                                 <select value={modalJustificante.año} onChange={e => setModalJustificante(prev => ({ ...prev, año: parseInt(e.target.value) }))}>
-                                    {añosDisponibles.map(año => (
+                                    {(añosDisponibles.includes(modalJustificante.año) ? añosDisponibles : [modalJustificante.año, ...añosDisponibles]).map(año => (
                                         <option key={año} value={año}>{año}</option>
                                     ))}
                                 </select>
@@ -547,8 +548,8 @@ function Transparencia() {
                                     }
                                     setModalNuevoAño(false);
                                     setAñoParaModalNuevo(null);
-                                    setModalJustificante({ año, concepto: '', importe: '' });
                                     setAñoSeleccionado(año);
+                                    setModalJustificante({ año, concepto: '', importe: '' });
                                 }} disabled={saving}>
                                     Crear año y añadir justificante
                                 </button>
