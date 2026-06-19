@@ -10,7 +10,10 @@ function Footer() {
                     <div className={styles.footerLogo}>
                         <Link to="/" className={styles.logo}>
                             <div className={styles.logoIcon}>
-                                <img src="/img/logo.png" alt="Logo Flacuchos" />
+                                <picture>
+                                    <source srcSet="/img/logo.webp" type="image/webp" />
+                                    <img src="/img/logo.png" alt="Logo Flacuchos" />
+                                  </picture>
                             </div>
                             <span>Flacuchos</span>
                         </Link>
@@ -32,9 +35,9 @@ function Footer() {
                 <div className={styles.footerBottom}>
                     <p>© 2026 Protectora de Animales Flacuchos - CIF: G-56120157</p>
                     <div className={styles.legalLinks}>
-                        <a href="#">Aviso Legal</a>
-                        <a href="#">Política de Privacidad</a>
-                        <a href="#">Política de Cookies</a>
+                        <Link to="/aviso-legal">Aviso Legal</Link>
+                        <Link to="/politica-privacidad">Política de Privacidad</Link>
+                        <Link to="/politica-cookies">Política de Cookies</Link>
                     </div>
                 </div>
             </div>

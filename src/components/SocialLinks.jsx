@@ -1,9 +1,9 @@
 import styles from './SocialLinks.module.css';
 
 const socialLinks = [
-    { href: 'https://www.instagram.com/ayudaunflacucho/', img: '/img/logo-instagram.png', alt: 'Instagram' },
-    { href: 'https://www.facebook.com/ayudaunflacucho', img: '/img/logo-facebook.png', alt: 'Facebook' },
-    { href: 'https://www.teaming.net/group/list?q=flacuchos', img: '/img/logo-teaming.png', alt: 'Teaming' },
+    { href: 'https://www.instagram.com/ayudaunflacucho/', img: '/img/logo-instagram.webp', fallback: '/img/logo-instagram.png', alt: 'Instagram' },
+    { href: 'https://www.facebook.com/ayudaunflacucho', img: '/img/logo-facebook.webp', fallback: '/img/logo-facebook.png', alt: 'Facebook' },
+    { href: 'https://www.teaming.net/group/list?q=flacuchos', img: '/img/logo-teaming.webp', fallback: '/img/logo-teaming.png', alt: 'Teaming' },
 ];
 
 function SocialLinks({ className = '' }) {
@@ -17,7 +17,10 @@ function SocialLinks({ className = '' }) {
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    <img src={link.img} alt={link.alt} />
+                    <picture>
+                      <source srcSet={link.img} type="image/webp" />
+                      <img src={link.fallback} alt={link.alt} />
+                    </picture>
                 </a>
             ))}
         </div>

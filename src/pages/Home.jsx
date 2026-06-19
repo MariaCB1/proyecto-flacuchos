@@ -1,7 +1,29 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import CookieConsent from '../components/CookieConsent';
 import styles from './Home.module.css';
 
 function Home() {
+    const [showEasterEgg, setShowEasterEgg] = useState(false);
+
+    useEffect(() => {
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'f', 'm'];
+        let input = [];
+
+        const handler = (e) => {
+            const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+            input.push(key);
+            input = input.slice(-10);
+            if (input.length === 10 && input.every((k, i) => k === konamiCode[i])) {
+                setShowEasterEgg(prev => !prev);
+                input = [];
+            }
+        };
+
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, []);
+
     return (
         <>
             <section className={styles.hero}>
@@ -49,7 +71,10 @@ function Home() {
                             <h2>Quiénes Somos</h2>
                             <div className={styles.aboutCentered}>
                                 <div className={styles.aboutImage}>
-                                    <img src="/img/portada-historia.jpeg" alt="Perro con logo de Flacuchos en el fondo" />
+                                    <picture>
+                                      <source srcSet="/img/portada-historia.webp" type="image/webp" />
+                                      <img src="/img/portada-historia.jpeg" alt="Perro con logo de Flacuchos en el fondo" loading="lazy" />
+                                    </picture>
                                 </div>
                                 <div className={styles.aboutContent}>
                                     <h3>Nuestra Historia</h3>
@@ -86,6 +111,7 @@ function Home() {
                     </div>
                 </div>
             </section>
+            <CookieConsent active={showEasterEgg} />
         </>
     );
 }

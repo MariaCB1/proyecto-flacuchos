@@ -1,8 +1,9 @@
 .footer {
     background: var(--dark);
     color: var(--white);
-    padding: 40px 0 20px;
+    padding: 40px 60px 20px;
     margin-top: auto;
+    width: 100%;
 }
 
 .footerContent {
@@ -12,6 +13,7 @@
     padding-bottom: 30px;
     border-bottom: 1px solid rgba(255,255,255,0.1);
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .footerLogo .logo {

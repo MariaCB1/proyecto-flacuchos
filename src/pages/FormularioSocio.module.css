@@ -1,0 +1,571 @@
+.formSection {
+    padding: 20px 0;
+    background: white;
+}
+
+.formSectionFirst {
+    padding-top: 0;
+}
+
+.formSectionLast {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.warningBox {
+    background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+    border-radius: 16px;
+    padding: 20px;
+    border: 2px solid #FF9800;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.warningBox span {
+    font-size: 2rem;
+    color: #FF9800;
+    flex-shrink: 0;
+}
+
+.warningBox p {
+    color: #E65100;
+    font-size: 0.95rem;
+    margin-bottom: 5px;
+    line-height: 1.5;
+}
+
+.warningBox p:last-child {
+    margin-bottom: 0;
+}
+
+.form {
+    background: white;
+    border-radius: 20px;
+    padding: 35px;
+    box-shadow: 0 4px 25px rgba(25, 118, 210, 0.08);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.error {
+    background: #FFEBEE;
+    color: #C62828;
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    margin-top: 20px;
+    border: 1px solid #FFCDD2;
+    font-weight: 500;
+}
+
+.formSectionTitle {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #E3F2FD;
+}
+
+.formSectionTitle h3 {
+    color: #0D47A1;
+    font-size: 1.3rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.formSectionTitle h3 span {
+    color: #1976D2;
+    font-size: 1.5rem;
+}
+
+.sectionTitle {
+    color: #0D47A1;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sectionTitle span {
+    color: #1976D2;
+}
+
+.formSectionLast {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.sectionSubtitle {
+    color: #546E7A;
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup label {
+    color: #1565C0;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.formGroup input[type="text"],
+.formGroup input[type="email"],
+.formGroup input[type="tel"],
+.formGroup select,
+.formGroup textarea {
+    padding: 12px 16px;
+    border: 2px solid #E3F2FD;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    color: #333;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus,
+.input:focus {
+    outline: none;
+    border-color: #1976D2;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+}
+
+.input {
+    padding: 12px 16px;
+    border: 2px solid #E3F2FD;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    color: #333;
+}
+
+.formGroup textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.aportacionOptions {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 20px;
+    background: white;
+    border: 2px solid #E3F2FD;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    text-align: center;
+}
+
+.radioLabel:hover {
+    border-color: #1976D2;
+}
+
+.radioLabel input {
+    display: none;
+}
+
+.radioLabel.selected {
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    border-color: #1976D2;
+}
+
+.radioLabel.selected span {
+    color: white;
+}
+
+.radioLabel span {
+    color: #1565C0;
+    font-weight: 500;
+}
+
+.radioContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.radioAmount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1565C0;
+}
+
+.radioLabel.selected .radioAmount {
+    color: white;
+}
+
+.radioLabelText {
+    color: #546E7A;
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.radioLabel.selected .radioLabelText {
+    color: #E3F2FD;
+}
+
+.checkboxGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.checkbox:hover {
+    border-color: #1976D2;
+}
+
+.checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #1976D2;
+    cursor: pointer;
+}
+
+.checkboxLabel {
+    color: #0D47A1;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.daysGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.dayCheckbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: white;
+    border: 2px solid #E3F2FD;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dayCheckbox:hover {
+    border-color: #1976D2;
+}
+
+.dayCheckbox.selected {
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    border-color: #1976D2;
+}
+
+.dayCheckbox.selected span {
+    color: white;
+}
+
+.dayCheckbox input {
+    display: none;
+}
+
+.dayCheckbox span {
+    color: #1565C0;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.radioGroup {
+    display: flex;
+    gap: 12px;
+}
+
+.radioOption {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: white;
+    border: 2px solid #E3F2FD;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    text-align: center;
+}
+
+.radioOption:hover {
+    border-color: #1976D2;
+}
+
+.radioOption.selected {
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    border-color: #1976D2;
+}
+
+.radioOption.selected span {
+    color: white;
+}
+
+.radioOption input {
+    display: none;
+}
+
+.radioOption span {
+    color: #1565C0;
+    font-weight: 500;
+}
+
+.checkboxVehicle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.checkboxVehicle input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: #1976D2;
+}
+
+.checkboxVehicle span:first-of-type {
+    font-size: 1.5rem;
+    color: #1976D2;
+}
+
+.checkboxVehicle span:last-of-type {
+    color: #0D47A1;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.submitSection {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.submitBtn {
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+}
+
+.submitBtn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+}
+
+.submitBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.finalPhrase {
+    margin-top: 20px;
+    color: #546E7A;
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+.successMessage {
+    text-align: center;
+    padding: 50px;
+    background: white;
+    border-radius: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 4px 25px rgba(25, 118, 210, 0.1);
+}
+
+.successBox {
+    text-align: center;
+    padding: 50px;
+    background: white;
+    border-radius: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 4px 25px rgba(25, 118, 210, 0.1);
+}
+
+.successBox h2 {
+    color: #0D47A1;
+    margin: 20px 0 15px;
+}
+
+.successBox p {
+    color: #546E7A;
+    margin-bottom: 10px;
+}
+
+.errorText {
+    color: #C62828;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.inputDisabled {
+    background: #F5F5F5 !important;
+    color: #9E9E9E !important;
+    cursor: not-allowed;
+}
+
+.inputDisabled {
+    background: #F5F5F5 !important;
+    color: #9E9E9E !important;
+    cursor: not-allowed;
+}
+
+.inputError {
+    border-color: #C62828 !important;
+    background: #fff5f5 !important;
+}
+
+.inputError:focus {
+    border-color: #b71c1c !important;
+    box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1) !important;
+}
+
+.successIcon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.successLinks {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 700px) {
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .checkboxGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .radioGroup {
+        flex-direction: column;
+    }
+
+    .form {
+        padding: 25px 20px;
+    }
+
+    .aportacionOptions {
+        flex-direction: column;
+    }
+
+    .radioLabel {
+        min-width: 100%;
+    }
+}
+
+.loginPrompt {
+    text-align: center;
+    padding: 50px;
+    background: white;
+    border-radius: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0 4px 25px rgba(25, 118, 210, 0.1);
+}
+
+.loginPrompt span {
+    font-size: 4rem;
+    color: #1976D2;
+}
+
+.loginPrompt h3 {
+    color: #0D47A1;
+    margin: 20px 0 15px;
+}
+
+.loginPrompt p {
+    color: #546E7A;
+    margin-bottom: 25px;
+}
+
+.loginButtons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btnPrimary {
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btnPrimary:hover {
+    background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+    transform: translateY(-2px);
+}
+
+.btnSecondary {
+    background: white;
+    color: #1976D2;
+    border: 2px solid #1976D2;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btnSecondary:hover {
+    background: #E3F2FD;
+    transform: translateY(-2px);
+}

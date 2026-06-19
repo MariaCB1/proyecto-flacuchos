@@ -1,0 +1,263 @@
+.container {
+    background: var(--white);
+    padding: 40px 0;
+    min-height: calc(100vh - 200px);
+}
+
+.loading, .error, .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray);
+}
+
+.empty .material-symbols-outlined {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    color: #ccc;
+}
+
+.error {
+    color: #e74c3c;
+    background: #fdecea;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.statsBar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.statItem {
+    flex: 1;
+    min-width: 100px;
+    background: var(--light);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+.statValue {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.statPurple { color: #7B1FA2; }
+.statGreen { color: #27ae60; }
+.statBlue { color: #1976D2; }
+.statGray { color: #7f8c8d; }
+
+.statLabel {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 2px solid #7B1FA2;
+    background: transparent;
+    color: #7B1FA2;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.filterBtn.active, .filterBtn:hover {
+    background: #7B1FA2;
+    color: white;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: var(--light);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.cardTitle h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+    color: var(--dark);
+}
+
+.date {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.pending { background: #fff3e0; color: #f39c12; }
+.contactado { background: #e3f2fd; color: #1976D2; }
+.aprobado { background: #e8f5e9; color: #27ae60; }
+.rechazado { background: #ffebee; color: #e74c3c; }
+
+.cardBody {
+    padding: 15px 20px;
+}
+
+.infoRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--dark);
+}
+
+.infoRow .material-symbols-outlined {
+    font-size: 1rem;
+    color: #7B1FA2;
+}
+
+.section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.section h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px 0;
+    font-size: 0.85rem;
+    color: #7B1FA2;
+    font-weight: 600;
+}
+
+.section h4 .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+.section p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--dark);
+}
+
+.textArea {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    line-height: 1.5;
+}
+
+.cardActions {
+    display: flex;
+    gap: 10px;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+}
+
+.cardActions button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+}
+
+.cardActions button .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+.btnContactar {
+    background: #1976D2;
+    color: white;
+}
+
+.btnContactar:hover {
+    background: #1565C0;
+}
+
+.btnAprobar {
+    background: #27ae60;
+    color: white;
+}
+
+.btnAprobar:hover {
+    background: #219a52;
+}
+
+.btnRechazar {
+    background: #e74c3c;
+    color: white;
+}
+
+.btnRechazar:hover {
+    background: #c0392b;
+}
+
+.cardActions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .statsBar {
+        flex-direction: column;
+    }
+    
+    .statItem {
+        min-width: auto;
+    }
+    
+    .filters {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 10px;
+    }
+    
+    .filterBtn {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+}
