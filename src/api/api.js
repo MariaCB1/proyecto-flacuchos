@@ -28,6 +28,11 @@ const api = {
       ...options.headers,
     };
 
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}${endpoint}`, {
       ...options,
       headers,
