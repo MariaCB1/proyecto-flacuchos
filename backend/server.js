@@ -17,6 +17,7 @@ const stripeRoutes = require('./routes/stripe.routes');
 const socioRoutes = require('./routes/socio.routes');
 const voluntarioRoutes = require('./routes/voluntario.routes');
 const transparenciaRoutes = require('./routes/transparencia.routes');
+const cronRoutes = require('./routes/cron.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -49,7 +50,7 @@ app.use('/', noticiaRoutes);
 const apadrinamientoRoutes = require('./routes/apadrinamiento.routes');
 const resumenRoutes = require('./routes/resumen.routes');
 app.use('/apadrinamientos', apadrinamientoRoutes);
-app.use('/admin', resumenRoutes);
+app.use('/cron', cronRoutes);
 
 cron.schedule('0 8 1 * *', async () => {
   try {
