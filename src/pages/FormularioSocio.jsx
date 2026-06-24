@@ -44,6 +44,8 @@ function FormularioSocio() {
   const [config, setConfig] = useState(null);
   const [error] = useState(null);
   const [aportacion, setAportacion] = useState(10);
+  const totalConComision = aportacion === 5 ? 5.35 : 10.50;
+  const comisionMostrar = totalConComision - aportacion;
   const [errores, setErrores] = useState({});
   const [fueSocioEsteMes, setFueSocioEsteMes] = useState(false);
   
@@ -227,7 +229,7 @@ function FormularioSocio() {
           <div className="container">
             <div className={styles.successMessage}>
               <h3>¡Te has convertido en socio de Flacuchos!</h3>
-              <p>Tu aportación de {aportacion}€/mes es muy importante para nosotros.</p>
+              <p>Tu aportación de {totalConComision.toFixed(2).replace('.', ',')}€/mes ({aportacion}€ + {comisionMostrar.toFixed(2).replace('.', ',')}€ comisión) es muy importante para nosotros.</p>
               <p>Gracias a personas como tú, podemos seguir rescatar y cuidar a los animales.</p>
               <div className={styles.successLinks}>
                 <a href="/como-ayudar" className={styles.btnPrimary}>Volver a Cómo Ayudar</a>
@@ -362,7 +364,7 @@ function FormularioSocio() {
                     <span className="material-symbols-outlined">warning</span>
                     <div>
                       <p><strong>Atención:</strong> Ya has sido socio este mes.</p>
-                      <p>Al confirmar, se te cobrará inmediatamente {aportacion}€ de forma recurrente.</p>
+                      <p>Al confirmar, se te cobrará inmediatamente {totalConComision.toFixed(2).replace('.', ',')}€ ({aportacion}€ + {comisionMostrar.toFixed(2).replace('.', ',')}€ comisión) de forma recurrente.</p>
                     </div>
                   </div>
                 )}
