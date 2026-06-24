@@ -1358,6 +1358,26 @@ async function getTotalDonaciones() {
     return result.rows[0].total;
 }
 
+function calcularTotalConComision(importeLimpio) {
+  const totalCentavos = Math.ceil(((importeLimpio * 100 + 25) / 0.986));
+  const comisionCentavos = totalCentavos - importeLimpio * 100;
+  return {
+    total: totalCentavos,
+    comision: comisionCentavos,
+    importeLimpio: importeLimpio * 100
+  };
+}
+
+function calcularComisionDesdeTotal(totalCentavos) {
+  const importeLimpio = Math.floor((totalCentavos - 25) * 0.986);
+  const comisionCentavos = totalCentavos - importeLimpio;
+  return {
+    total: totalCentavos,
+    comision: comisionCentavos,
+    importeLimpio: importeLimpio
+  };
+}
+
 module.exports = {
     createPaymentIntent,
     ejecutarCobroDirecto,
@@ -1382,7 +1402,9 @@ module.exports = {
     limpiarSuscripcionesCanceladas,
     crearSuscripcionReal,
     marcarSocioFallido,
-    cancelarSuscripcionStripe
+    cancelarSuscripcionStripe,
+    calcularTotalConComision,
+    calcularComisionDesdeTotal
 };
 
 async function cancelarSuscripcionStripe(subscriptionId) {

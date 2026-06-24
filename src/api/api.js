@@ -277,6 +277,10 @@ export const contactoApi = {
     return api.get('/contacto/mis-acogidas');
   },
 
+  async getMisSolicitudesAcogida() {
+    return api.get('/contacto/mis-acogidas');
+  },
+
   async eliminarSolicitudAcogida(id) {
     return api.delete(`/contacto/solicitudes-acogida/${id}`);
   },

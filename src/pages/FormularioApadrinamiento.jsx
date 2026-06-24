@@ -604,6 +604,14 @@ function FormularioApadrinamiento() {
               </div>
               {fieldErrors.importe && <span className={styles.errorText} style={{ textAlign: 'center', marginTop: '-10px', marginBottom: '20px' }}>{fieldErrors.importe}</span>}
               <p className={styles.importeHint}>Importe mínimo: 1€</p>
+              {importe && parseFloat(importe) >= 1 && (() => {
+                const limpio = parseFloat(importe);
+                const totalCentavos = Math.ceil(((limpio * 100 + 25) / 0.986));
+                const comisionCentavos = totalCentavos - limpio * 100;
+                return <p style={{ textAlign: 'center', color: '#666', fontSize: '0.85rem', margin: '5px 0 15px' }}>
+                  Para {selectedAnimal?.nombre || 'el animal'}: {limpio.toFixed(2).replace('.', ',')}€ | Comisión: {(comisionCentavos / 100).toFixed(2).replace('.', ',')}€ | Total: {(totalCentavos / 100).toFixed(2).replace('.', ',')}€/mes
+                </p>;
+              })()}
               {selectedAnimal && (
                 <div className={styles.selectedAnimalSummary}>
                   {selectedAnimal.imagen_url ? (
