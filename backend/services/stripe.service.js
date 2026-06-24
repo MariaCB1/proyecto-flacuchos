@@ -7,6 +7,17 @@ const LOGO_URL = process.env.APP_LOGO_URL || 'https://encrypted-tbn0.gstatic.com
 const STRIPE_PRICE_5 = process.env.STRIPE_MONTHLY_PRICE_ID_5;
 const STRIPE_PRICE_10 = process.env.STRIPE_MONTHLY_PRICE_ID_10;
 
+function getPrecioCents(priceId) {
+  if (priceId === STRIPE_PRICE_5) return 535;
+  if (priceId === STRIPE_PRICE_10) return 1050;
+  return 1000;
+}
+
+function getAportacion(priceId) {
+  if (priceId === STRIPE_PRICE_5) return 5;
+  return 10;
+}
+
 async function getOrCreateCustomer(email, nombre, datosPersonales = null, usuarioId = null) {
     let customerId = null;
     
@@ -136,7 +147,7 @@ async function createSubscription(priceId, email, nombre, usuarioId = null, meto
             usage: 'off_session'
         });
 
-        const aportacion = priceId === STRIPE_PRICE_5 ? 5 : 10;
+        const aportacion = getAportacion(priceId);
         
         // GUARDAR EN BD CON ESTADO 'iniciando' - NO se considera socio hasta que se confirme el pago
         // Este estado evita que el usuario acceda a pantalla de bienvenida
@@ -155,7 +166,7 @@ async function createSubscription(priceId, email, nombre, usuarioId = null, meto
     }
 
     // Crear PaymentIntent para la primera cuota
-    const price = priceId === STRIPE_PRICE_5 ? 500 : 1000;
+    const price = getPrecioCents(priceId);
     const paymentIntent = await stripe.paymentIntents.create({
         amount: price,
         currency: 'eur',
@@ -172,7 +183,7 @@ async function createSubscription(priceId, email, nombre, usuarioId = null, meto
         }
     });
 
-    const aportacion = priceId === STRIPE_PRICE_5 ? 5 : 10;
+    const aportacion = getAportacion(priceId);
 
     // GUARDAR EN BD CON ESTADO 'pending' - se actualizará a 'active' tras el pago exitoso
     if (usuarioId) {
@@ -264,7 +275,7 @@ async function crearSuscripcionReal(usuarioId, paymentIntentId) {
         );
 
         // Enviar notificación al socio
-        const aportacion = priceId === STRIPE_PRICE_5 ? 5 : 10;
+        const aportacion = getAportacion(priceId);
         await pool.query(
             `INSERT INTO notificaciones (usuario_id, tipo, mensaje, referencia_id)
              VALUES ($1, 'socio_aprobado', $2, NULL)`,
@@ -294,7 +305,7 @@ async function crearSuscripcionReal(usuarioId, paymentIntentId) {
 
 async function createSubscriptionFromSetup(setupIntentId, priceId, usuarioId = null, metodoPago = 'sepa', datosPersonales = null) {
     const setupIntent = await stripe.setupIntents.retrieve(setupIntentId);
-    const aportacion = priceId === STRIPE_PRICE_5 ? 5 : 10;
+    const aportacion = getAportacion(priceId);
 
     // EVALUAR EL LATEST ATTEMPT PARA DETECTAR FALLOS EN LA VALIDACIÓN DEL IBAN
     if (setupIntent.latest_attempt) {
@@ -619,7 +630,7 @@ async function handlePagoExitoso(paymentIntent) {
                     [usuarioId]
                 );
 
-                const aportacion = priceId === STRIPE_PRICE_5 ? 5 : 10;
+                const aportacion = getAportacion(priceId);
                 await notificarSocioCreado(usuarioId, 'Socio', aportacion);
             }
         } catch (err) {
@@ -1168,7 +1179,7 @@ async function deleteSuscripcion(subscription) {
 
 async function saveSocio(usuarioId, subscriptionId, customerId, priceId, metodoPago) {
     try {
-        const aportacion = priceId === STRIPE_PRICE_5 ? 5 : (priceId === STRIPE_PRICE_10 ? 10 : 10);
+        const aportacion = getAportacion(priceId);
 
         await pool.query(
             `INSERT INTO socios (usuario_id, stripe_subscription_id, stripe_customer_id, stripe_price_id, aportacion, metodo_pago, estado)
@@ -1182,7 +1193,7 @@ async function saveSocio(usuarioId, subscriptionId, customerId, priceId, metodoP
 
 async function updateSocioCompleto(usuarioId, oldSubscriptionId, newSubscriptionId, customerId, priceId, metodoPago, datosPersonales) {
     try {
-        const aportacion = priceId === STRIPE_PRICE_5 ? 5 : (priceId === STRIPE_PRICE_10 ? 10 : 10);
+        const aportacion = getAportacion(priceId);
         
         await pool.query(
             `UPDATE socios SET 
@@ -1221,7 +1232,7 @@ async function updateSocioCompleto(usuarioId, oldSubscriptionId, newSubscription
 
 async function saveSocioTemporal(usuarioId, subscriptionId, customerId, priceId, metodoPago, email, datosPersonales) {
     try {
-        const aportacion = priceId === STRIPE_PRICE_5 ? 5 : 10;
+        const aportacion = getAportacion(priceId);
         
         // Guardar con estado 'iniciando' - NO se considera socio hasta confirmarse el pago
         // Este estado bloquea el acceso a pantalla de bienvenida
@@ -1246,7 +1257,7 @@ async function saveSocioTemporal(usuarioId, subscriptionId, customerId, priceId,
 
 async function saveSocioCompleto(usuarioId, subscriptionId, customerId, priceId, metodoPago, datosPersonales) {
     try {
-        const aportacion = priceId === STRIPE_PRICE_5 ? 5 : 10;
+        const aportacion = getAportacion(priceId);
         
         await pool.query(
             `INSERT INTO socios (
@@ -1404,7 +1415,9 @@ module.exports = {
     marcarSocioFallido,
     cancelarSuscripcionStripe,
     calcularTotalConComision,
-    calcularComisionDesdeTotal
+    calcularComisionDesdeTotal,
+    getPrecioCents,
+    getAportacion
 };
 
 async function cancelarSuscripcionStripe(subscriptionId) {

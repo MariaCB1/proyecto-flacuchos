@@ -50,6 +50,16 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
   const elements = useElements();
   const [sepaStep, setSepaStep] = useState(1);
   const [setupData, setSetupData] = useState(null);
+  const totalInfo = (() => {
+    const limpio = parseFloat(importe);
+    if (isNaN(limpio) || limpio < 1) return null;
+    const totalCentavos = Math.ceil(((limpio * 100 + 25) / 0.986));
+    const comisionCentavos = totalCentavos - limpio * 100;
+    return { total: totalCentavos / 100, comision: comisionCentavos / 100, limpio };
+  })();
+  const totalStr = totalInfo ? totalInfo.total.toFixed(2).replace('.', ',') : importe;
+  const comisionStr = totalInfo ? totalInfo.comision.toFixed(2).replace('.', ',') : '0';
+  const limpioStr = parseFloat(importe).toFixed(2).replace('.', ',');
 
   const handleCardSubmit = async (e) => {
     e.preventDefault();
@@ -182,7 +192,7 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
 
       <div className={styles.pagoSelectedAmount}>
         <span className={styles.pagoAmountLabel}>Aportación seleccionada:</span>
-        <span className={styles.pagoAmountValue}>{importe}€/mes</span>
+        <span className={styles.pagoAmountValue}>{totalStr}€/mes</span>
       </div>
 
       <div className={styles.pagoMethodSelector}>
@@ -227,10 +237,10 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
               <CardElement options={{ style: { base: { fontSize: '16px' } } }} />
             </div>
             <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '15px' }}>
-              Primer cobro: <strong>{importe}€</strong> - Los cobros mensuales se procesarán manualmente
+              Primer cobro: <strong>{totalStr}€</strong> ({limpioStr}€ + {comisionStr}€ comisión) - Los cobros mensuales se procesarán manualmente
             </p>
             <button type="submit" disabled={!stripe || loading || envioPagoIniciado} className={styles.pagoSubmitBtn}>
-              {loading ? 'Procesando...' : `Pagar ${importe}€ y enviar solicitud`}
+              {loading ? 'Procesando...' : `Pagar ${totalStr}€ (${limpioStr}€ + ${comisionStr}€ comisión) y enviar solicitud`}
             </button>
           </form>
         )}
@@ -240,7 +250,7 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
             {sepaStep === 1 && (
               <div style={{ marginBottom: '15px', color: '#424770', fontSize: '0.9rem', lineHeight: '1.5' }}>
                 <p>
-                  Autorizas a Flacuchos a realizar cobros recurrentes de <strong>{importe}€/mes</strong> de tu cuenta
+                  Autorizas a Flacuchos a realizar cobros recurrentes de <strong>{totalStr}€/mes</strong> ({limpioStr}€ + {comisionStr}€ comisión) de tu cuenta
                   SEPA.
                 </p>
                 <p style={{ fontStyle: 'italic', color: '#666', fontSize: '0.85rem' }}>
@@ -255,7 +265,7 @@ function PaymentForms({ importe, metodoPago, setMetodoPago, user, onSuccess, onE
               </div>
             )}
             <button type="submit" disabled={loading || !stripe || !elements || envioPagoIniciado} className={styles.pagoSubmitBtn}>
-              {loading ? 'Procesando...' : sepaStep === 1 ? 'Continuar con SEPA' : `Confirmar primer cobro de ${importe}€`}
+              {loading ? 'Procesando...' : sepaStep === 1 ? 'Continuar con SEPA' : `Confirmar primer cobro de ${totalStr}€`}
             </button>
           </form>
         )}
@@ -660,7 +670,7 @@ function FormularioApadrinamiento() {
                 </div>
                 <div className={styles.resumenItem}>
                   <span>Aportación:</span>
-                  <strong>{importe}€/mes</strong>
+                  <strong>{(() => { const l = parseFloat(importe); if (isNaN(l) || l < 1) return importe; const tc = Math.ceil(((l * 100 + 25) / 0.986)); const cc = tc - l * 100; return `${(tc / 100).toFixed(2).replace('.', ',')}€/mes (${l.toFixed(2).replace('.', ',')}€ + ${(cc / 100).toFixed(2).replace('.', ',')}€ comisión)`; })()}</strong>
                 </div>
                 <div className={styles.resumenItem}>
                   <span>Privacidad:</span>
