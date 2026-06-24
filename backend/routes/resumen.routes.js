@@ -38,11 +38,16 @@ router.get('/resumen-ayudas', async (req, res) => {
        WHERE estado = 'active'`
     );
 
-    // Total apadrinamientos activos
-    const apadrinamientosResult = await db.query(
-      `SELECT COALESCE(SUM(importe), 0) as total
-       FROM apadrinamientos
-       WHERE estado = 'active'`
+    // Total apadrinamientos activos (con comisión)
+    const apadrinamientosImportes = await db.query(
+      `SELECT importe FROM apadrinamientos WHERE estado = 'active'`
+    );
+    const calcularTotalConComision = (importeLimpio) => {
+      const totalCentavos = Math.ceil(((importeLimpio * 100 + 25) / 0.986));
+      return totalCentavos / 100;
+    };
+    const apadrMensual = apadrinamientosImportes.rows.reduce(
+      (sum, r) => sum + calcularTotalConComision(parseFloat(r.importe || 0)), 0
     );
 
     // Ingresos históricos totales
@@ -79,7 +84,6 @@ router.get('/resumen-ayudas', async (req, res) => {
 
     // Calcular ingresos mensuales de socios y apadrinamientos (para el mes actual)
     const socioMensual = parseFloat(sociosResult.rows[0].total) || 0;
-    const apadrMensual = parseFloat(apadrinamientosResult.rows[0].total) || 0;
 
     // Actualizar el último mes con los valores mensuales
     if (ultimos12Meses.length > 0) {

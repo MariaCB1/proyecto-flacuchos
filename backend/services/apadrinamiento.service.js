@@ -23,7 +23,16 @@ const apadrinamientoService = {
   },
 
   async getAllConStats() {
-    return await apadrinamientoRepository.getAllConStats();
+    const data = await apadrinamientoRepository.getAllConStats();
+    const stripeService = require('./stripe.service');
+    data.apadrinamientos = data.apadrinamientos.map(a => {
+      const { total: totalCentavos } = stripeService.calcularTotalConComision(a.importe);
+      return { ...a, importeTotal: totalCentavos / 100 };
+    });
+    const activos = data.apadrinamientos.filter(a => a.estado === 'active');
+    const ingresosActivos = activos.reduce((sum, r) => sum + parseFloat(r.importeTotal || 0), 0);
+    data.stats.ingresosMensuales = ingresosActivos;
+    return data;
   },
 
   async getById(id) {
@@ -83,10 +92,13 @@ const apadrinamientoService = {
     if (apadrinamiento.stripe_customer_id && apadrinamiento.stripe_payment_method_id) {
       try {
         const stripeService = require('./stripe.service');
+        const { total: totalCentavos } = stripeService.calcularTotalConComision(apadrinamiento.importe);
+        const montoTotal = totalCentavos / 100;
+
         const paymentIntent = await stripeService.ejecutarCobroDirecto(
           apadrinamiento.stripe_customer_id,
           apadrinamiento.stripe_payment_method_id,
-          apadrinamiento.importe,
+          montoTotal,
           `Primer cobro apadrinamiento ${animal.nombre}`
         );
 
@@ -94,7 +106,7 @@ const apadrinamientoService = {
           await cobroRepository.registrarCobro({
             apadrinamiento_id: id,
             stripe_payment_id: paymentIntent.id,
-            monto: apadrinamiento.importe,
+            monto: montoTotal,
             estado: 'completada'
           });
         } else {
@@ -278,19 +290,23 @@ const apadrinamientoService = {
     };
 
     for (const apadr of apadrinamientosActivos) {
+      let montoTotal = apadr.importe;
       try {
         const stripeService = require('./stripe.service');
-        const paymentIntent = await stripeService.procesarCobroMensual(
+        const { total: totalCentavos } = stripeService.calcularTotalConComision(apadr.importe);
+        montoTotal = totalCentavos / 100;
+
+        const paymentIntent = await stripeService.ejecutarCobroDirecto(
           apadr.stripe_customer_id,
           apadr.stripe_payment_method_id,
-          apadr.importe,
+          montoTotal,
           `Cobro mensual apadrinamiento ${apadr.animal_id}`
         );
 
         await cobroRepository.registrarCobro({
           apadrinamiento_id: apadr.id,
           stripe_payment_id: paymentIntent.id,
-          monto: apadr.importe,
+          monto: montoTotal,
           estado: paymentIntent.status === 'succeeded' ? 'completada' : 'fallida'
         });
 
@@ -310,7 +326,7 @@ const apadrinamientoService = {
         
         await cobroRepository.registrarCobro({
           apadrinamiento_id: apadr.id,
-          monto: apadr.importe,
+          monto: montoTotal,
           estado: 'fallida'
         });
 

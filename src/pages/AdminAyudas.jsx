@@ -200,7 +200,7 @@ function AdminAyudas() {
       if (!acc[apadr.animal_nombre]) {
         acc[apadr.animal_nombre] = { total: 0, count: 0, ids: [] };
       }
-      acc[apadr.animal_nombre].total += parseFloat(apadr.importe || 0);
+      acc[apadr.animal_nombre].total += parseFloat(apadr.importeTotal || apadr.importe || 0);
       acc[apadr.animal_nombre].count += 1;
       acc[apadr.animal_nombre].ids.push(apadr.id);
       return acc;
@@ -867,7 +867,7 @@ const handleToggleVoluntario = async (usuarioId, activo) => {
                                 </div>
                               </div>
                             </td>
-                            <td className={styles.monto}>{apadr.importe}€/mes</td>
+                            <td className={styles.monto}>{apadr.importeTotal || apadr.importe}€/mes</td>
                             <td>
                               <span className={`${styles.badge} ${apadr.estado === 'active' ? styles.completada : apadr.estado === 'pending' ? styles.pending : styles.cancelada}`}>
                                 {apadr.estado === 'active' ? 'Activo' : apadr.estado === 'pending' ? 'Pendiente' : apadr.estado === 'rejected' ? 'Rechazado' : 'Cancelado'}
