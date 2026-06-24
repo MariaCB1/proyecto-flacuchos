@@ -6,6 +6,12 @@ import { stripeApi, authApi } from '../api/api';
 import styles from './Donacion.module.css';
 
 const PREDEFINED_AMOUNTS = [5, 10, 25, 50];
+
+function calcularTotalConComision(importeLimpio) {
+  const totalCentavos = Math.ceil(((importeLimpio * 100 + 25) / 0.986));
+  const comisionCentavos = totalCentavos - importeLimpio * 100;
+  return { total: totalCentavos / 100, comision: comisionCentavos / 100, importeLimpio };
+}
 const METODOS_DONACION = [
     { id: 'card', label: 'Tarjeta', icon: '💳' }
 ];
@@ -89,6 +95,7 @@ function CheckoutCardPuntual({ amount, email, nombre, onSuccess }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [pendingMessage, setPendingMessage] = useState('');
+    const { total } = calcularTotalConComision(amount);
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -102,7 +109,7 @@ function CheckoutCardPuntual({ amount, email, nombre, onSuccess }) {
         setPendingMessage('');
         
         try {
-            const data = await stripeApi.createPaymentIntent(amount, email, nombre, 'card', authApi.getCurrentUser()?.id);
+            const data = await stripeApi.createPaymentIntent(total, email, nombre, 'card', authApi.getCurrentUser()?.id);
             const clientSecret = data.clientSecret;
             const paymentId = data.paymentIntentId;
             
@@ -313,11 +320,12 @@ function SEPAForm({ amount, email, nombre, onSuccess, priceId }) {
 
 function TransferForm({ amount, nombre, onSuccess, usuarioId }) {
     const [loading, setLoading] = useState(false);
+    const { total } = calcularTotalConComision(amount);
     
     const handleConfirm = async () => {
         setLoading(true);
         try {
-            await stripeApi.createPaymentIntent(amount, '', nombre || 'Donante', 'transfer', usuarioId);
+            await stripeApi.createPaymentIntent(total, '', nombre || 'Donante', 'transfer', usuarioId);
             onSuccess();
         } catch {
             onSuccess();
@@ -372,7 +380,7 @@ function DonacionPuntual({ stripePromise }) {
             <div className={styles.successBox}>
                 <div className={styles.successIcon}>✓</div>
                 <h3>¡Gracias!</h3>
-                <p>Tu donativo de {amount}€ se ha procesado correctamente.</p>
+                <p>Tu donativo de {amount}€ limpios se ha procesado correctamente.</p>
                 <button onClick={() => { setSuccess(false); setStep(1); }} className={styles.submitBtn}>Nueva donación</button>
             </div>
         </div>
@@ -387,18 +395,29 @@ function DonacionPuntual({ stripePromise }) {
             {step === 1 && (
                 <>
                     <div className={styles.amountOptions}>
-                        {PREDEFINED_AMOUNTS.map(v => (
+                        {PREDEFINED_AMOUNTS.map(v => {
+                            const { comision } = calcularTotalConComision(v);
+                            return (
                             <button key={v} type="button" onClick={() => handleAmountSelect(v)} 
-                                className={`${styles.amountBtn} ${amount === v ? styles.active : ''}`}>{v}€</button>
-                        ))}
+                                className={`${styles.amountBtn} ${amount === v ? styles.active : ''}`}>
+                                {v}€{comision > 0 && <small className={styles.feeInfo}> (+{comision.toFixed(2).replace('.', ',')}€ com.)</small>}
+                            </button>
+                            );
+                        })}
                         <div className={styles.customAmount}>
                             <span>Otro:</span>
                             <input type="number" min="1" value={customAmount} onChange={handleCustomChange} 
                                 placeholder="€" className={styles.input} />
                         </div>
+                        {customAmount && parseInt(customAmount) >= 1 && (() => {
+                            const { total, comision } = calcularTotalConComision(parseInt(customAmount));
+                            return <p className={styles.feeDetail}>Para Flacuchos: {customAmount}€ | Comisión: {comision.toFixed(2).replace('.', ',')}€ | Total: {total.toFixed(2).replace('.', ',')}€</p>;
+                        })()}
                     </div>
                     {error && <div className={styles.error}>{error}</div>}
-                    <button onClick={() => handleContinuar()} className={styles.mainBtn}>Donar {amount}€</button>
+                    <button onClick={() => handleContinuar()} className={styles.mainBtn}>
+                        Donar {amount}€{amount >= 1 && (() => { const { comision } = calcularTotalConComision(amount); return ` (${comision.toFixed(2).replace('.', ',')}€ comisión)`; })()}
+                    </button>
                 </>
             )}
 
