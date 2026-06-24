@@ -383,7 +383,7 @@ function FormularioSocio() {
                       />
                       <span className={styles.radioContent}>
                         <span className={styles.radioAmount}>5 €</span>
-                        <span className={styles.radioLabelText}>al mes (estudiante)</span>
+                        <span className={styles.radioLabelText}>al mes (estudiante) — pagas 5,35€ (0,35€ comisión)</span>
                       </span>
                     </label>
 
@@ -397,7 +397,7 @@ function FormularioSocio() {
                       />
                       <span className={styles.radioContent}>
                         <span className={styles.radioAmount}>10 €</span>
-                        <span className={styles.radioLabelText}>al mes (socio adulto)</span>
+                        <span className={styles.radioLabelText}>al mes (socio adulto) — pagas 10,50€ (0,50€ comisión)</span>
                       </span>
                     </label>
                   </div>

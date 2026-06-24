@@ -50,6 +50,7 @@ app.use('/', noticiaRoutes);
 const apadrinamientoRoutes = require('./routes/apadrinamiento.routes');
 const resumenRoutes = require('./routes/resumen.routes');
 app.use('/apadrinamientos', apadrinamientoRoutes);
+app.use('/admin', resumenRoutes);
 app.use('/cron', cronRoutes);
 
 cron.schedule('0 8 1 * *', async () => {
