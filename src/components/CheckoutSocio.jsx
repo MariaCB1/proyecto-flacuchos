@@ -5,12 +5,14 @@ import styles from './Donacion.module.css';
 
 const ibanOptions = { style: { base: { fontSize: '16px', color: '#424770' } }, supportedCountries: ['SEPA'] };
 
-function CheckoutCard({ amount, email, nombre, datosPersonales, onSuccess, priceId }) {
+function CheckoutCard({ amount, email, nombre, datosPersonales, onSuccess, priceId, totalConComision }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [pendingMessage, setPendingMessage] = useState('');
+  const displayTotal = totalConComision || (amount === 5 ? 5.35 : 10.50);
+  const comisionMostrar = displayTotal - amount;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -77,13 +79,13 @@ function CheckoutCard({ amount, email, nombre, datosPersonales, onSuccess, price
       {error && <div className={styles.error}>{error}</div>}
       {pendingMessage && <div className={styles.success}>{pendingMessage}</div>}
       <button type="submit" disabled={!stripe || loading} className={styles.submitBtn}>
-        {loading ? 'Procesando...' : `Pagar ${amount}€/mes y hacerme socio`}
+        {loading ? 'Procesando...' : `Pagar ${displayTotal.toFixed(2).replace('.', ',')}€/mes (${amount}€ + ${comisionMostrar.toFixed(2).replace('.', ',')}€ comisión) y hacerme socio`}
       </button>
     </form>
   );
 }
 
-function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess, priceId }) {
+function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess, priceId, totalConComision }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -91,6 +93,8 @@ function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess, price
   const [pendingMessage, setPendingMessage] = useState('');
   const [step, setStep] = useState(1);
   const [setupData, setSetupData] = useState(null);
+  const displayTotal = totalConComision || (amount === 5 ? 5.35 : 10.50);
+  const comisionMostrar = displayTotal - amount;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -205,7 +209,7 @@ function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess, price
     <form onSubmit={handleSubmit} className={styles.form}>
       {step === 1 && (
         <p className={styles.sepaMandate}>
-          Autorizas a Flacuchos a realizar cobros recurrentes de {amount}€/mes de tu cuenta SEPA.
+          Autorizas a Flacuchos a realizar cobros recurrentes de {displayTotal.toFixed(2).replace('.', ',')}€/mes ({amount}€ + {comisionMostrar.toFixed(2).replace('.', ',')}€ comisión) de tu cuenta SEPA.
           <br /><small>El primer cobro se procesará en 1-2 días hábiles.</small>
         </p>
       )}
@@ -217,7 +221,7 @@ function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess, price
       {error && <div className={styles.error}>{error}</div>}
       {pendingMessage && <div className={styles.success}>{pendingMessage}</div>}
       <button type="submit" disabled={loading || !stripe || !elements} className={styles.submitBtn}>
-        {loading ? 'Procesando...' : step === 1 ? 'Continuar con SEPA' : `Confirmar ${amount}€/mes`}
+        {loading ? 'Procesando...' : step === 1 ? 'Continuar con SEPA' : `Confirmar ${displayTotal.toFixed(2).replace('.', ',')}€/mes`}
       </button>
     </form>
   );
@@ -225,6 +229,8 @@ function CheckoutSEPA({ amount, email, nombre, datosPersonales, onSuccess, price
 
 export default function CheckoutSocio({ amount, email, nombre, datosPersonales, onSuccess, onBack, priceId }) {
   const [method, setMethod] = useState('card');
+  const totalConComision = amount === 5 ? 5.35 : 10.50;
+  const comisionMostrar = totalConComision - amount;
 
   return (
     <div>
@@ -232,8 +238,9 @@ export default function CheckoutSocio({ amount, email, nombre, datosPersonales, 
 
       <div className={styles.selectedAmount}>
         <span className={styles.amountLabel}>Cuota seleccionada:</span>
-        <span className={styles.amountValue}>{amount}€/mes</span>
+        <span className={styles.amountValue}>{totalConComision.toFixed(2).replace('.', ',')}€/mes</span>
       </div>
+      <p style={{textAlign: 'center', color: '#666', fontSize: '0.85rem', margin: '-10px 0 15px', padding: '8px 12px', background: '#f5f5f5', borderRadius: '8px'}}>{amount}€ + {comisionMostrar.toFixed(2).replace('.', ',')}€ comisión</p>
 
       <div className={styles.methodSelector}>
         <p className={styles.methodLabel}>Método de pago:</p>
@@ -265,8 +272,8 @@ export default function CheckoutSocio({ amount, email, nombre, datosPersonales, 
           <input type="text" value={nombre || ''} disabled className={styles.textInput} />
         </div>
 
-        {method === 'card' && <CheckoutCard amount={amount} email={email} nombre={nombre} datosPersonales={datosPersonales} onSuccess={onSuccess} priceId={priceId} />}
-        {method === 'sepa' && <CheckoutSEPA amount={amount} email={email} nombre={nombre} datosPersonales={datosPersonales} onSuccess={onSuccess} priceId={priceId} />}
+        {method === 'card' && <CheckoutCard amount={amount} totalConComision={totalConComision} email={email} nombre={nombre} datosPersonales={datosPersonales} onSuccess={onSuccess} priceId={priceId} />}
+        {method === 'sepa' && <CheckoutSEPA amount={amount} totalConComision={totalConComision} email={email} nombre={nombre} datosPersonales={datosPersonales} onSuccess={onSuccess} priceId={priceId} />}
 
         <button type="button" onClick={onBack} className={styles.backBtn}>Volver</button>
       </div>

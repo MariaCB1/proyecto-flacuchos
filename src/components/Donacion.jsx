@@ -23,12 +23,14 @@ const METODOS_SOCIO = [
 
 const ibanOptions = { style: { base: { fontSize: '16px', color: '#424770' } }, supportedCountries: ['SEPA'] };
 
-function CheckoutCard({ amount, email, nombre, onSuccess, priceId }) {
+function CheckoutCard({ amount, email, nombre, onSuccess, priceId, totalConComision }) {
     const stripe = useStripe();
     const elements = useElements();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [pendingMessage, setPendingMessage] = useState('');
+    const displayTotal = totalConComision || (amount === 5 ? 5.35 : 10.50);
+    const comisionMostrar = displayTotal - amount;
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -83,7 +85,7 @@ function CheckoutCard({ amount, email, nombre, onSuccess, priceId }) {
             {error && <div className={styles.error}>{error}</div>}
             {pendingMessage && <div className={styles.success}>{pendingMessage}</div>}
             <button type="submit" disabled={!stripe || loading} className={styles.submitBtn}>
-                {loading ? 'Procesando...' : `Hacerme socio (${amount}€/mes)`}
+                {loading ? 'Procesando...' : `Hacerme socio (${displayTotal.toFixed(2).replace('.', ',')}€/mes — ${amount}€ + ${comisionMostrar.toFixed(2).replace('.', ',')}€ comisión)`}
             </button>
         </form>
     );
@@ -95,7 +97,7 @@ function CheckoutCardPuntual({ amount, email, nombre, onSuccess }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [pendingMessage, setPendingMessage] = useState('');
-    const { total } = calcularTotalConComision(amount);
+    const { total, comision } = calcularTotalConComision(amount);
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -186,13 +188,13 @@ function CheckoutCardPuntual({ amount, email, nombre, onSuccess }) {
             {error && <div className={styles.error}>{error}</div>}
             {pendingMessage && <div className={styles.success}>{pendingMessage}</div>}
             <button type="submit" disabled={!stripe || loading} className={styles.submitBtn}>
-                {loading ? 'Procesando...' : `Donar ${amount}€ con tarjeta`}
+                {loading ? 'Procesando...' : `Donar ${total.toFixed(2).replace('.', ',')}€ (${amount}€ + ${comision.toFixed(2).replace('.', ',')}€ comisión) con tarjeta`}
             </button>
         </form>
     );
 }
 
-function SEPAForm({ amount, email, nombre, onSuccess, priceId }) {
+function SEPAForm({ amount, email, nombre, onSuccess, priceId, totalConComision }) {
     const stripe = useStripe();
     const elements = useElements();
     const [loading, setLoading] = useState(false);
@@ -200,6 +202,8 @@ function SEPAForm({ amount, email, nombre, onSuccess, priceId }) {
     const [pendingMessage, setPendingMessage] = useState('');
     const [step, setStep] = useState(1);
     const [setupData, setSetupData] = useState(null);
+    const displayTotal = totalConComision || (amount === 5 ? 5.35 : 10.50);
+    const comisionMostrar = displayTotal - amount;
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -295,8 +299,8 @@ function SEPAForm({ amount, email, nombre, onSuccess, priceId }) {
         <form onSubmit={handleSubmit} className={styles.form}>
             {step === 1 && (
                 <p className={styles.sepaMandate}>
-                    Autorizas a Flacuchs a realizar cobros recurrentes de {amount}€/mes de tu cuenta SEPA.
-                    <br /><small>El primer cobro se procesará en 1-2 días h��biles.</small>
+                    Autorizas a Flacuchs a realizar cobros recurrentes de {displayTotal.toFixed(2).replace('.', ',')}€/mes ({amount}€ + {comisionMostrar.toFixed(2).replace('.', ',')}€ comisión) de tu cuenta SEPA.
+                    <br /><small>El primer cobro se procesará en 1-2 días hábiles.</small>
                 </p>
             )}
             {step === 2 && (
@@ -312,15 +316,17 @@ function SEPAForm({ amount, email, nombre, onSuccess, priceId }) {
             {error && <div className={styles.error}>{error}</div>}
             {pendingMessage && <div className={styles.success}>{pendingMessage}</div>}
             <button type="submit" disabled={loading || !stripe || !elements} className={styles.submitBtn}>
-                {loading ? 'Procesando...' : step === 1 ? 'Continuar con SEPA' : `Confirmar ${amount}€/mes`}
+                {loading ? 'Procesando...' : step === 1 ? 'Continuar con SEPA' : `Confirmar ${displayTotal.toFixed(2).replace('.', ',')}€/mes`}
             </button>
         </form>
     );
 }
 
-function TransferForm({ amount, nombre, onSuccess, usuarioId }) {
+function TransferForm({ amount, nombre, onSuccess, usuarioId, totalConComision }) {
     const [loading, setLoading] = useState(false);
     const { total } = calcularTotalConComision(amount);
+    const displayTotal = totalConComision || total;
+    const comisionMostrar = displayTotal - amount;
     
     const handleConfirm = async () => {
         setLoading(true);
@@ -338,7 +344,7 @@ function TransferForm({ amount, nombre, onSuccess, usuarioId }) {
         <div className={styles.transferBox}>
             <p>🏠 <strong>Transferencia Bancaria</strong></p>
             <p className={styles.transferInfo}>
-                Ingresa {amount}€/mes a la cuenta de la protectora. 
+                Ingresa {displayTotal.toFixed(2).replace('.', ',')}€/mes ({amount}€ + {comisionMostrar.toFixed(2).replace('.', ',')}€ comisión) a la cuenta de la protectora. 
                 Después de hacer la transferencia, contacta con nosotros para confirmar.
             </p>
             <button onClick={handleConfirm} disabled={loading} className={styles.submitBtn}>
@@ -395,29 +401,29 @@ function DonacionPuntual({ stripePromise }) {
             {step === 1 && (
                 <>
                     <div className={styles.amountOptions}>
-                        {PREDEFINED_AMOUNTS.map(v => {
-                            const { comision } = calcularTotalConComision(v);
-                            return (
+                        {PREDEFINED_AMOUNTS.map(v => (
                             <button key={v} type="button" onClick={() => handleAmountSelect(v)} 
                                 className={`${styles.amountBtn} ${amount === v ? styles.active : ''}`}>
-                                {v}€{comision > 0 && <small className={styles.feeInfo}> (+{comision.toFixed(2).replace('.', ',')}€ com.)</small>}
+                                {v}€
                             </button>
-                            );
-                        })}
+                        ))}
                         <div className={styles.customAmount}>
                             <span>Otro:</span>
                             <input type="number" min="1" value={customAmount} onChange={handleCustomChange} 
                                 placeholder="€" className={styles.input} />
                         </div>
-                        {customAmount && parseInt(customAmount) >= 1 && (() => {
-                            const { total, comision } = calcularTotalConComision(parseInt(customAmount));
-                            return <p className={styles.feeDetail}>Para Flacuchos: {customAmount}€ | Comisión: {comision.toFixed(2).replace('.', ',')}€ | Total: {total.toFixed(2).replace('.', ',')}€</p>;
+                        {amount >= 1 && (() => {
+                            const { total, comision } = calcularTotalConComision(amount);
+                            return <p className={styles.feeDetail}>Para Flacuchos: {amount}€ | Comisión: {comision.toFixed(2).replace('.', ',')}€ | Total: {total.toFixed(2).replace('.', ',')}€</p>;
                         })()}
                     </div>
                     {error && <div className={styles.error}>{error}</div>}
-                    <button onClick={() => handleContinuar()} className={styles.mainBtn}>
-                        Donar {amount}€{amount >= 1 && (() => { const { comision } = calcularTotalConComision(amount); return ` (${comision.toFixed(2).replace('.', ',')}€ comisión)`; })()}
-                    </button>
+                    {amount >= 1 && (() => {
+                        const { total, comision } = calcularTotalConComision(amount);
+                        return <button onClick={() => handleContinuar()} className={styles.mainBtn}>
+                            Donar {total.toFixed(2).replace('.', ',')}€ ({amount}€ + {comision.toFixed(2).replace('.', ',')}€ comisión)
+                        </button>;
+                    })()}
                 </>
             )}
 
@@ -451,7 +457,7 @@ function DonacionPuntual({ stripePromise }) {
 
                         <Elements stripe={stripePromise}>
                             {metodoPago === 'card' && <CheckoutCardPuntual amount={amount} email={email} nombre={nombre} onSuccess={() => setSuccess(true)} />}
-                            {metodoPago === 'transfer' && <TransferForm amount={amount} nombre={nombre} usuarioId={currentUser?.id} onSuccess={() => setSuccess(true)} />}
+                            {metodoPago === 'transfer' && <TransferForm amount={amount} totalConComision={(() => { const { total } = calcularTotalConComision(amount); return total; })()} nombre={nombre} usuarioId={currentUser?.id} onSuccess={() => setSuccess(true)} />}
                         </Elements>
 
                         <button type="button" onClick={() => setStep(1)} className={styles.backBtn}>Volver</button>
@@ -482,6 +488,8 @@ function DonacionSocioLoggedIn({ stripePromise, config }) {
     const [nombre, setNombre] = useState(currentUser?.nombre || '');
     const [success, setSuccess] = useState(false);
     const amount = selectedMonthly === 'price_5' ? 5 : 10;
+    const totalConComision = selectedMonthly === 'price_5' ? 5.35 : 10.50;
+    const comision = totalConComision - amount;
     const priceId = config?.monthlyPrices?.[selectedMonthly];
 
     if (success) return (
@@ -505,11 +513,12 @@ function DonacionSocioLoggedIn({ stripePromise, config }) {
                 <>
                     <div className={styles.monthlyOptions}>
                         <button type="button" onClick={() => setSelectedMonthly('price_5')} 
-                            className={`${styles.monthlyBtn} ${selectedMonthly === 'price_5' ? styles.active : ''}`}>5€/mes</button>
+                            className={`${styles.monthlyBtn} ${selectedMonthly === 'price_5' ? styles.active : ''}`}>5€/mes (estudiante)</button>
                         <button type="button" onClick={() => setSelectedMonthly('price_10')} 
-                            className={`${styles.monthlyBtn} ${selectedMonthly === 'price_10' ? styles.active : ''}`}>10€/mes</button>
+                            className={`${styles.monthlyBtn} ${selectedMonthly === 'price_10' ? styles.active : ''}`}>10€/mes (socio adulto)</button>
                     </div>
-                    <button onClick={() => setStep(2)} className={styles.mainBtn}>Hacerme socio ({amount}€/mes)</button>
+                    <p className={styles.feeDetail}>Al confirmar, se te cobrará {totalConComision.toFixed(2).replace('.', ',')}€ ({amount}€ + {comision.toFixed(2).replace('.', ',')}€ comisión) cada mes de forma recurrente.</p>
+                    <button onClick={() => setStep(2)} className={styles.mainBtn}>Hacerme socio ({totalConComision.toFixed(2).replace('.', ',')}€/mes)</button>
                 </>
             )}
 
@@ -539,9 +548,9 @@ function DonacionSocioLoggedIn({ stripePromise, config }) {
                         </div>
 
                         <Elements stripe={stripePromise}>
-                            {metodoPago === 'card' && <CheckoutCard amount={amount} email={email} nombre={nombre} onSuccess={() => setSuccess(true)} priceId={priceId} />}
-                            {metodoPago === 'sepa' && <SEPAForm amount={amount} email={email} nombre={nombre} onSuccess={() => setSuccess(true)} priceId={priceId} />}
-                            {metodoPago === 'transfer' && <TransferForm amount={amount} onSuccess={() => setSuccess(true)} />}
+                            {metodoPago === 'card' && <CheckoutCard amount={amount} totalConComision={totalConComision} email={email} nombre={nombre} onSuccess={() => setSuccess(true)} priceId={priceId} />}
+                            {metodoPago === 'sepa' && <SEPAForm amount={amount} totalConComision={totalConComision} email={email} nombre={nombre} onSuccess={() => setSuccess(true)} priceId={priceId} />}
+                            {metodoPago === 'transfer' && <TransferForm amount={amount} totalConComision={totalConComision} onSuccess={() => setSuccess(true)} />}
                         </Elements>
 
                         <button type="button" onClick={() => setStep(1)} className={styles.backBtn}>← Volver</button>

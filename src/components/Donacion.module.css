@@ -424,6 +424,16 @@
     border-color: #1976D2;
 }
 
+.feeDetail {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin: 8px 0 12px;
+    padding: 8px 12px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
 .teamingBox {
     background: #f8f9fa;
     padding: 20px;
