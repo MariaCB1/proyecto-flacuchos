@@ -29,6 +29,13 @@ function Contacto() {
             return;
         }
 
+        const phoneClean = formData.phone.replace(/[\s-]/g, '');
+        const phoneRegex = /^(\+34)?[6789]\d{8}$/;
+        if (phoneClean && !phoneRegex.test(phoneClean)) {
+            setFeedback({ type: 'error', message: 'Introduce un teléfono español válido (9 dígitos empezando por 6, 7, 8 o 9)' });
+            return;
+        }
+
         setLoading(true);
         setFeedback({ type: '', message: '' });
 
