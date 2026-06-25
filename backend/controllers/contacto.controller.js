@@ -10,6 +10,14 @@ const contactoController = {
         return res.status(400).json({ error: 'Nombre, email y mensaje son requeridos' });
       }
 
+      if (telefono) {
+        const phoneClean = String(telefono).replace(/[\s-]/g, '');
+        const phoneRegex = /^(\+34)?[6789]\d{8}$/;
+        if (!phoneRegex.test(phoneClean)) {
+          return res.status(400).json({ error: 'El teléfono debe ser un número español válido (9 dígitos empezando por 6, 7, 8 o 9)' });
+        }
+      }
+
       const mensajeGuardado = await contactoService.crearMensaje({
         nombre,
         email,
@@ -48,6 +56,12 @@ const contactoController = {
 
       if (!nombre_completo || !dni || !telefono || !userEmail) {
         return res.status(400).json({ error: 'Los campos marcados con * son requeridos' });
+      }
+
+      const phoneClean = String(telefono).replace(/[\s-]/g, '');
+      const phoneRegex = /^(\+34)?[6789]\d{8}$/;
+      if (!phoneRegex.test(phoneClean)) {
+        return res.status(400).json({ error: 'El teléfono debe ser un número español válido (9 dígitos empezando por 6, 7, 8 o 9)' });
       }
 
       const tipoAnimalStr = Array.isArray(tipo_animal) ? tipo_animal.join(', ') : tipo_animal;
