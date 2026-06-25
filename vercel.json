@@ -1,3 +1,9 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "routes": [
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/img/(.*)", "destination": "/img/$1" },
+    { "source": "/favicon.ico", "destination": "/favicon.ico" },
+    { "source": "/google(.*).html", "destination": "/google$1.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
