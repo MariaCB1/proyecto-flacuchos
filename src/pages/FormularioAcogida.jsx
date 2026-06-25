@@ -103,7 +103,15 @@ function FormularioAcogida() {
 
     if (paso === 0) {
       if (!formData.dni?.trim()) errors.dni = 'El DNI/NIE es obligatorio';
-      if (!formData.telefono?.trim()) errors.telefono = 'El teléfono es obligatorio';
+      if (!formData.telefono?.trim()) {
+        errors.telefono = 'El teléfono es obligatorio';
+      } else {
+        const phoneClean = formData.telefono.replace(/[\s-]/g, '');
+        const phoneRegex = /^(\+34)?[6789]\d{8}$/;
+        if (!phoneRegex.test(phoneClean)) {
+          errors.telefono = 'El teléfono debe tener 9 dígitos empezando por 6, 7, 8 o 9';
+        }
+      }
     }
 
     if (paso === 1) {
