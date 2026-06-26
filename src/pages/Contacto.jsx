@@ -79,7 +79,7 @@ function Contacto() {
                                 <div className={styles.contactIcon}><span className="material-symbols-outlined">call</span></div>
                                 <div>
                                     <h4>Teléfono</h4>
-                                    <p>696 951 795</p>
+                                    <p>614 41 68 51</p>
                                 </div>
                             </div>
                             <div className={styles.contactItem}>

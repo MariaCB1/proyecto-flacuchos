@@ -18,7 +18,7 @@ export default function PoliticaPrivacidad() {
                             <p><strong>CIF:</strong> G-56120157</p>
                             <p><strong>Domicilio:</strong> Diseminado Diseminados, 822, 14850 Baena, Córdoba</p>
                             <p><strong>Correo electrónico:</strong> flacuchosbaena@gmail.com</p>
-                            <p><strong>Teléfono:</strong> 696 951 795</p>
+                            <p><strong>Teléfono:</strong> 614 41 68 51</p>
                         </div>
                         <p>
                             La Protectora de Animales Flacuchos, como entidad responsable de este sitio web, se compromete
