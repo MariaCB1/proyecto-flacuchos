@@ -252,9 +252,9 @@ function ComoAyudar() {
                     </Link>
                     <div className={styles.voluntarioContact}>
                         <p>Para coordinar las tareas, contacta con la protectora:</p>
-                        <a href="tel:696951795" className={styles.voluntarioPhone}>
+                        <a href="tel:614416851" className={styles.voluntarioPhone}>
                             <span className="material-symbols-outlined">phone</span>
-                            696 951 795
+                            614 41 68 51
                         </a>
                     </div>
                 </div>
@@ -338,9 +338,9 @@ function ComoAyudar() {
                                         <p className={styles.contactText}>
                                             {section.isApadrinamiento ? 'Para apadrinar un animal llame a este número para más información:' : 'Para coordinar la entrega, contacta con la protectora:'}
                                         </p>
-                                        <a href="tel:696951795" className={styles.contactPhone}>
+                                        <a href="tel:614416851" className={styles.contactPhone}>
                                             <span className="material-symbols-outlined">phone</span>
-                                            696 951 795
+                                            614 41 68 51
                                         </a>
                                         <p className={styles.contactOr}>o</p>
                                         <p className={styles.contactFormText}>
